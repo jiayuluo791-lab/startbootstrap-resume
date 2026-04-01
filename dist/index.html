@@ -44,10 +44,25 @@
         #close-btn { margin-top: 20px; cursor: pointer; color: #00796b; font-weight: bold; }
         #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); z-index: 90; }
     </style>
+    /* 让头像悬浮在最中间 */
+#profile-avatar {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* 精准对齐中心 */
+    width: 150px; /* 大小可以自己调 */
+    height: 150px;
+    border-radius: 50%; /* 圆形 */
+    border: 5px solid rgba(255, 255, 255, 0.5); /* 淡淡的白框 */
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1), 0 0 50px rgba(255,255,255,0.3); /* 双重阴影：一个往下投射，一个往外发光 */
+    z-index: 5; /* 在背景上面，但在鱼群下面，这样鱼会游过它 */
+    overflow: hidden;
+    object-fit: cover;
+}
 </head>
 <body>
 
-<div id="overlay"></div>
+<div id="overlay"></div><img id="profile-avatar" src="assets/img/profile.jpg" alt="jiayu的照片">
 <div id="modal">
     <h2 id="modal-title">信息</h2>
     <div id="modal-content">内容加载中...</div>
