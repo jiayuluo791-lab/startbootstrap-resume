@@ -7,17 +7,17 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "Microsoft YaHei", sans-serif; }
         
-        /* 1. 背景：直接指向根目录下的 assets */
+        /* 1. 背景：指向 dist 文件夹里的水面照片 */
         body { 
-            background-image: url("assets/img/water.jpg");
+            background-image: url("dist/assets/img/water.jpg");
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             background-repeat: no-repeat;
-            background-color: #e0f7fa; /* 淡淡的湖蓝色底色 */
+            background-color: #e0f7fa; 
         }
         
-        /* 2. 中心头像：增加柔和呼吸感 */
+        /* 2. 中心头像：增加柔和浮动感 */
         #profile-avatar {
             position: fixed;
             top: 50%; left: 50%;
@@ -28,7 +28,7 @@
             box-shadow: 0 0 30px rgba(255, 255, 255, 0.6), 0 10px 40px rgba(0,0,0,0.1);
             z-index: 5;
             object-fit: cover;
-            animation: float 4s ease-in-out infinite; /* 增加浮动动画 */
+            animation: float 4s ease-in-out infinite;
         }
 
         @keyframes float {
@@ -44,53 +44,54 @@
             transition: transform 0.3s; 
         }
         
-        /* 4. 鱼下面的文字 */
+        /* 4. 鱼下面的文字：直白清晰 */
         .fish div {
             font-size: 14px; color: #00796b; font-weight: bold; text-align: center;
             margin-top: 5px; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
             pointer-events: none;
         }
 
-        /* 弹窗遮罩层 */
-        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.2); backdrop-filter: blur(3px); z-index: 90; }
-        
-        /* 弹窗暂时保留，等会儿我们再统一改造成蓝色泡泡 */
+        /* 5. 弹窗样式（暂时保留传统样式，待你找好泡泡图后再升级） */
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); z-index: 90; }
         #modal {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 80%; max-width: 400px; padding: 25px; border-radius: 25px;
-            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 100;
-            text-align: center; color: #004d40;
+            width: 80%; max-width: 400px; padding: 30px; border-radius: 30px;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1); z-index: 100;
+            text-align: center; border: 1px solid rgba(255,255,255,0.3);
         }
-        #close-btn { margin-top: 15px; cursor: pointer; font-weight: bold; color: #009688; }
+        #modal-title { color: #00796b; margin-bottom: 15px; }
+        #modal-content { color: #333; line-height: 1.6; }
+        #close-btn { margin-top: 20px; cursor: pointer; font-weight: bold; color: #009688; }
     </style>
 </head>
 <body>
 
-<img id="profile-avatar" src="assets/img/profile.jpg" alt="家玉的照片">
+<img id="profile-avatar" src="dist/assets/img/profile.jpg" alt="家玉的照片">
 
-<div id="overlay"></div>
+<div id="overlay" onclick="closeModal()"></div>
 <div id="modal">
-    <h2 id="modal-title">信息</h2>
-    <div id="modal-content"></div>
+    <h2 id="modal-title">标题</h2>
+    <div id="modal-content">内容加载中...</div>
     <div id="close-btn" onclick="closeModal()">[ 点击返回水池 ]</div>
 </div>
 
 <script>
+    // 按照你的要求：直白的名字
     const fishData = [
-        { title: '基础信息', content: '加载中...' },
-        { title: '实习简历', content: '加载中...' },
-        { title: '项目经历', content: '加载中...' },
-        { title: '我的自媒体', content: '加载中...' },
-        { title: '性格与爱好', content: '加载中...' }
+        { title: '基础信息', content: '这里展示你的姓名、联系方式等基本资料。' },
+        { title: '实习简历', content: '这里展示你的实习经历，可滑动查看图片。' },
+        { title: '项目经历', content: '这里展示你参与过的 Tada App 等项目成果。' },
+        { title: '我的自媒体', content: '展示你的自媒体账号、作品与数据。' },
+        { title: '性格与爱好', content: '分享你的个人生活、兴趣爱好与性格特点。' }
     ];
 
     fishData.forEach((data) => {
         const fish = document.createElement('div');
         fish.className = 'fish';
-        // 注意：这里的路径去掉了 dist/
+        // 鱼图片路径：指向 dist
         fish.innerHTML = `
-            <img src="assets/img/fish1.png">
+            <img src="dist/assets/img/fish1.png">
             <div>${data.title}</div>
         `;
         document.body.appendChild(fish);
@@ -108,6 +109,7 @@
             fish.style.left = posX + 'px';
             fish.style.top = posY + 'px';
 
+            // 局部翻转：只转鱼，不转字
             const fishImg = fish.querySelector('img');
             if (fishImg) {
                 fishImg.style.transform = velX > 0 ? 'scaleX(1)' : 'scaleX(-1)';
