@@ -4,6 +4,35 @@
     <meta charset="UTF-8">
     <title>家玉的鱼塘主页</title>
     <style>
+        /* 升级版：更有质感的鱼 */
+.fish {
+    position: absolute;
+    cursor: pointer;
+    transition: transform 0.3s, filter 0.3s;
+    z-index: 10;
+    /* 初始状态：淡淡的透明度 */
+    opacity: 0.8; 
+}
+
+/* 鱼的 SVG 图案（纯代码生成） */
+.fish::before {
+    content: '';
+    display: block;
+    width: 60px; /* 鱼的大小 */
+    height: 40px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60"><path d="M90,30 C90,45 70,55 50,55 C30,55 10,45 10,30 C10,15 30,5 50,5 C70,5 90,15 90,30 Z" fill="%2326c6da"/><path d="M10,30 L-5,40 L-5,20 Z" fill="%230097a7"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+    /* 增加投射阴影 */
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2)); 
+}
+
+/* 鼠标悬停时的效果：变亮、变大 */
+.fish:hover {
+    transform: scale(1.1);
+    opacity: 1;
+    filter: brightness(1.1) drop-shadow(0 8px 10px rgba(0,0,0,0.3));
+}
         /* 1. 把之前的 linear-gradient 替换掉 */
 body { 
     background-image: url("assets/img/water.jpg"); /* 这里换成你照片的名字 */
@@ -67,7 +96,8 @@ body {
     fishData.forEach((data) => {
         const fish = document.createElement('div');
         fish.className = 'fish';
-        fish.innerHTML = `<div style="font-size: 45px;">🐟</div><div style="font-size: 14px; color:#004d40; font-weight:bold; text-align:center">${data.title}</div>`;
+       // 这一行会让鱼的图案由 CSS 自动生成，只留下美化后的标题文字
+fish.innerHTML = `<div style="font-size: 14px; color:#004d40; font-weight:bold; text-align:center; margin-top:45px">${data.title}</div>`;
         document.body.appendChild(fish);
 
         let posX = Math.random() * window.innerWidth;
