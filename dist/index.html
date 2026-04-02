@@ -2,50 +2,67 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>家渝的主页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>家玉的专属鱼塘</title>
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "Microsoft YaHei", sans-serif; }
         
-        /* 1. 背景设置：使用你的水面照片 */
+        /* 1. 背景：直接指向根目录下的 assets */
         body { 
             background-image: url("assets/img/water.jpg");
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             background-repeat: no-repeat;
-            background-color: #80deea; 
+            background-color: #e0f7fa; /* 淡淡的湖蓝色底色 */
         }
         
-        /* 2. 中心悬浮头像 */
+        /* 2. 中心头像：增加柔和呼吸感 */
         #profile-avatar {
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 180px; 
-            height: 180px;
+            width: 200px; height: 200px;
             border-radius: 50%;
-            border: 5px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2), 0 0 50px rgba(255,255,255,0.4);
+            border: 6px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.6), 0 10px 40px rgba(0,0,0,0.1);
             z-index: 5;
-            overflow: hidden;
             object-fit: cover;
+            animation: float 4s ease-in-out infinite; /* 增加浮动动画 */
         }
 
-        /* 3. 鱼的样式 */
-        .fish { position: absolute; cursor: pointer; z-index: 10; transition: transform 0.3s; }
-        .fish img { filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2)); }
+        @keyframes float {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+            50% { transform: translate(-50%, -50%) translateY(-15px); }
+        }
+
+        /* 3. 鱼容器样式 */
+        .fish { position: absolute; cursor: pointer; z-index: 10; }
+        .fish img { 
+            width: 80px; height: auto; display: block; margin: 0 auto;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); 
+            transition: transform 0.3s; 
+        }
         
-        /* 4. 磨砂弹窗 */
+        /* 4. 鱼下面的文字 */
+        .fish div {
+            font-size: 14px; color: #00796b; font-weight: bold; text-align: center;
+            margin-top: 5px; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            pointer-events: none;
+        }
+
+        /* 弹窗遮罩层 */
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.2); backdrop-filter: blur(3px); z-index: 90; }
+        
+        /* 弹窗暂时保留，等会儿我们再统一改造成蓝色泡泡 */
         #modal {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 80%; max-width: 500px; padding: 30px; border-radius: 20px;
-            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 100;
-            border: 1px solid rgba(255,255,255,0.3);
+            width: 80%; max-width: 400px; padding: 25px; border-radius: 25px;
+            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 100;
+            text-align: center; color: #004d40;
         }
-        #close-btn { margin-top: 20px; cursor: pointer; color: #00796b; font-weight: bold; }
-        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 90; }
+        #close-btn { margin-top: 15px; cursor: pointer; font-weight: bold; color: #009688; }
     </style>
 </head>
 <body>
@@ -55,29 +72,26 @@
 <div id="overlay"></div>
 <div id="modal">
     <h2 id="modal-title">信息</h2>
-    <div id="modal-content">内容加载中...</div>
+    <div id="modal-content"></div>
     <div id="close-btn" onclick="closeModal()">[ 点击返回水池 ]</div>
 </div>
 
 <script>
     const fishData = [
-        { title: '关于我', content: '嗨！我是家玉，欢迎来到我的专属鱼塘。' },
-        { title: '教育背景', content: '这里写你的学校和专业信息。' },
-        { title: '我的技能', content: '擅长策划、营销以及有趣的网页设计。' },
-        { title: '项目经历', content: 'Tada App 推广项目、个人主页开发等。' },
-        { title: '联系方式', content: '微信/邮箱：在此输入你的联系方式。' }
+        { title: '基础信息', content: '加载中...' },
+        { title: '实习简历', content: '加载中...' },
+        { title: '项目经历', content: '加载中...' },
+        { title: '我的自媒体', content: '加载中...' },
+        { title: '性格与爱好', content: '加载中...' }
     ];
 
     fishData.forEach((data) => {
         const fish = document.createElement('div');
         fish.className = 'fish';
-        
-        // 关键：确保这里使用的是你上传的 fish1.png
+        // 注意：这里的路径去掉了 dist/
         fish.innerHTML = `
-            <img src="assets/img/fish1.png" style="width:80px; height:auto; display:block; margin:0 auto;">
-            <div style="font-size: 14px; color:#004d40; font-weight:bold; text-align:center; margin-top:5px; text-shadow: 1px 1px 2px white;">
-                ${data.title}
-            </div>
+            <img src="assets/img/fish1.png">
+            <div>${data.title}</div>
         `;
         document.body.appendChild(fish);
 
@@ -87,24 +101,17 @@
         let velY = (Math.random() - 0.5) * 2;
 
         function move() {
-            posX += velX;
-            posY += velY;
+            posX += velX; posY += velY;
             if (posX < 0 || posX > window.innerWidth - 100) velX *= -1;
             if (posY < 0 || posY > window.innerHeight - 100) velY *= -1;
             
             fish.style.left = posX + 'px';
             fish.style.top = posY + 'px';
-            // 1. 只抓取鱼的图片进行翻转
+
             const fishImg = fish.querySelector('img');
             if (fishImg) {
                 fishImg.style.transform = velX > 0 ? 'scaleX(1)' : 'scaleX(-1)';
             }
-            
-            // 2. 整个容器不再翻转，这样文字永远是正的
-            fish.style.left = posX + 'px';
-            fish.style.top = posY + 'px';
-
-            // 3. 这一行必须保留，用来驱动动画
             requestAnimationFrame(move);
         }
         move();
