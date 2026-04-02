@@ -7,7 +7,7 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "Microsoft YaHei", sans-serif; }
         
-        /* 背景图路径：统一指向 dist 文件夹 */
+        /* 1. 背景图：指向 dist */
         body { 
             background-image: url("dist/assets/img/water.jpg");
             background-size: cover;
@@ -17,7 +17,7 @@
             background-color: #e0f7fa; 
         }
         
-        /* 中心头像：统一指向 dist 文件夹 */
+        /* 2. 中心头像：指向 dist */
         #profile-avatar {
             position: fixed;
             top: 50%; left: 50%;
@@ -36,19 +36,68 @@
             50% { transform: translate(-50%, -50%) translateY(-15px); }
         }
 
+        /* 3. 鱼容器样式 */
         .fish { position: absolute; cursor: pointer; z-index: 10; }
-        .fish img { width: 80px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
-        .fish div { font-size: 14px; color: #00796b; font-weight: bold; text-align: center; margin-top: 5px; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8); }
-
-        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); z-index: 90; }
-        #modal {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 80%; max-width: 400px; padding: 30px; border-radius: 30px;
-            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.1); z-index: 100;
-            text-align: center; color: #004d40;
+        .fish img { 
+            width: 80px; height: auto; display: block; margin: 0 auto;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); 
+            transition: transform 0.3s; 
         }
-        #close-btn { margin-top: 20px; cursor: pointer; font-weight: bold; color: #009688; }
+        
+        /* 4. 鱼下面的文字：直白清晰 */
+        .fish div {
+            font-size: 14px; color: #00796b; font-weight: bold; text-align: center;
+            margin-top: 5px; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            pointer-events: none;
+        }
+
+        /* 5. 遮罩层：增加模糊感 */
+        #overlay { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); z-index: 90; 
+        }
+
+        /* =========================================
+           ✨ 核心修改：泡泡弹窗样式 ✨
+           ========================================= */
+        #modal {
+            display: none; /* 初始隐藏 */
+            position: fixed; top: 50%; left: 50%;
+            
+            /* 关键：使用你的泡泡图片作为背景 */
+            background-image: url("dist/assets/img/bubble.png"); 
+            background-size: 100% 100%; /* 让图片铺满 */
+            background-repeat: no-repeat;
+            
+            /* 调整泡泡的大小和内边距 */
+            width: 350px; height: 350px; /* 建议设为正方形，更像泡泡 */
+            padding: 60px; /* 增加内边距，让文字在泡泡中间 */
+            box-sizing: border-box; /* 确保 padding 不会撑大泡泡 */
+            
+            /* 文字样式 */
+            text-align: center; color: #004d40;
+            z-index: 100;
+            border: none; /* 去掉之前的边框 */
+            box-shadow: 0 10px 30px rgba(0,121,107,0.2); /* 增加一点蓝色的阴影 */
+
+            /* 关键：绑定Q弹出现动画 */
+            animation: bubblePop 0.5s ease-out forwards;
+            transform-origin: center; /* 动画中心点 */
+        }
+
+        /* 泡泡内部文字布局 */
+        #modal-title { font-size: 22px; color: #00796b; margin-top: 20px; margin-bottom: 10px; }
+        #modal-content { font-size: 16px; color: #333; line-height: 1.6; overflow-y: auto; max-height: 180px; } /* 内容过多可滚动 */
+        #close-btn { margin-top: 25px; cursor: pointer; font-weight: bold; color: #009688; font-size: 14px; }
+
+        /* =========================================
+           动画：Q弹出现效果 (bubblePop)
+           ========================================= */
+        @keyframes bubblePop {
+            0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+            60% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } /* 稍微放大一点 */
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } /* 回到原大小 */
+        }
     </style>
 </head>
 <body>
@@ -58,23 +107,24 @@
 <div id="overlay" onclick="closeModal()"></div>
 <div id="modal">
     <h2 id="modal-title">标题</h2>
-    <div id="modal-content">内容准备中...</div>
+    <div id="modal-content">内容加载中...</div>
     <div id="close-btn" onclick="closeModal()">[ 点击返回 ]</div>
 </div>
 
 <script>
+    // 按照你的要求：直白的名字
     const fishData = [
-        { title: '基础信息', content: '加载中...' },
-        { title: '实习简历', content: '加载中...' },
-        { title: '项目经历', content: '加载中...' },
-        { title: '我的自媒体', content: '加载中...' },
-        { title: '性格与爱好', content: '加载中...' }
+        { title: '基础信息', content: '这里展示你的姓名、联系方式等基本资料。' },
+        { title: '实习简历', content: '这里展示你的实习经历。' },
+        { title: '项目经历', content: '这里展示你的项目成果。' },
+        { title: '我的自媒体', content: '展示你的自媒体账号。' },
+        { title: '性格与爱好', content: '分享你的个人生活。' }
     ];
 
     fishData.forEach((data) => {
         const fish = document.createElement('div');
         fish.className = 'fish';
-        // 鱼路径也改为 dist 里的
+        // 3. 鱼图片路径：指向 dist
         fish.innerHTML = `
             <img src="dist/assets/img/fish1.png">
             <div>${data.title}</div>
@@ -90,10 +140,15 @@
             posX += velX; posY += velY;
             if (posX < 0 || posX > window.innerWidth - 100) velX *= -1;
             if (posY < 0 || posY > window.innerHeight - 100) velY *= -1;
+            
             fish.style.left = posX + 'px';
             fish.style.top = posY + 'px';
+
+            // 局部翻转：只转鱼，不转字
             const fishImg = fish.querySelector('img');
-            if (fishImg) { fishImg.style.transform = velX > 0 ? 'scaleX(1)' : 'scaleX(-1)'; }
+            if (fishImg) {
+                fishImg.style.transform = velX > 0 ? 'scaleX(1)' : 'scaleX(-1)';
+            }
             requestAnimationFrame(move);
         }
         move();
@@ -101,8 +156,17 @@
         fish.onclick = () => {
             document.getElementById('modal-title').innerText = data.title;
             document.getElementById('modal-content').innerText = data.content;
-            document.getElementById('modal').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
+            
+            // 显示弹窗和遮罩
+            const modal = document.getElementById('modal');
+            const overlay = document.getElementById('overlay');
+            modal.style.display = 'block';
+            overlay.style.display = 'block';
+            
+            // 每次打开都重新触发动画
+            modal.style.animation = 'none';
+            modal.offsetHeight; /* 触发重绘 */
+            modal.style.animation = null; 
         };
     });
 
@@ -112,5 +176,4 @@
     }
 </script>
 </body>
-</html>
 </html>
