@@ -85,6 +85,11 @@ body {
 </div>
 
 <script>
+/* 鼠标悬停时的图片特效：放大并变亮 */
+.fish:hover img {
+    transform: scale(1.1); /* 轻轻放大 */
+    filter: brightness(1.1) drop-shadow(0 8px 10px rgba(0,0,0,0.3)); /* 变亮，加深阴影 */
+}
     const fishData = [
         { title: '关于我', content: '嗨！我是家渝，欢迎来到我的专属鱼塘。' },
         { title: '教育背景', content: '我来自华南农业大学的农林经济管理，现在是大三。' },
@@ -96,8 +101,16 @@ body {
     fishData.forEach((data) => {
         const fish = document.createElement('div');
         fish.className = 'fish';
-       // 这一行会让鱼的图案由 CSS 自动生成，只留下美化后的标题文字
-fish.innerHTML = `<div style="font-size: 14px; color:#004d40; font-weight:bold; text-align:center; margin-top:45px">${data.title}</div>`;
+       // 手术 B：让所有鱼都加载 fish1.png，并加上美化样式
+fish.innerHTML = `
+    <img src="assets/img/fish1.png" 
+         style="width:70px; height:auto; display:block; margin:0 auto; 
+                filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2)); 
+                transition: filter 0.3s, transform 0.3s;">
+    <div style="font-size: 14px; color:#004d40; font-weight:bold; text-align:center; margin-top:5px;">
+        ${data.title}
+    </div>
+`;
         document.body.appendChild(fish);
 
         let posX = Math.random() * window.innerWidth;
