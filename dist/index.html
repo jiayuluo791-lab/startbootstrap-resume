@@ -94,7 +94,17 @@
             
             fish.style.left = posX + 'px';
             fish.style.top = posY + 'px';
-            fish.style.transform = velX > 0 ? 'scaleX(1)' : 'scaleX(-1)';
+            // 1. 只抓取鱼的图片进行翻转
+            const fishImg = fish.querySelector('img');
+            if (fishImg) {
+                fishImg.style.transform = velX > 0 ? 'scaleX(1)' : 'scaleX(-1)';
+            }
+            
+            // 2. 整个容器不再翻转，这样文字永远是正的
+            fish.style.left = posX + 'px';
+            fish.style.top = posY + 'px';
+
+            // 3. 这一行必须保留，用来驱动动画
             requestAnimationFrame(move);
         }
         move();
