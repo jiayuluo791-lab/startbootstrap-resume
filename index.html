@@ -14,74 +14,64 @@
         
         /* 中心头像 */
         #profile-avatar {
-            position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 220px; height: 220px;
-            border-radius: 50%; border: 8px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 0 40px rgba(255, 255, 255, 0.6);
-            z-index: 5; object-fit: cover;
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 220px; height: 220px; border-radius: 50%; border: 8px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.6); z-index: 5; object-fit: cover;
             animation: float 4s ease-in-out infinite;
         }
         @keyframes float { 0%, 100% { transform: translate(-50%, -50%) translateY(0px); } 50% { transform: translate(-50%, -50%) translateY(-15px); } }
 
-        /* 基础鱼 */
-        .fish { position: absolute; cursor: pointer; z-index: 10; transition: transform 0.3s; }
-        .fish img { width: 80px; height: auto; }
-        .fish div { font-size: 14px; color: #00796b; font-weight: bold; text-align: center; margin-top: 5px; }
+        /* 🐟 鱼容器：解决文字反向问题 */
+        .fish { position: absolute; cursor: pointer; z-index: 10; display: flex; flex-direction: column; align-items: center; }
+        .fish img { width: 80px; height: auto; transition: transform 0.1s; }
+        .fish div { 
+            font-size: 14px; color: #00796b; font-weight: bold; text-align: center; margin-top: 5px;
+            /* 强制文字永远不反转 */
+            transform: scaleX(1) !important; 
+        }
 
-        /* 通用遮罩 */
-        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.1); backdrop-filter: blur(8px); z-index: 90; }
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.05); backdrop-filter: blur(8px); z-index: 90; }
 
-        /* 基础泡泡样式 */
+        /* 🧼 泡泡基础样式 */
         .bubble-common {
-            position: fixed; display: none; justify-content: center; align-items: center;
-            border-radius: 50%; border: 2px solid rgba(255,255,255,0.5);
-            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.6), rgba(178, 235, 242, 0.2));
-            backdrop-filter: blur(4px); box-shadow: inset -5px -5px 15px rgba(255,255,255,0.3);
-            cursor: pointer; z-index: 100; text-align: center; color: #00796b;
+            position: fixed; border-radius: 50%; border: 1px solid rgba(255,255,255,0.6);
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.5), rgba(178, 235, 242, 0.1));
+            backdrop-filter: blur(2px); display: flex; justify-content: center; align-items: center;
+            cursor: pointer; z-index: 100; color: #00796b; pointer-events: auto;
         }
 
-        /* 兴趣爱好扩散的小气泡 */
-        .sub-bubble {
-            width: 100px; height: 100px; font-size: 14px; font-weight: bold;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* 破碎时洒落的小碎泡泡 */
+        .tiny-bubble {
+            position: fixed; background: rgba(255, 255, 255, 0.4); border-radius: 50%;
+            pointer-events: none; z-index: 99; animation: fall 2s ease-out forwards;
         }
-        .sub-bubble:hover { transform: scale(1.2); background: rgba(255,255,255,0.8); }
+        @keyframes fall {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(100px) scale(0.2); opacity: 0; }
+        }
 
-        /* 详情展示大卡片 */
+        /* 详情卡片：Q弹出现 */
         #detail-card {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 80%; max-width: 500px; padding: 40px; border-radius: 30px;
-            background: rgba(255,255,255,0.9); backdrop-filter: blur(20px);
-            z-index: 110; box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            width: 80%; max-width: 450px; padding: 40px; border-radius: 30px;
+            background: rgba(255,255,255,0.92); backdrop-filter: blur(20px);
+            z-index: 110; box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
+        @keyframes popIn { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
 
-        /* 列表展示大框 */
-        #list-modal {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 90%; max-width: 800px; padding: 40px; border-radius: 30px;
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); z-index: 100;
-        }
-
-        #close-btn { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 24px; color: #999; }
+        #close-btn { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 24px; color: #ccc; }
     </style>
 </head>
 <body>
 
 <img id="profile-avatar" src="dist/assets/img/profile.jpg">
-
 <div id="overlay" onclick="closeAll()"></div>
 
 <div id="detail-card">
     <div id="close-btn" onclick="closeDetail()">×</div>
-    <h2 id="detail-title" style="color:#00796b"></h2>
+    <h2 id="detail-title" style="color:#00796b; margin-top:0;"></h2>
     <div id="detail-content" style="line-height:1.8; color:#444"></div>
-</div>
-
-<div id="list-modal" class="modal-content">
-    <div id="close-btn" onclick="closeAll()">×</div>
-    <h2 id="list-title" style="color:#00796b"></h2>
-    <div id="list-content"></div>
 </div>
 
 <script>
@@ -93,20 +83,18 @@
     };
 
     const fishData = [
-        { title: '基础信息', details: '...（此处省略你之前的详细代码，保持一致即可）' },
-        { title: '实习简历', details: '实习经历建设中...' },
+        { title: '基础信息', details: '...（保持你之前的详细简历HTML代码）' },
         { title: '性格与爱好', type: 'special' }
     ];
 
-    // 生成鱼
-    fishData.forEach((data, index) => {
+    fishData.forEach((data) => {
         const fish = document.createElement('div');
         fish.className = 'fish';
-        fish.innerHTML = `<img src="dist/assets/img/fish1.png"><div>${data.title}</div>`;
+        fish.innerHTML = `<img src="dist/assets/img/fish1.png"><div class="fish-txt">${data.title}</div>`;
         document.body.appendChild(fish);
         
-        let posX = Math.random() * window.innerWidth;
-        let posY = Math.random() * window.innerHeight;
+        let posX = Math.random() * (window.innerWidth - 100);
+        let posY = Math.random() * (window.innerHeight - 100);
         let velX = (Math.random() - 0.5) * 2;
         let velY = (Math.random() - 0.5) * 2;
 
@@ -116,78 +104,100 @@
             if (posY < 0 || posY > window.innerHeight - 80) velY *= -1;
             fish.style.left = posX + 'px';
             fish.style.top = posY + 'px';
-            fish.style.transform = velX > 0 ? 'scaleX(1)' : 'scaleX(-1)';
+            
+            // ✨ 修复点：只镜像图片，文字永远保持 scaleX(1)
+            const img = fish.querySelector('img');
+            img.style.transform = velX > 0 ? 'scaleX(1)' : 'scaleX(-1)';
+            
             requestAnimationFrame(move);
         }
         move();
 
         fish.onclick = () => {
-            if (data.type === 'special') {
-                showHobbyBubbles();
-            } else {
-                showNormalModal(data.title, data.details);
-            }
+            if (data.type === 'special') startSpecialEffect();
+            else showNormalModal(data.title, data.details);
         };
     });
 
-    // 1. 特殊交互：展示兴趣爱好小气泡
-    function showHobbyBubbles() {
+    // 1. ✨ 核心交互：破碎动效逻辑
+    function startSpecialEffect() {
         document.getElementById('overlay').style.display = 'block';
-        const hobbies = Object.keys(hobbyData);
-        hobbies.forEach((name, i) => {
-            const b = document.createElement('div');
-            b.className = 'bubble-common sub-bubble';
-            b.innerText = name;
-            b.style.display = 'flex';
-            document.body.appendChild(b);
+        
+        // 先生成一个大气泡
+        const big = document.createElement('div');
+        big.className = 'bubble-common';
+        big.style.width = '180px'; big.style.height = '180px';
+        big.style.left = 'calc(50% - 90px)'; big.style.top = 'calc(50% - 90px)';
+        big.style.fontSize = '20px'; big.innerText = '性格与爱好';
+        big.style.display = 'flex';
+        document.body.appendChild(big);
 
-            // 初始位置在中心
-            const centerX = window.innerWidth / 2 - 50;
-            const centerY = window.innerHeight / 2 - 50;
-            b.style.left = centerX + 'px';
-            b.style.top = centerY + 'px';
+        big.onclick = (e) => {
+            e.stopPropagation();
+            // 碎裂：大气泡消失
+            big.style.transform = 'scale(1.5)';
+            big.style.opacity = '0';
+            setTimeout(() => big.remove(), 200);
 
-            // 扩散动画
-            const angle = (i / hobbies.length) * Math.PI * 2;
-            const dist = 180; 
-            setTimeout(() => {
-                b.style.left = (centerX + Math.cos(angle) * dist) + 'px';
-                b.style.top = (centerY + Math.sin(angle) * dist) + 'px';
-            }, 10);
+            // 产生洒落的细碎微型气泡
+            for(let i=0; i<15; i++) {
+                createTinyBubble(window.innerWidth/2, window.innerHeight/2);
+            }
 
-            b.onclick = (e) => {
-                e.stopPropagation();
-                showDetail(name, hobbyData[name]);
-            };
-        });
+            // 迸发出四个功能气泡
+            const hobbies = Object.keys(hobbyData);
+            hobbies.forEach((name, i) => {
+                const sub = document.createElement('div');
+                sub.className = 'bubble-common hobby-sub';
+                sub.style.width = '90px'; sub.style.height = '90px';
+                sub.innerText = name; sub.style.fontWeight = 'bold';
+                sub.style.display = 'flex';
+                document.body.appendChild(sub);
+
+                const angle = (i / hobbies.length) * Math.PI * 2;
+                const dist = 200;
+                const startX = window.innerWidth/2 - 45;
+                const startY = window.innerHeight/2 - 45;
+                sub.style.left = startX + 'px'; sub.style.top = startY + 'px';
+
+                // 迸发动画
+                setTimeout(() => {
+                    sub.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    sub.style.left = (startX + Math.cos(angle) * dist) + 'px';
+                    sub.style.top = (startY + Math.sin(angle) * dist) + 'px';
+                }, 50);
+
+                sub.onclick = (ev) => {
+                    ev.stopPropagation();
+                    showDetail(name, hobbyData[name]);
+                };
+            });
+        };
     }
 
-    // 展示普通模态框
-    function showNormalModal(title, content) {
-        document.getElementById('overlay').style.display = 'block';
-        document.getElementById('list-modal').style.display = 'block';
-        document.getElementById('list-title').innerText = title;
-        document.getElementById('list-content').innerHTML = content;
+    function createTinyBubble(x, y) {
+        const t = document.createElement('div');
+        t.className = 'tiny-bubble';
+        const size = Math.random() * 8 + 4;
+        t.style.width = size + 'px'; t.style.height = size + 'px';
+        t.style.left = x + (Math.random()-0.5)*100 + 'px';
+        t.style.top = y + (Math.random()-0.5)*100 + 'px';
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 2000);
     }
 
-    // 2. 三级交互：展示具体爱好详情
     function showDetail(title, text) {
-        const card = document.getElementById('detail-card');
         document.getElementById('detail-title').innerText = title;
         document.getElementById('detail-content').innerText = text;
-        card.style.display = 'block';
-        card.style.animation = 'bubblePop 0.4s ease-out forwards';
+        document.getElementById('detail-card').style.display = 'block';
     }
 
-    function closeDetail() {
-        document.getElementById('detail-card').style.display = 'none';
-    }
-
+    function closeDetail() { document.getElementById('detail-card').style.display = 'none'; }
+    
     function closeAll() {
         document.getElementById('overlay').style.display = 'none';
-        document.getElementById('list-modal').style.display = 'none';
         document.getElementById('detail-card').style.display = 'none';
-        document.querySelectorAll('.sub-bubble').forEach(b => b.remove());
+        document.querySelectorAll('.bubble-common').forEach(b => b.remove());
     }
 </script>
 </body>
