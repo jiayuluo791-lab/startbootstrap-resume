@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>家玉的专属鱼塘</title>
+    <title>家渝的个人鱼塘</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "Microsoft YaHei", sans-serif; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
         
         /* 1. 背景图 */
         body { 
@@ -40,93 +40,117 @@
         /* 4. 遮罩层 */
         #overlay { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(255,255,255,0.02); backdrop-filter: blur(5px); z-index: 90; 
+            background: rgba(255,255,255,0.02); backdrop-filter: blur(8px); z-index: 90; 
         }
 
-        /* =========================================
-           ✨ 核心修改：CSS 纯手工打造“水感泡泡” ✨
-           ========================================= */
+        /* 5. 泡泡弹窗 */
         #modal {
             display: none;
             position: fixed; top: 50%; left: 50%;
             transform: translate(-50%, -50%) scale(0.3);
-            
-            /* 正圆与尺寸 */
             width: 260px; height: 260px;
             border-radius: 50%;
-            
-            /* 关键：使用渐变色模拟水泡质感 */
-            background: radial-gradient(circle at 30% 30%, 
-                        rgba(255, 255, 255, 0.6) 0%, 
-                        rgba(178, 235, 242, 0.4) 40%, 
-                        rgba(0, 150, 136, 0.1) 100%);
-            
-            /* 模拟泡泡的高光和边缘 */
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.7) 0%, rgba(178, 235, 242, 0.4) 40%, rgba(0, 150, 136, 0.1) 100%);
             border: 2px solid rgba(255, 255, 255, 0.5);
-            box-shadow: inset -5px -5px 15px rgba(255, 255, 255, 0.3), 
-                        0 10px 30px rgba(0, 0, 0, 0.05);
-            
-            /* 增加磨砂玻璃感 */
+            box-shadow: inset -5px -5px 15px rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(4px);
-            
             padding: 40px; box-sizing: border-box;
             text-align: center; z-index: 100;
             transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-            cursor: pointer; overflow: hidden;
-            opacity: 0;
+            cursor: pointer; overflow: hidden; opacity: 0;
         }
 
-        /* 二级：全屏磨砂玻璃墙 */
+        /* 变身为大展示厅 */
         #modal.expanded {
-            width: 85%; max-width: 900px;
-            height: 80%; max-height: 600px;
-            border-radius: 40px; 
+            width: 90%; max-width: 850px;
+            height: auto; min-height: 500px;
+            border-radius: 30px; 
             transform: translate(-50%, -50%) scale(1);
             opacity: 1;
-            /* 变大后变成极简白色磨砂 */
-            background: rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             cursor: default;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
         }
 
         @keyframes bubblePop {
             0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
-            70% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
             100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
 
         .showBubble { animation: bubblePop 0.5s ease-out forwards; }
 
+        /* 内容排版样式 */
         #modal-title { font-size: 22px; color: #00796b; margin-top: 50px; transition: 0.4s; }
-        #modal-content { font-size: 15px; color: #444; line-height: 1.6; margin-top: 10px; }
-        #close-btn { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); cursor: pointer; color: #009688; font-weight: bold; }
+        #modal.expanded #modal-title { margin-top: 0; font-size: 32px; border-bottom: 2px solid #e0f2f1; padding-bottom: 15px; margin-bottom: 20px; }
+        
+        #modal-content { font-size: 15px; color: #444; line-height: 1.6; }
+        
+        /* 内部格栅排版 */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; }
+        .info-section { background: rgba(0,150,136,0.03); padding: 15px; border-radius: 12px; }
+        .info-section h4 { margin: 0 0 8px 0; color: #00796b; font-size: 16px; display: flex; align-items: center; }
+        .tag { display: inline-block; background: #e0f2f1; color: #00796b; padding: 2px 8px; border-radius: 4fr; font-size: 12px; margin: 2px; font-weight: bold; }
 
-        /* 放大后的样式调整 */
-        #modal.expanded #modal-title { margin-top: 0; font-size: 32px; }
-        #modal.expanded #modal-content { font-size: 18px; margin-top: 20px; }
-        #modal.expanded #close-btn { bottom: 30px; }
+        #close-btn { position: absolute; top: 20px; right: 20px; cursor: pointer; color: #999; font-size: 24px; }
     </style>
 </head>
 <body>
 
-<img id="profile-avatar" src="dist/assets/img/profile.jpg" alt="家玉的照片">
+<img id="profile-avatar" src="dist/assets/img/profile.jpg" alt="家渝的照片">
 
 <div id="overlay" onclick="closeModal()"></div>
 <div id="modal" onclick="expandBubble()">
+    <div id="close-btn" onclick="closeModal(); event.stopPropagation()">×</div>
     <h2 id="modal-title">标题</h2>
-    <div id="modal-content">点击泡泡查看详情</div>
-    <div id="close-btn" onclick="closeModal(); event.stopPropagation()">[ 返回 ]</div>
+    <div id="modal-content">点击查看详情</div>
 </div>
 
 <script>
     const fishData = [
-        { title: '基础信息', details: '姓名：罗家玉\n联系方式：[待填写]\n这里可以放你的基本介绍。' },
-        { title: '实习简历', details: '这里未来可以放入详细的简历文字和图片展示。' },
-        { title: '项目经历', details: 'Tada App 推广项目及其他策划成果。' },
-        { title: '我的自媒体', details: '账号数据、爆款案例等。' },
-        { title: '性格与爱好', details: '生活点滴、猫狗照片、旅行日记。' }
+        { 
+            title: '基础信息', 
+            details: `
+                <div class="info-grid">
+                    <div class="info-section">
+                        <h4>👤 个人概况</h4>
+                        <b>姓名：</b>罗家渝<br>
+                        <b>专业：</b>华南农业大学 · 农林经济管理<br>
+                        <b>政治面貌：</b>中共预备党员<br>
+                        <b>时间线：</b>2023 - 2027 (本科)
+                    </div>
+                    <div class="info-section">
+                        <h4>📍 联系方式</h4>
+                        <b>籍贯：</b>广东东莞 / <b>现居：</b>广州天河<br>
+                        <b>电话：</b>18998055663<br>
+                        <b>邮箱：</b>2304362354@qq.com
+                    </div>
+                    <div class="info-section" style="grid-column: span 2;">
+                        <h4>🏆 荣誉与语言</h4>
+                        <div>
+                            <span class="tag">CET-4</span> <span class="tag">CET-6</span>
+                            <span class="tag">日常工作交流无障碍</span>
+                        </div>
+                        <div style="margin-top:8px;">
+                            🏅 <b>曾连续两年获得校级奖学金</b>
+                        </div>
+                    </div>
+                    <div class="info-section" style="grid-column: span 2;">
+                        <h4>💻 专业技能</h4>
+                        <b>数据处理：</b>计算机二级、精通 Excel 数据透视表等追踪分析<br>
+                        <b>办公协作：</b>熟练掌握 Word、PPT 等全套 Office 软件<br>
+                        <b>视觉创意：</b>Figma、PS、秀米、Canva (独立策划设计)<br>
+                        <b>视频剪辑：</b>剪映 (独立完成短视频策划与制作)
+                    </div>
+                </div>
+            `
+        },
+        { title: '实习简历', details: '实习经历内容准备中...' },
+        { title: '项目经历', details: 'Tada App 推广及项目细节...' },
+        { title: '我的自媒体', details: '作品链接与运营数据...' },
+        { title: '性格与爱好', details: '生活点滴与个人兴趣...' }
     ];
 
     let currentFishDetails = "";
@@ -157,13 +181,11 @@
         fish.onclick = () => {
             const modal = document.getElementById('modal');
             document.getElementById('modal-title').innerText = data.title;
-            document.getElementById('modal-content').innerText = "点击泡泡查看详情";
+            document.getElementById('modal-content').innerHTML = "点击泡泡查看详情";
             currentFishDetails = data.details;
-            
             modal.classList.remove('expanded');
             modal.style.display = 'block';
             document.getElementById('overlay').style.display = 'block';
-            
             modal.style.animation = 'none';
             modal.offsetHeight;
             modal.style.animation = null; 
@@ -177,9 +199,8 @@
         modal.classList.add('expanded');
         modal.classList.remove('showBubble');
         setTimeout(() => {
-            // 将换行符转换为 HTML 的换行标签
-            document.getElementById('modal-content').innerHTML = currentFishDetails.replace(/\n/g, '<br>');
-        }, 200);
+            document.getElementById('modal-content').innerHTML = currentFishDetails;
+        }, 150);
     }
 
     function closeModal() {
@@ -187,7 +208,6 @@
         modal.style.display = 'none';
         document.getElementById('overlay').style.display = 'none';
         modal.classList.remove('expanded');
-        modal.classList.remove('showBubble');
     }
 </script>
 </body>
