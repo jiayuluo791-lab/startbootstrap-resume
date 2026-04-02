@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <title>家玉的鱼塘主页</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "Microsoft YaHei", sans-serif; }
-        /* 1. 深浅渐变的水池背景 */
-        body { background: linear-gradient(180deg, #e0f7fa 0%, #80deea 100%); }
-        
+        /* 1. 把之前的 linear-gradient 替换掉 */
+body { 
+    background-image: url("assets/img/water.jpg"); /* 这里换成你照片的名字 */
+    background-size: cover;        /* 让图片铺满屏幕 */
+    background-position: center;   /* 图片居中显示 */
+    background-attachment: fixed;  /* 滚动时背景固定，更有深邃感 */
+    background-repeat: no-repeat;
+    background-color: #e0f7fa;     /* 备用色，防止图片加载慢时白屏 */
+}
         /* 2. 让头像优雅地悬浮在正中间 */
         #profile-avatar {
             position: fixed;
@@ -52,11 +57,11 @@
 
 <script>
     const fishData = [
-        { title: '关于我', content: '嗨！我是家玉，欢迎来到我的专属鱼塘。' },
-        { title: '教育背景', content: '这里写你的学校和专业信息。' },
+        { title: '关于我', content: '嗨！我是家渝，欢迎来到我的专属鱼塘。' },
+        { title: '教育背景', content: '我来自华南农业大学的农林经济管理，现在是大三。' },
         { title: '我的技能', content: '擅长策划、营销以及有趣的网页设计。' },
         { title: '项目经历', content: 'Tada App 推广项目、个人主页开发等。' },
-        { title: '联系方式', content: '微信/邮箱：在此输入你的联系方式。' }
+        { title: '联系方式', content: '18998055663。' }
     ];
 
     fishData.forEach((data) => {
