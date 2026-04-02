@@ -7,27 +7,23 @@
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "Microsoft YaHei", sans-serif; }
         
-        /* 1. 背景图：指向 dist */
+        /* 1. 背景图 */
         body { 
             background-image: url("dist/assets/img/water.jpg");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
+            background-size: cover; background-position: center;
+            background-attachment: fixed; background-repeat: no-repeat;
             background-color: #e0f7fa; 
         }
         
-        /* 2. 中心头像：指向 dist */
+        /* 2. 中心头像 */
         #profile-avatar {
-            position: fixed;
-            top: 50%; left: 50%;
+            position: fixed; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             width: 220px; height: 220px;
             border-radius: 50%;
             border: 8px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 0 40px rgba(255, 255, 255, 0.6), 0 10px 50px rgba(0,0,0,0.15);
-            z-index: 5;
-            object-fit: cover;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.6);
+            z-index: 5; object-fit: cover;
             animation: float 4s ease-in-out infinite;
         }
 
@@ -36,102 +32,81 @@
             50% { transform: translate(-50%, -50%) translateY(-15px); }
         }
 
-        /* 3. 鱼容器样式 */
+        /* 3. 鱼 */
         .fish { position: absolute; cursor: pointer; z-index: 10; }
-        .fish img { 
-            width: 80px; height: auto; display: block; margin: 0 auto;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); 
-            transition: transform 0.3s; 
-        }
-        
-        /* 4. 鱼下面的文字：直白清晰 */
-        .fish div {
-            font-size: 14px; color: #00796b; font-weight: bold; text-align: center;
-            margin-top: 5px; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
-            pointer-events: none;
-        }
+        .fish img { width: 80px; height: auto; display: block; margin: 0 auto; }
+        .fish div { font-size: 14px; color: #00796b; font-weight: bold; text-align: center; margin-top: 5px; }
 
-        /* 5. 遮罩层：增加模糊感 */
+        /* 4. 遮罩层 */
         #overlay { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(255,255,255,0.05); backdrop-filter: blur(8px); z-index: 90; 
+            background: rgba(255,255,255,0.02); backdrop-filter: blur(5px); z-index: 90; 
         }
 
         /* =========================================
-           ✨ 核心修改：泡泡弹窗的“变身”魔术 ✨
+           ✨ 核心修改：CSS 纯手工打造“水感泡泡” ✨
            ========================================= */
         #modal {
-            display: none; /* 初始隐藏 */
+            display: none;
             position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(0.3); /* 初始是缩小的状态 */
+            transform: translate(-50%, -50%) scale(0.3);
             
-            /* 关键：使用你的泡泡图片作为背景 */
-            background-image: url("dist/assets/img/bubble.png"); 
-            background-size: 100% 100%; /* 让图片铺满 */
-            background-repeat: no-repeat;
+            /* 正圆与尺寸 */
+            width: 260px; height: 260px;
+            border-radius: 50%;
             
-            /* 调整泡泡的大小（这个是二级全面展示的大小） */
-            width: 380px; height: 380px; /* 初始小泡泡的大小 */
-            padding: 60px; /* 增加内边距 */
-            box-sizing: border-box; /* 确保 padding 不会撑大泡泡 */
+            /* 关键：使用渐变色模拟水泡质感 */
+            background: radial-gradient(circle at 30% 30%, 
+                        rgba(255, 255, 255, 0.6) 0%, 
+                        rgba(178, 235, 242, 0.4) 40%, 
+                        rgba(0, 150, 136, 0.1) 100%);
             
-            /* 文字样式 */
-            text-align: center; color: #004d40;
-            z-index: 100;
-            border: none;
-            box-shadow: 0 10px 40px rgba(0,121,107,0.3);
-
-            /* 关键：绑定过渡动画（柔和缩放的关键） */
+            /* 模拟泡泡的高光和边缘 */
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            box-shadow: inset -5px -5px 15px rgba(255, 255, 255, 0.3), 
+                        0 10px 30px rgba(0, 0, 0, 0.05);
+            
+            /* 增加磨砂玻璃感 */
+            backdrop-filter: blur(4px);
+            
+            padding: 40px; box-sizing: border-box;
+            text-align: center; z-index: 100;
             transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-            transform-origin: center; /* 动画中心点 */
-            cursor: pointer; /* 提示可以点击放大 */
-            overflow: hidden; /* 防止放大时内容撑破边缘 */
+            cursor: pointer; overflow: hidden;
             opacity: 0;
         }
 
-        /* 泡泡放大时的样式（二级展示） */
+        /* 二级：全屏磨砂玻璃墙 */
         #modal.expanded {
-            width: 80%; /* 变成全屏宽度 */
-            max-width: 900px; /* 设置最大宽度 */
-            height: 80%; /* 变成全屏高度 */
-            max-height: 600px; /* 设置最大高度 */
-            border-radius: 40px; /* 去掉泡泡形状，变成圆角玻璃效果 */
-            transform: translate(-50%, -50%) scale(1); /* 放大到 1 */
+            width: 85%; max-width: 900px;
+            height: 80%; max-height: 600px;
+            border-radius: 40px; 
+            transform: translate(-50%, -50%) scale(1);
             opacity: 1;
-            padding: 50px; /* 放大后调整 padding */
-            background-image: none; /* 去掉泡泡背景，用磨砂玻璃效果 */
-            background: rgba(255, 255, 255, 0.85); /* 磨砂玻璃背景 */
-            backdrop-filter: blur(20px); /* 磨砂玻璃效果 */
-            cursor: default; /* 放大后，鼠标变回普通状态 */
-            border: 1px solid rgba(255, 255, 255, 0.3); /* 磨砂玻璃边框 */
+            /* 变大后变成极简白色磨砂 */
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            cursor: default;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
         }
 
-        /* 动画：小泡泡出现时的 Q 弹效果 (小泡泡出现动画) */
         @keyframes bubblePop {
             0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
-            60% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } /* 稍微放大一点 */
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } /* 回到原大小 */
+            70% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
 
-        /* 用于小泡泡出现时的动画 */
-        .showBubble {
-            animation: bubblePop 0.5s ease-out forwards;
-        }
+        .showBubble { animation: bubblePop 0.5s ease-out forwards; }
 
-        /* 泡泡内部文字布局（小泡泡状态） */
-        #modal-title { font-size: 24px; color: #00796b; margin-top: 30px; margin-bottom: 10px; transition: all 0.6s; }
-        #modal-content { font-size: 16px; color: #333; line-height: 1.6; overflow: hidden; max-height: 100px; transition: all 0.6s; opacity: 1;}
-        #close-btn { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); cursor: pointer; font-weight: bold; color: #009688; font-size: 14px; opacity: 1; transition: all 0.6s; }
-        
-        /* 放大状态的内容布局建议（等资料整理好再具体优化） */
-        #modal.expanded #modal-title { font-size: 32px; margin-top: 0; }
-        #modal.expanded #modal-content { max-height: 400px; opacity: 1; margin-top: 20px;}
-        #modal.expanded #close-btn { font-size: 18px; bottom: 40px;}
+        #modal-title { font-size: 22px; color: #00796b; margin-top: 50px; transition: 0.4s; }
+        #modal-content { font-size: 15px; color: #444; line-height: 1.6; margin-top: 10px; }
+        #close-btn { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); cursor: pointer; color: #009688; font-weight: bold; }
 
-        /* 一级预览时的极简文案样式 */
-        #modal-content.preview {
-            opacity: 1;
-        }
+        /* 放大后的样式调整 */
+        #modal.expanded #modal-title { margin-top: 0; font-size: 32px; }
+        #modal.expanded #modal-content { font-size: 18px; margin-top: 20px; }
+        #modal.expanded #close-btn { bottom: 30px; }
     </style>
 </head>
 <body>
@@ -141,30 +116,25 @@
 <div id="overlay" onclick="closeModal()"></div>
 <div id="modal" onclick="expandBubble()">
     <h2 id="modal-title">标题</h2>
-    <div id="modal-content" class="preview">这里展示你的基本资料。</div>
-    <div id="close-btn" onclick="closeModal(); event.stopPropagation()">[ 点击返回 ]</div>
+    <div id="modal-content">点击泡泡查看详情</div>
+    <div id="close-btn" onclick="closeModal(); event.stopPropagation()">[ 返回 ]</div>
 </div>
 
 <script>
-    // 按照你的要求：直白的名字
     const fishData = [
-        { title: '基础信息', content: '这里将展示你的姓名、联系方式等资料。' },
-        { title: '实习简历', content: '这里将展示你的实习经历。', details: '详细的实习内容，这里可以放很多很多字，等整理好资料再塞进来。' },
-        { title: '项目经历', content: '这里将展示你的项目成果。', details: '详细的项目细节，可以放 Tada App 的截图。' },
-        { title: '我的自媒体', content: '展示你的自媒体账号。', details: '详细的作品图和爆款文案。' },
-        { title: '性格与爱好', content: '分享你的个人生活。', details: '放一些猫猫狗狗、喝奶茶的照片。' }
+        { title: '基础信息', details: '姓名：罗家玉\n联系方式：[待填写]\n这里可以放你的基本介绍。' },
+        { title: '实习简历', details: '这里未来可以放入详细的简历文字和图片展示。' },
+        { title: '项目经历', details: 'Tada App 推广项目及其他策划成果。' },
+        { title: '我的自媒体', details: '账号数据、爆款案例等。' },
+        { title: '性格与爱好', details: '生活点滴、猫狗照片、旅行日记。' }
     ];
 
-    let currentFishDetails = ""; // 存储当前选中的详细内容
+    let currentFishDetails = "";
 
     fishData.forEach((data) => {
         const fish = document.createElement('div');
         fish.className = 'fish';
-        // 3. 鱼图片路径：指向 dist
-        fish.innerHTML = `
-            <img src="dist/assets/img/fish1.png">
-            <div>${data.title}</div>
-        `;
+        fish.innerHTML = `<img src="dist/assets/img/fish1.png"><div>${data.title}</div>`;
         document.body.appendChild(fish);
 
         let posX = Math.random() * (window.innerWidth - 100);
@@ -185,57 +155,37 @@
         move();
 
         fish.onclick = () => {
-            document.getElementById('modal-title').innerText = data.title;
-            
-            // 一级预览：只显示一句最极简的诱导文案
-            document.getElementById('modal-content').innerText = "点击泡泡查看详情";
-            document.getElementById('modal-content').className = "preview";
-            
-            // 存储二级详细内容，等点击泡泡放大时再显示
-            currentFishDetails = data.details || data.content;
-            
-            // 显示小泡泡和遮罩
             const modal = document.getElementById('modal');
-            const overlay = document.getElementById('overlay');
+            document.getElementById('modal-title').innerText = data.title;
+            document.getElementById('modal-content').innerText = "点击泡泡查看详情";
+            currentFishDetails = data.details;
             
-            // 先确保没有 expanded 类
             modal.classList.remove('expanded');
-            
             modal.style.display = 'block';
-            overlay.style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
             
-            // 每次打开小泡泡都重新触发动画
             modal.style.animation = 'none';
-            modal.offsetHeight; /* 触发重绘 */
+            modal.offsetHeight;
             modal.style.animation = null; 
-            modal.classList.add('showBubble'); // 添加出现动画的类
+            modal.classList.add('showBubble');
         };
     });
 
-    // ✨ 二级放大魔术：点击小泡泡，把自身变大
     function expandBubble() {
         const modal = document.getElementById('modal');
-        
-        // 如果泡泡已经是放大的状态，就不要再触发了
         if (modal.classList.contains('expanded')) return;
-
-        // 核心修改：把自己从 bubble.png 的小泡泡，变成全屏磨砂玻璃
         modal.classList.add('expanded');
-        modal.classList.remove('showBubble'); // 移除一级出现动画
-
-        // 放大后，把详细的文字显示出来
+        modal.classList.remove('showBubble');
         setTimeout(() => {
-            document.getElementById('modal-content').innerText = currentFishDetails;
-            document.getElementById('modal-content').className = ""; // 移除预览样式
-        }, 100); // 延迟 100ms 显示文字，让过渡更柔和
+            // 将换行符转换为 HTML 的换行标签
+            document.getElementById('modal-content').innerHTML = currentFishDetails.replace(/\n/g, '<br>');
+        }, 200);
     }
 
     function closeModal() {
         const modal = document.getElementById('modal');
         modal.style.display = 'none';
         document.getElementById('overlay').style.display = 'none';
-        
-        // 关闭时，移除 expanded 类和一级出现动画
         modal.classList.remove('expanded');
         modal.classList.remove('showBubble');
     }
