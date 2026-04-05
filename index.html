@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>家渝的个人鱼塘</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "PingFang SC", sans-serif; }
         body { 
             background-image: url("dist/assets/img/water.jpg");
             background-size: cover; background-position: center;
             background-attachment: fixed; background-color: #e0f7fa; 
         }
         
+        /* 中心头像 */
         #profile-avatar {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 220px; height: 220px; border-radius: 50%; border: 8px solid rgba(255, 255, 255, 0.4);
@@ -20,12 +21,27 @@
         }
         @keyframes float { 0%, 100% { transform: translate(-50%, -50%) translateY(0px); } 50% { transform: translate(-50%, -50%) translateY(-15px); } }
 
+        /* 基础鱼 */
         .fish { position: absolute; cursor: pointer; z-index: 10; display: flex; flex-direction: column; align-items: center; }
         .fish img { width: 80px; height: auto; transition: transform 0.1s; }
         .fish div { font-size: 14px; color: #00796b; font-weight: bold; text-align: center; margin-top: 5px; }
 
-        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.15); backdrop-filter: blur(8px); z-index: 90; }
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.1); backdrop-filter: blur(8px); z-index: 90; }
 
+        /* 🐚 贝壳轨道样式 */
+        .shell-item {
+            position: fixed; width: 70px; height: 70px; 
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 100; transition: transform 0.3s;
+        }
+        .shell-item img { width: 100%; height: auto; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
+        .shell-item span { 
+            font-size: 12px; color: #004d40; font-weight: bold; 
+            background: rgba(255,255,255,0.6); padding: 2px 6px; border-radius: 10px; margin-top: -5px;
+        }
+        .shell-item:hover { transform: scale(1.3) !important; z-index: 110; }
+
+        /* 泡泡与破碎 */
         .bubble-common {
             position: fixed; border-radius: 50%; border: 1px solid rgba(255,255,255,0.6);
             background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.5), rgba(178, 235, 242, 0.2));
@@ -33,65 +49,18 @@
             cursor: pointer; z-index: 100; color: #00796b; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .tiny-bubble {
-            position: fixed; background: rgba(255, 255, 255, 0.5); border-radius: 50%;
-            pointer-events: none; z-index: 99; animation: fall 1.5s ease-out forwards;
-        }
-        @keyframes fall { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(80px) scale(0); opacity: 0; } }
-
-        /* 统一大弹窗 */
-        #main-modal {
+        /* 弹窗样式 */
+        #detail-card, #main-modal {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 90%; max-width: 800px; padding: 40px; border-radius: 30px;
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
-            z-index: 110; box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            width: 85%; max-width: 480px; max-height: 80vh; padding: 30px; border-radius: 25px;
+            background: #fff; z-index: 150; box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            overflow-y: auto;
         }
+        .close-x { position: sticky; top: -10px; float: right; cursor: pointer; font-size: 26px; color: #999; z-index: 160; background: #fff; width: 30px; height: 30px; text-align: center; line-height: 30px; }
 
-        /* 🧩 核心修复：兴趣爱好详情卡片 */
-        #detail-card {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 85%; max-width: 480px; 
-            max-height: 80vh; /* 限制高度在屏幕 80% 以内 */
-            padding: 30px; border-radius: 25px;
-            background: #fff; z-index: 120; box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-            
-            /* 关键修改：开启纵向滚动 */
-            overflow-y: auto !important; 
-            -webkit-overflow-scrolling: touch; /* 优化移动端滑动 */
-        }
-
-        /* 美化滚动条 */
-        #detail-card::-webkit-scrollbar { width: 6px; }
-        #detail-card::-webkit-scrollbar-thumb { background: #009688; border-radius: 10px; }
-
-        .close-x { position: sticky; top: -10px; float: right; cursor: pointer; font-size: 26px; color: #999; z-index: 130; background: #fff; width: 30px; height: 30px; text-align: center; line-height: 30px; }
-
-        /* 海报舒展开容器 */
-        #poster-container {
-            width: 100%;
-            height: 0; /* 初始高度 0 */
-            overflow: visible; /* 改为可见，防止滚动条失效 */
-            margin-top: 10px;
-            transition: height 0.8s ease-in-out; 
-        }
-
-        #poster-container.unfold {
-            height: auto; /* 展开后根据图片自动撑开 */
-        }
-
-        #swim-poster {
-            width: 100%;
-            height: auto;
-            border-radius: 12px;
-            display: block;
-            margin-top: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        /* 基础信息排版 */
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; }
-        .info-section { background: rgba(0,150,136,0.03); padding: 15px; border-radius: 12px; }
-        .tag { display: inline-block; background: #e0f2f1; color: #00796b; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; font-weight: bold; }
+        #poster-container { width: 100%; height: 0; overflow: visible; margin-top: 10px; transition: height 0.8s ease-in-out; }
+        #poster-container.unfold { height: auto; }
+        #swim-poster { width: 100%; height: auto; border-radius: 12px; display: block; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -101,102 +70,56 @@
 
 <div id="main-modal">
     <div class="close-x" onclick="closeAll()">×</div>
-    <h2 id="main-title" style="color:#00796b; margin-top:0;"></h2>
+    <h2 id="main-title" style="color:#00796b;"></h2>
     <div id="main-content"></div>
 </div>
 
 <div id="detail-card">
     <div class="close-x" onclick="closeDetail()">×</div>
-    <h2 id="detail-title" style="color:#00796b; margin-top:10px;"></h2>
-    <div id="detail-content" style="line-height:1.8; color:#444"></div>
-    
-    <div id="poster-container">
-        <img src="dist/assets/img/游泳.png" id="swim-poster" alt="游泳海报">
-    </div>
+    <h2 id="detail-title" style="color:#00796b;"></h2>
+    <div id="detail-content"></div>
+    <div id="poster-container"><img src="" id="swim-poster"></div>
 </div>
 
 <script>
     const hobbyData = {
-        '网球': '热爱挥洒汗水的快感，网球不仅是运动，更是对节奏和爆发力的掌控。',
-        '游泳': '在水底世界寻找宁静，享受每一次划水带来的自由感。',
-        '追星': '记录美好瞬间，学习优秀偶像的闪光点，也是一种生活动力。',
-        '旅游': '看遍广东的山水，也向往更远的远方。喜欢策划路线，挖掘小众打卡地。'
+        '网球': '热爱挥洒汗水的快感。',
+        '游泳': '在水底世界寻找宁静。',
+        '追星': '记录美好瞬间，学习闪光点。',
+        '旅游': '看遍大好河山，记录每一站的风景。'
     };
 
+    const travelCities = ['南京', '北京', '沈阳', '云南', '重庆', '湖南', '广东', '广西', '马来西亚'];
+    
     const fishData = [
-        { 
-            title: '基础信息', 
-            details: `
-                <div class="info-grid">
-                    <div class="info-section">
-                        <h4 style="margin:0 0 10px 0; color:#00796b;">👤 个人概况</h4>
-                        <b>姓名：</b>罗家渝<br>
-                        <b>专业：</b>华南农业大学 · 农林经济管理<br>
-                        <b>政治面貌：</b>中共预备党员<br>
-                        <b>时间线：</b>2023 - 2027 (本科)
-                    </div>
-                    <div class="info-section">
-                        <h4 style="margin:0 0 10px 0; color:#00796b;">📍 联系方式</h4>
-                        <b>籍贯：</b>广东东莞 / <b>现居：</b>广州天河<br>
-                        <b>电话：</b>18998055663<br>
-                        <b>邮箱：</b>2304362354@qq.com
-                    </div>
-                    <div class="info-section" style="grid-column: span 2;">
-                        <h4 style="margin:0 0 10px 0; color:#00796b;">🏆 荣誉与语言</h4>
-                        <span class="tag">CET-4</span> <span class="tag">CET-6</span>
-                        <div style="margin-top:8px;">🏅 <b>曾连续两年获得校级奖学金</b></div>
-                    </div>
-                    <div class="info-section" style="grid-column: span 2;">
-                        <h4 style="margin:0 0 10px 0; color:#00796b;">💻 专业技能</h4>
-                        <b>数据：</b>计算机二级、精通 Excel 数据透视表分析<br>
-                        <b>视觉：</b>Figma、PS、Canva、秀米 (独立设计能力)<br>
-                        <b>视频：</b>剪映 (独立完成短视频策划与制作)
-                    </div>
-                </div>
-            `
-        },
-        { title: '实习简历', details: '<p style="text-align:center; padding:50px;">实习经历正在整理中，敬请期待...</p>' },
-        { title: '项目经历', details: '<p style="text-align:center; padding:50px;">Tada App 推广项目细节正在录入...</p>' },
-        { title: '我的自媒体', details: '<p style="text-align:center; padding:50px;">自媒体运营数据与作品展示准备中...</p>' },
+        { title: '基础信息', details: '...（基础信息HTML）' },
         { title: '性格与爱好', type: 'special' }
     ];
 
+    // 初始化鱼群
     fishData.forEach((data) => {
         const fish = document.createElement('div');
         fish.className = 'fish';
         fish.innerHTML = `<img src="dist/assets/img/fish1.png"><div>${data.title}</div>`;
         document.body.appendChild(fish);
-        
-        let posX = Math.random() * (window.innerWidth - 100);
-        let posY = Math.random() * (window.innerHeight - 100);
-        let velX = (Math.random() - 0.5) * 2;
-        let velY = (Math.random() - 0.5) * 2;
+        let posX = Math.random() * window.innerWidth, posY = Math.random() * window.innerHeight;
+        let velX = (Math.random() - 0.5) * 2, velY = (Math.random() - 0.5) * 2;
 
         function move() {
             posX += velX; posY += velY;
             if (posX < 0 || posX > window.innerWidth - 80) velX *= -1;
             if (posY < 0 || posY > window.innerHeight - 80) velY *= -1;
-            fish.style.left = posX + 'px';
-            fish.style.top = posY + 'px';
-            const img = fish.querySelector('img');
-            img.style.transform = velX > 0 ? 'scaleX(1)' : 'scaleX(-1)';
+            fish.style.left = posX + 'px'; fish.style.top = posY + 'px';
+            fish.querySelector('img').style.transform = velX > 0 ? 'scaleX(1)' : 'scaleX(-1)';
             requestAnimationFrame(move);
         }
         move();
-
-        fish.onclick = () => {
-            if (data.type === 'special') startHobbyFlow();
-            else showNormalModal(data.title, data.details);
-        };
+        fish.onclick = () => data.type === 'special' ? startHobbyFlow() : showNormalModal(data.title, data.details);
     });
 
-    function showNormalModal(title, content) {
-        document.getElementById('overlay').style.display = 'block';
-        const m = document.getElementById('main-modal');
-        document.getElementById('main-title').innerText = title;
-        document.getElementById('main-content').innerHTML = content;
-        m.style.display = 'block';
-    }
+    // --- 核心：九贝旋转逻辑 ---
+    let rotationAngle = 0;
+    let isRotating = false;
 
     function startHobbyFlow() {
         document.getElementById('overlay').style.display = 'block';
@@ -204,78 +127,118 @@
         big.className = 'bubble-common';
         big.style.width = '160px'; big.style.height = '160px';
         big.style.left = 'calc(50% - 80px)'; big.style.top = 'calc(50% - 80px)';
-        big.style.fontSize = '18px'; big.style.fontWeight = 'bold';
         big.innerText = '性格与爱好'; big.style.display = 'flex';
         document.body.appendChild(big);
 
         big.onclick = (e) => {
             e.stopPropagation();
             big.style.transform = 'scale(1.8)'; big.style.opacity = '0';
-            for(let i=0; i<12; i++) createTinyBubble(window.innerWidth/2, window.innerHeight/2);
-            setTimeout(() => big.remove(), 300);
-
-            const hobbies = Object.keys(hobbyData);
-            hobbies.forEach((name, i) => {
-                const sub = document.createElement('div');
-                sub.className = 'bubble-common sub-h';
-                sub.style.width = '85px'; sub.style.height = '85px';
-                sub.innerText = name; sub.style.display = 'flex';
-                sub.style.left = (window.innerWidth/2 - 42) + 'px';
-                sub.style.top = (window.innerHeight/2 - 42) + 'px';
-                document.body.appendChild(sub);
-
-                const angle = (i / hobbies.length) * Math.PI * 2;
-                const dist = 190;
-                setTimeout(() => {
-                    sub.style.left = (window.innerWidth/2 - 42 + Math.cos(angle) * dist) + 'px';
-                    sub.style.top = (window.innerHeight/2 - 42 + Math.sin(angle) * dist) + 'px';
-                }, 50);
-
-                sub.onclick = (ev) => {
-                    ev.stopPropagation();
-                    const card = document.getElementById('detail-card');
-                    const posterContainer = document.getElementById('poster-container');
-                    
-                    document.getElementById('detail-title').innerText = name;
-                    document.getElementById('detail-content').innerText = hobbyData[name];
-                    
-                    if (name === '游泳') {
-                        posterContainer.style.display = 'block';
-                        setTimeout(() => { posterContainer.classList.add('unfold'); }, 100);
-                    } else {
-                        posterContainer.classList.remove('unfold');
-                        posterContainer.style.display = 'none';
-                    }
-                    
-                    card.style.display = 'block';
-                    card.scrollTop = 0; // 重置滚动位置
-                };
-            });
+            setTimeout(() => { big.remove(); spawnHobbySub(); }, 300);
         };
     }
 
-    function createTinyBubble(x, y) {
-        const t = document.createElement('div');
-        t.className = 'tiny-bubble';
-        const size = Math.random() * 10 + 5;
-        t.style.width = size + 'px'; t.style.height = size + 'px';
-        t.style.left = x + (Math.random()-0.5)*80 + 'px';
-        t.style.top = y + (Math.random()-0.5)*80 + 'px';
-        document.body.appendChild(t);
-        setTimeout(() => t.remove(), 1500);
+    function spawnHobbySub() {
+        const hobbies = Object.keys(hobbyData);
+        hobbies.forEach((name, i) => {
+            const sub = document.createElement('div');
+            sub.className = 'bubble-common sub-h';
+            sub.style.width = '85px'; sub.style.height = '85px';
+            sub.innerText = name; sub.style.display = 'flex';
+            sub.style.left = '50%'; sub.style.top = '50%';
+            document.body.appendChild(sub);
+
+            const angle = (i / hobbies.length) * Math.PI * 2;
+            const dist = 190;
+            setTimeout(() => {
+                sub.style.left = (window.innerWidth/2 - 42 + Math.cos(angle) * dist) + 'px';
+                sub.style.top = (window.innerHeight/2 - 42 + Math.sin(angle) * dist) + 'px';
+            }, 50);
+
+            sub.onclick = (ev) => {
+                ev.stopPropagation();
+                if (name === '旅游') startTravelShells();
+                else showHobbyDetail(name);
+            };
+        });
     }
 
-    function closeDetail() { 
-        document.getElementById('detail-card').style.display = 'none'; 
-        document.getElementById('poster-container').classList.remove('unfold');
+    function startTravelShells() {
+        // 清除性格泡泡
+        document.querySelectorAll('.sub-h').forEach(b => b.remove());
+        isRotating = true;
+        
+        travelCities.forEach((city, i) => {
+            const shell = document.createElement('div');
+            shell.className = 'shell-item';
+            shell.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${city}</span>`;
+            shell.style.display = 'flex';
+            document.body.appendChild(shell);
+
+            // 点击贝壳展示照片（目前占位）
+            shell.onclick = (e) => {
+                e.stopPropagation();
+                showCityPhoto(city);
+            };
+        });
+        updateShellPositions();
     }
-    
+
+    function updateShellPositions() {
+        if (!isRotating) return;
+        rotationAngle += 0.005; // 控制旋转速度，越小越慢
+        const shells = document.querySelectorAll('.shell-item');
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        const radius = 240; // 旋转半径
+
+        shells.forEach((shell, i) => {
+            const angle = rotationAngle + (i / shells.length) * Math.PI * 2;
+            const x = centerX + Math.cos(angle) * radius - 35;
+            const y = centerY + Math.sin(angle) * radius - 35;
+            
+            // 加入微小的起伏感
+            const wobble = Math.sin(rotationAngle * 2 + i) * 10;
+            
+            shell.style.left = x + 'px';
+            shell.style.top = (y + wobble) + 'px';
+            // 让贝壳轻微随角度旋转
+            shell.style.transform = `rotate(${Math.cos(angle) * 10}deg)`;
+        });
+        requestAnimationFrame(updateShellPositions);
+    }
+
+    function showCityPhoto(city) {
+        const card = document.getElementById('detail-card');
+        document.getElementById('detail-title').innerText = `旅游足迹 · ${city}`;
+        document.getElementById('detail-content').innerText = `这是我在${city}留下的美好回忆...（待上传照片）`;
+        // 这里可以根据城市切换图片路径
+        const poster = document.getElementById('swim-poster');
+        poster.src = ""; // 等你有了照片填这里
+        document.getElementById('poster-container').classList.remove('unfold');
+        card.style.display = 'block';
+    }
+
+    function showHobbyDetail(name) {
+        document.getElementById('detail-title').innerText = name;
+        document.getElementById('detail-content').innerText = hobbyData[name];
+        const poster = document.getElementById('swim-poster');
+        const container = document.getElementById('poster-container');
+        if (name === '游泳') {
+            poster.src = "dist/assets/img/游泳.png";
+            container.style.display = 'block';
+            setTimeout(() => container.classList.add('unfold'), 50);
+        } else {
+            container.style.display = 'none';
+        }
+        document.getElementById('detail-card').style.display = 'block';
+    }
+
+    function closeDetail() { document.getElementById('detail-card').style.display = 'none'; }
     function closeAll() {
         document.getElementById('overlay').style.display = 'none';
-        document.getElementById('main-modal').style.display = 'none';
         document.getElementById('detail-card').style.display = 'none';
-        document.getElementById('poster-container').classList.remove('unfold');
-        document.querySelectorAll('.bubble-common').forEach(b => b.remove());
+        document.querySelectorAll('.bubble-common, .shell-item').forEach(b => b.remove());
+        isRotating = false;
     }
 </script>
 </body>
