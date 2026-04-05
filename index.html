@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>家渝的个人鱼塘</title>
+    <title>家渝有一片海</title>
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
         body { 
@@ -12,7 +12,7 @@
             background-attachment: fixed; background-color: #e0f7fa; 
         }
         
-        /* 中心头像 */
+        /* 1. 中心头像 */
         #profile-avatar {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 220px; height: 220px; border-radius: 50%; border: 8px solid rgba(255, 255, 255, 0.4);
@@ -21,57 +21,54 @@
         }
         @keyframes float { 0%, 100% { transform: translate(-50%, -50%) translateY(0px); } 50% { transform: translate(-50%, -50%) translateY(-15px); } }
 
-        /* 🐟 鱼容器 */
+        /* 2. 鱼群容器 */
         .fish { position: absolute; cursor: pointer; z-index: 10; display: flex; flex-direction: column; align-items: center; }
         .fish img { width: 80px; height: auto; transition: transform 0.1s; }
-        .fish div { font-size: 14px; color: #00796b; font-weight: bold; text-align: center; margin-top: 5px; transform: scaleX(1) !important; }
+        .fish div { font-size: 14px; color: #00796b; font-weight: bold; text-align: center; margin-top: 5px; }
 
-        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.1); backdrop-filter: blur(8px); z-index: 90; }
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.15); backdrop-filter: blur(8px); z-index: 90; }
 
-        /* 🧼 泡泡基础样式 */
-        .bubble-common {
-            position: fixed; border-radius: 50%; border: 1px solid rgba(255,255,255,0.6);
-            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.5), rgba(178, 235, 242, 0.2));
-            backdrop-filter: blur(3px); display: flex; justify-content: center; align-items: center;
-            cursor: pointer; z-index: 100; color: #00796b; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-align: center; padding: 5px;
+        /* 3. 工作经历画廊样式 (重点优化) */
+        .work-gallery {
+            display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+            gap: 20px; padding: 15px 5px; -webkit-overflow-scrolling: touch;
         }
+        .work-gallery::-webkit-scrollbar { height: 6px; }
+        .work-gallery::-webkit-scrollbar-thumb { background: #009688; border-radius: 10px; }
 
-        /* 🐚 贝壳轨道样式 */
-        .shell-item {
-            position: fixed; width: 75px; height: 75px; 
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; z-index: 100;
+        .work-card {
+            flex: 0 0 85%; scroll-snap-align: center;
+            background: #fff; border-radius: 15px; overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1); border: 1px solid #eee;
         }
-        .shell-item img { width: 100%; height: auto; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); transition: transform 0.3s; }
-        .shell-item span { 
-            font-size: 12px; color: #004d40; font-weight: bold; 
-            background: rgba(255,255,255,0.7); padding: 2px 8px; border-radius: 10px; margin-top: -5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .shell-item:hover img { transform: scale(1.3); }
+        .work-card img { width: 100%; height: auto; display: block; cursor: zoom-in; }
+        .work-card .desc { padding: 12px; font-size: 13px; color: #00796b; text-align: center; background: #fdfdfd; font-weight: 500; }
 
-        /* 弹窗通用样式 */
+        /* 4. 弹窗样式 */
         #detail-card, #main-modal {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 85%; max-width: 500px; max-height: 80vh; padding: 30px; border-radius: 25px;
-            background: #fff; z-index: 150; box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            width: 88%; max-width: 520px; max-height: 85vh; padding: 25px; border-radius: 25px;
+            background: #fff; z-index: 150; box-shadow: 0 20px 50px rgba(0,0,0,0.2);
             overflow-y: auto !important;
         }
-        .close-x { position: sticky; top: -10px; float: right; cursor: pointer; font-size: 26px; color: #999; z-index: 160; background: #fff; width: 30px; height: 30px; text-align: center; line-height: 30px; border-radius: 50%; }
+        .close-x { position: sticky; top: -10px; float: right; cursor: pointer; font-size: 26px; color: #999; z-index: 160; background: #fff; width: 32px; height: 32px; text-align: center; line-height: 32px; border-radius: 50%; }
 
-        /* 海报动画 */
-        #poster-container { width: 100%; height: 0; overflow: visible; margin-top: 10px; transition: height 0.8s ease-in-out; }
-        #poster-container.unfold { height: auto; }
-        #swim-poster { width: 100%; height: auto; border-radius: 12px; display: block; margin-top: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        /* 5. 旅游贝壳样式 */
+        .shell-item { position: fixed; width: 75px; height: 75px; display: none; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; z-index: 100; }
+        .shell-item img { width: 100%; height: auto; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); transition: transform 0.3s; }
+        .shell-item span { font-size: 11px; color: #004d40; font-weight: bold; background: rgba(255,255,255,0.8); padding: 2px 8px; border-radius: 10px; margin-top: -5px; }
 
-        /* 基础信息排版样式 */
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; }
-        .info-section { background: rgba(0,150,136,0.03); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,150,136,0.05); }
-        .tag { display: inline-block; background: #e0f2f1; color: #00796b; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px; font-weight: bold; }
+        /* 内容通用排版 */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .info-section { background: rgba(0,150,136,0.04); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,150,136,0.1); }
+        .tag { display: inline-block; background: #e0f2f1; color: #00796b; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin: 0 4px 4px 0; font-weight: bold; }
         
-        .tiny-bubble { position: fixed; background: rgba(255, 255, 255, 0.5); border-radius: 50%; pointer-events: none; z-index: 99; animation: fall 1.5s ease-out forwards; }
-        @keyframes fall { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(80px) scale(0); opacity: 0; } }
+        /* 游泳海报容器 */
+        #poster-container { width: 100%; height: 0; overflow: visible; transition: height 0.8s ease-in-out; }
+        #poster-container.unfold { height: auto; }
+        #swim-poster { width: 100%; height: auto; border-radius: 12px; display: block; margin-top: 15px; }
+
+        .bubble-common { position: fixed; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.6), rgba(178,235,242,0.3)); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; color: #00796b; border: 1px solid rgba(255,255,255,0.5); }
     </style>
 </head>
 <body>
@@ -86,21 +83,21 @@
 
 <div id="detail-card">
     <div class="close-x" onclick="closeDetail()">×</div>
-    <h2 id="detail-title" style="color:#00796b; margin-top:0;"></h2>
+    <h2 id="detail-title" style="color:#00796b; margin:0 0 10px 0;"></h2>
     <div id="detail-content" style="line-height:1.8; color:#444"></div>
     <div id="poster-container"><img src="" id="swim-poster"></div>
 </div>
 
 <script>
+    // 1. 数据定义
+    const travelCities = ['南京', '北京', '沈阳', '云南', '重庆', '湖南', '广东', '广西', '马来西亚'];
     const hobbyData = {
         '网球': '热爱挥洒汗水的快感，网球不仅是运动，更是对节奏和爆发力的掌控。',
         '游泳': '在水底世界寻找宁静，享受每一次划水带来的自由感。',
-        '追星': '记录美好瞬间，学习优秀偶像的闪光点，也是一种生活动力。',
-        '旅游': '看遍大好河山，记录每一站的风景。点击贝壳探索我的足迹！'
+        '追星': '记录美好瞬间，学习优秀偶像的闪光点。',
+        '旅游': '记录每一站的风景。点击贝壳探索我的足迹！'
     };
 
-    const travelCities = ['南京', '北京', '沈阳', '云南', '重庆', '湖南', '广东', '广西', '马来西亚'];
-    
     const fishData = [
         { 
             title: '基础信息', 
@@ -108,46 +105,63 @@
                 <h2 style="color:#00796b; margin-top:0;">基础信息</h2>
                 <div class="info-grid">
                     <div class="info-section">
-                        <h4 style="margin:0 0 10px 0; color:#00796b;">👤 个人概况</h4>
+                        <h4 style="margin:0 0 8px 0;">👤 个人概况</h4>
                         <b>姓名：</b>罗家渝<br>
-                        <b>专业：</b>华南农业大学 · 农林经济管理<br>
-                        <b>政治面貌：</b>中共预备党员<br>
-                        <b>时间线：</b>2023 - 2027 (本科)
+                        <b>专业：</b>华南农大 · 农林经管<br>
+                        <b>身份：</b>中共预备党员
                     </div>
                     <div class="info-section">
-                        <h4 style="margin:0 0 10px 0; color:#00796b;">📍 联系方式</h4>
-                        <b>籍贯：</b>广东东莞 / <b>现居：</b>广州天河<br>
+                        <h4 style="margin:0 0 8px 0;">📍 联系方式</h4>
+                        <b>籍贯：</b>广东东莞<br>
                         <b>电话：</b>18998055663<br>
                         <b>邮箱：</b>2304362354@qq.com
                     </div>
                     <div class="info-section" style="grid-column: span 2;">
-                        <h4 style="margin:0 0 10px 0; color:#00796b;">🏆 荣誉与语言</h4>
+                        <h4 style="margin:0 0 8px 0;">🏆 荣誉奖励</h4>
+                        🏅 连续两年获得校级奖学金<br>
                         <span class="tag">CET-4</span> <span class="tag">CET-6</span>
-                        <div style="margin-top:8px;">🏅 <b>曾连续两年获得校级奖学金</b></div>
-                    </div>
-                    <div class="info-section" style="grid-column: span 2;">
-                        <h4 style="margin:0 0 10px 0; color:#00796b;">💻 专业技能</h4>
-                        <b>数据：</b>计算机二级、精通 Excel 数据透视表分析<br>
-                        <b>视觉：</b>Figma、PS、Canva、秀米 (独立设计能力)<br>
-                        <b>视频：</b>剪映 (独立完成短视频策划与制作)
                     </div>
                 </div>
             `
         },
-        { title: '实习简历', details: '<h2 style="color:#00796b;">实习简历</h2><p style="text-align:center; padding:50px; color:#999;">实习经历正在整理中，敬请期待...</p>' },
-        { title: '项目经历', details: '<h2 style="color:#00796b;">项目经历</h2><p style="text-align:center; padding:50px; color:#999;">Tada App 推广项目细节正在录入...</p>' },
-        { title: '我的自媒体', details: '<h2 style="color:#00796b;">自媒体运营</h2><p style="text-align:center; padding:50px; color:#999;">小红书/抖音运营数据展示准备中...</p>' },
+        { 
+            title: '工作经历', 
+            details: `
+                <h2 style="color:#00796b; margin-top:0;">工作经历</h2>
+                <div class="work-gallery">
+                    <div class="work-card"><img src="dist/assets/img/worke1.jpg" onclick="window.open(this.src)"><div class="desc">TikTok 食谱账号运营</div></div>
+                    <div class="work-card"><img src="dist/assets/img/worke2.jpg" onclick="window.open(this.src)"><div class="desc">Tada App 推广策划</div></div>
+                    <div class="work-card"><img src="dist/assets/img/worke3.jpg" onclick="window.open(this.src)"><div class="desc">KOL/KOC 商务合作</div></div>
+                    <div class="work-card"><img src="dist/assets/img/worke4.jpg" onclick="window.open(this.src)"><div class="desc">短视频内容脚本创作</div></div>
+                    <div class="work-card"><img src="dist/assets/img/worke5.jpg" onclick="window.open(this.src)"><div class="desc">数据分析与复盘</div></div>
+                </div>
+                <p style="font-size:12px; color:#999; text-align:center;">💡 左右滑动切片，点击图片可放大查看</p>
+            `
+        },
+        { 
+            title: '工作技能', 
+            details: `
+                <h2 style="color:#00796b; margin-top:0;">专业技能</h2>
+                <div class="info-section" style="margin-bottom:15px;">
+                    <b style="color:#00796b;">🎨 视觉与策划：</b><br>
+                    精通 Figma, Photoshop, Canva, 秀米。具备短视频全流程策划与剪映后期制作能力。
+                </div>
+                <div class="info-section">
+                    <b style="color:#00796b;">📊 数据与办公：</b><br>
+                    精通 Excel 数据透视表分析。持有全国计算机二级证书。
+                </div>
+            `
+        },
         { title: '性格与爱好', type: 'special' }
     ];
 
-    // 初始化鱼群
+    // 2. 鱼群逻辑
     fishData.forEach((data) => {
         const fish = document.createElement('div');
         fish.className = 'fish';
         fish.innerHTML = `<img src="dist/assets/img/fish1.png"><div>${data.title}</div>`;
         document.body.appendChild(fish);
-        let posX = Math.random() * (window.innerWidth - 100);
-        let posY = Math.random() * (window.innerHeight - 100);
+        let posX = Math.random() * (window.innerWidth - 100), posY = Math.random() * (window.innerHeight - 100);
         let velX = (Math.random() - 0.5) * 2, velY = (Math.random() - 0.5) * 2;
 
         function move() {
@@ -162,16 +176,14 @@
         fish.onclick = () => data.type === 'special' ? startHobbyFlow() : showNormalModal(data.details);
     });
 
+    // 3. 弹窗与交互
     function showNormalModal(content) {
         document.getElementById('overlay').style.display = 'block';
-        const m = document.getElementById('main-modal');
         document.getElementById('main-content').innerHTML = content;
-        m.style.display = 'block';
+        document.getElementById('main-modal').style.display = 'block';
     }
 
-    // --- 爱好气泡与贝壳旋转逻辑 ---
-    let rotationAngle = 0;
-    let isRotating = false;
+    let rotationAngle = 0, isRotating = false;
 
     function startHobbyFlow() {
         document.getElementById('overlay').style.display = 'block';
@@ -179,14 +191,12 @@
         big.className = 'bubble-common';
         big.style.width = '160px'; big.style.height = '160px';
         big.style.left = 'calc(50% - 80px)'; big.style.top = 'calc(50% - 80px)';
-        big.style.fontSize = '18px'; big.style.fontWeight = 'bold';
         big.innerText = '性格与爱好'; big.style.display = 'flex';
         document.body.appendChild(big);
 
         big.onclick = (e) => {
             e.stopPropagation();
             big.style.transform = 'scale(1.8)'; big.style.opacity = '0';
-            for(let i=0; i<10; i++) createTinyBubble(window.innerWidth/2, window.innerHeight/2);
             setTimeout(() => { big.remove(); spawnHobbyBubbles(); }, 300);
         };
     }
@@ -198,20 +208,15 @@
             sub.className = 'bubble-common sub-h';
             sub.style.width = '85px'; sub.style.height = '85px';
             sub.innerText = name; sub.style.display = 'flex';
-            sub.style.left = '50%'; sub.style.top = '50%';
             document.body.appendChild(sub);
-
-            const angle = (i / hobbies.length) * Math.PI * 2;
-            const dist = 190;
+            const angle = (i / hobbies.length) * Math.PI * 2, dist = 190;
             setTimeout(() => {
                 sub.style.left = (window.innerWidth/2 - 42 + Math.cos(angle) * dist) + 'px';
                 sub.style.top = (window.innerHeight/2 - 42 + Math.sin(angle) * dist) + 'px';
             }, 50);
-
             sub.onclick = (ev) => {
                 ev.stopPropagation();
-                if (name === '旅游') startTravelShells();
-                else showHobbyDetail(name);
+                name === '旅游' ? startTravelShells() : showHobbyDetail(name);
             };
         });
     }
@@ -219,7 +224,7 @@
     function startTravelShells() {
         document.querySelectorAll('.sub-h').forEach(b => b.remove());
         isRotating = true;
-        travelCities.forEach((city, i) => {
+        travelCities.forEach((city) => {
             const shell = document.createElement('div');
             shell.className = 'shell-item';
             shell.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${city}</span>`;
@@ -233,56 +238,36 @@
     function updateShellPositions() {
         if (!isRotating) return;
         rotationAngle += 0.005;
-        const shells = document.querySelectorAll('.shell-item');
-        const radius = 240;
+        const shells = document.querySelectorAll('.shell-item'), radius = 240;
         shells.forEach((shell, i) => {
             const angle = rotationAngle + (i / shells.length) * Math.PI * 2;
             const x = window.innerWidth / 2 + Math.cos(angle) * radius - 37;
             const y = window.innerHeight / 2 + Math.sin(angle) * radius - 37;
-            const wobble = Math.sin(rotationAngle * 2 + i) * 10;
-            shell.style.left = x + 'px';
-            shell.style.top = (y + wobble) + 'px';
+            shell.style.left = x + 'px'; shell.style.top = (y + Math.sin(rotationAngle * 2 + i) * 10) + 'px';
             shell.style.transform = `rotate(${Math.cos(angle) * 10}deg)`;
         });
         requestAnimationFrame(updateShellPositions);
     }
 
     function showHobbyDetail(name) {
-        const card = document.getElementById('detail-card');
-        const poster = document.getElementById('swim-poster');
-        const container = document.getElementById('poster-container');
+        const card = document.getElementById('detail-card'), poster = document.getElementById('swim-poster'), container = document.getElementById('poster-container');
         document.getElementById('detail-title').innerText = name;
         document.getElementById('detail-content').innerText = hobbyData[name];
-        
         if (name === '游泳') {
             poster.src = "dist/assets/img/游泳.png";
             container.style.display = 'block';
             setTimeout(() => container.classList.add('unfold'), 50);
         } else {
-            container.classList.remove('unfold');
             container.style.display = 'none';
         }
         card.style.display = 'block';
-        card.scrollTop = 0;
     }
 
     function showCityPhoto(city) {
-        const card = document.getElementById('detail-card');
         document.getElementById('detail-title').innerText = `旅游足迹 · ${city}`;
-        document.getElementById('detail-content').innerText = `这是我在${city}留下的回忆...`;
+        document.getElementById('detail-content').innerText = `这是我在${city}留下的美好瞬间...`;
         document.getElementById('poster-container').style.display = 'none';
-        card.style.display = 'block';
-    }
-
-    function createTinyBubble(x, y) {
-        const t = document.createElement('div');
-        t.className = 'tiny-bubble';
-        const size = Math.random() * 10 + 5;
-        t.style.width = size + 'px'; t.style.height = size + 'px';
-        t.style.left = x + (Math.random()-0.5)*80 + 'px';
-        t.style.top = y + (Math.random()-0.5)*80 + 'px';
-        document.body.appendChild(t);
-        setTimeout(() => t.remove(), 1500);
+        document.getElementById('detail-card').style.display = 'block';
     }
 
     function closeDetail() { document.getElementById('detail-card').style.display = 'none'; }
