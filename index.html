@@ -33,14 +33,20 @@
                 transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--tr)); 
             }
         }
-        
-        /* ✅ 关键：动画结束后停在最后一帧 */
-        .char-tag-scatter {
-            position: fixed; padding: 8px 18px; background: #e0f2f1; color: #00796b; border-radius: 20px;
-            font-weight: bold; font-size: 14px; pointer-events: none; z-index: 200; border: 1px solid #b2dfdb;
-            animation: scatterAnim 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards; /* 必须有 forwards */
-        }
-
+.char-tag-scatter {
+    position: fixed; 
+    padding: 8px 18px; 
+    background: #e0f2f1; 
+    color: #00796b; 
+    border-radius: 20px;
+    font-weight: bold; 
+    font-size: 14px; 
+    pointer-events: none; 
+    z-index: 200; 
+    border: 1px solid #b2dfdb;
+    /* 关键点：0.8s是速度，forwards确保动画结束不消失 */
+    animation: scatterAnim 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
+}
         /* 中心头像 */
         #profile-avatar { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
@@ -206,26 +212,27 @@ if (i === 0) {
     }
 
    function scatterTags() {
-        const tags = ['ENTJ', '行动派', '社牛大师', '拒绝拖延', '想象力丰富', '说干就干', '爱笑', '偶尔工作狂', '有个设计梦', '第一喜欢海边', '执行力极强', '探索欲Max'];
+    const tags = ['ENTJ', '行动派', '社牛大师', '拒绝拖延', '想象力丰富', '说干就干', '爱笑', '偶尔工作狂', '有个设计梦', '第一喜欢海边', '执行力极强', '探索欲Max'];
+    
+    tags.forEach((text, i) => {
+        const el = document.createElement('div');
+        el.className = 'char-tag-scatter'; // 只要写了这一行，它就会自动去套用上面 CSS 里的动画
+        el.innerText = text;
         
-        tags.forEach((text, i) => {
-            const el = document.createElement('div');
-            el.className = 'char-tag-scatter'; // 这里会关联上面 CSS 里的 animation 属性
-            el.innerText = text;
-            el.style.left = '50%'; 
-            el.style.top = '50%';
-            
-            const angle = (i / tags.length) * Math.PI * 2; 
-            const dist = 220 + Math.random() * 100; // 稍微拉开距离
-            
-            el.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
-            el.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
-            el.style.setProperty('--tr', (Math.random() - 0.5) * 40 + 'deg');
-            
-            el.style.animationDelay = (i * 0.05) + 's';
-            document.body.appendChild(el);
-        });
-    }
+        el.style.left = '50%'; 
+        el.style.top = '50%';
+        
+        const angle = (i / tags.length) * Math.PI * 2; 
+        const dist = 220 + Math.random() * 80; 
+        
+        el.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+        el.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+        el.style.setProperty('--tr', (Math.random() - 0.5) * 30 + 'deg');
+        
+        el.style.animationDelay = (i * 0.05) + 's';
+        document.body.appendChild(el);
+    });
+}
     function showHobbySub() {
         const subs = [
             {name:'✈️ 旅游', c:'<h3>热爱旅行</h3><p>喜欢探索未知的城市和风景，捕捉自然灵感，追求“原生感”的视觉表达。</p>'},
