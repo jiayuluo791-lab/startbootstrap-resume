@@ -22,12 +22,12 @@
         opacity: 0; 
         transform: translate(-50%, -50%) scale(0); 
     }
-    20% { 
+    30% { 
         opacity: 1; 
         transform: translate(-50%, -50%) scale(1.1); 
     }
     100% { 
-        opacity: 1; /* 保持可见，不透明度设为 1 */
+        opacity: 1; /* 确保最后是完全可见的 */
         transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--tr)); 
     }
 }
@@ -222,7 +222,7 @@ if (i === 0) {
         el.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
         el.style.setProperty('--tr', (Math.random() - 0.5) * 40 + 'deg'); // 随机旋转一点点，更好看
         
-        el.style.animationDelay = (i * 0.1) + 's';
+       animation: scatterAnim 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
         document.body.appendChild(el);
         
         // 【重要】删掉之前的 setTimeout(..., 4000)，这样标签就不会被移除了
