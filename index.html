@@ -48,7 +48,13 @@
 
         /* 贝壳与子项 */
         .shell-option { position: fixed; width: 125px; height: 125px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; color: var(--teal); font-weight: bold; transform: translate(-50%, -50%) scale(0); opacity: 0; transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .shell-option img { position: absolute; width: 100%; height: 100%; z-index: -1; }
+       /* 添加这行，确保贝壳里的文字可见 */
+.shell-option span { 
+    position: relative; 
+    z-index: 2; 
+    font-size: 16px; 
+    text-shadow: 0 0 5px #fff; 
+} .shell-option img { position: absolute; width: 100%; height: 100%; z-index: -1; }
         .shell-unfold { transform: translate(-50%, -50%) scale(1) !important; opacity: 1 !important; }
 
         /* 经历滑动 */
@@ -157,7 +163,20 @@
             btn.style.top = '50%'; btn.style.left = i === 0 ? 'calc(50% - 130px)' : 'calc(50% + 30px)';
             document.body.appendChild(btn); setTimeout(() => btn.classList.add('shell-unfold'), 50);
             btn.onclick = (e) => { e.stopPropagation(); document.querySelectorAll('.dive-opt').forEach(el => el.remove()); 
-                if(opt.type === 'char') showCharTags(); else showHobbySub();
+               // 请替换 startDive 函数中的判断逻辑
+if (o.t === 'h') {
+    showHobby(); 
+} else {
+    // 修复：性格部分改用更美观的展示
+    showModal(`
+        <h3 style="color:var(--teal)">我的性格标签</h3>
+        <div style="display:flex; flex-wrap:wrap; gap:10px; padding:10px;">
+            ${['ENTJ', '爱笑', '社牛大师', '偶尔工作狂', '想象力丰富', '说干就干'].map(tag => 
+                `<span style="background:#e0f2f1; color:#00796b; padding:5px 12px; border-radius:15px; font-weight:bold;">${tag}</span>`
+            ).join('')}
+        </div>
+    `);
+}
             };
         });
     }
