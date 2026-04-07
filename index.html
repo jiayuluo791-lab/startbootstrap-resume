@@ -57,11 +57,10 @@
         .record-player { display: flex; overflow-x: auto; gap: 20px; padding: 20px 0; scroll-snap-type: x mandatory; scrollbar-width: none; }
         .record-player::-webkit-scrollbar { display: none; }
         .record-item { flex: 0 0 150px; scroll-snap-align: center; text-align: center; }
-        .record-item img { width: 140px; height: 140px; border-radius: 50%; border: 10px solid #222; animation: spin 5s linear infinite; animation-play-state: paused; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .record-item img { width: 140px; height: 140px; border-radius: 50%; border: 10px solid #222; animation: spin 8s linear infinite; animation-play-state: paused; box-shadow: 0 5px 15px rgba(0,0,0,0.3); object-fit: cover; }
         .record-item:hover img { animation-play-state: running; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* 贝壳 */
+        /* 贝壳与运动 */
         .shell-item { position: fixed; width: 70px; height: 70px; display: none; flex-direction: column; align-items: center; z-index: 100; cursor: pointer; }
         .shell-item img { width: 100%; }
         .shell-item span { font-size: 10px; background: rgba(255,255,255,0.8); padding: 2px 5px; border-radius: 5px; margin-top: -5px; color: var(--teal); font-weight: bold; }
@@ -69,7 +68,7 @@
         /* 工作经历滑动 */
         .work-gallery { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; padding: 10px 0; }
         .work-card { flex: 0 0 85%; scroll-snap-align: center; border-radius: 15px; overflow: hidden; border: 1px solid #eee; background: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .work-card img { width: 100%; cursor: pointer; }
+        .work-card img { width: 100%; cursor: pointer; display: block; }
 
         .close-x { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 24px; color: #999; z-index: 170; width: 30px; height: 30px; text-align: center; line-height: 30px; background: #fff; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     </style>
@@ -97,18 +96,20 @@
     const fishData = [
         { title: '基础信息', type: 'info', content: `<h3 style="color:var(--teal);margin-top:0;">基础信息</h3><p><b>罗家渝</b> | 华南农大 农林经管<br>中共预备党员 | 连续两年校奖学金</p><p>📞 18998055663<br>📧 2304362354@qq.com</p><p>技能认证：CET-6、计算机二级、Figma、Excel 数据透视表</p>` },
         { title: '工作经历', type: 'work', content: `
-            <h3 style="color:var(--teal);margin-top:0;">项目实战</h3>
+            <h3 style="color:var(--teal);margin-top:0;">项目实战集锦</h3>
             <div class="work-gallery">
-                <div class="work-card"><img src="dist/assets/img/worke1.jpg" onclick="window.open('https://www.tiktok.com/@_babyfood')"><p style="font-size:12px;text-align:center;padding:5px;">TikTok食谱账号</p></div>
-                <div class="work-card"><img src="dist/assets/img/worke2.jpg" onclick="window.open('https://xhslink.com/m/6RJ7BJGKedW')"><p style="font-size:12px;text-align:center;padding:5px;">美的华凌小红书</p></div>
-                <div class="work-card"><img src="dist/assets/img/worke3.jpg" onclick="window.open('https://xhslink.com/m/5dalT0qlOf5')"><p style="font-size:12px;text-align:center;padding:5px;">明星自媒体运营</p></div>
-            </div>` 
+                <div class="work-card"><img src="dist/assets/img/worke1.jpg" onclick="viewImage('worke1.jpg')"><p style="font-size:12px;text-align:center;padding:5px;">TikTok食谱实战</p></div>
+                <div class="work-card"><img src="dist/assets/img/worke2.jpg" onclick="viewImage('worke2.jpg')"><p style="font-size:12px;text-align:center;padding:5px;">华凌小红书运营</p></div>
+                <div class="work-card"><img src="dist/assets/img/worke3.jpg" onclick="viewImage('worke3.jpg')"><p style="font-size:12px;text-align:center;padding:5px;">明星自媒体运营</p></div>
+                <div class="work-card"><img src="dist/assets/img/worke4.jpg" onclick="viewImage('worke4.jpg')"><p style="font-size:12px;text-align:center;padding:5px;">创意文案脚本</p></div>
+                <div class="work-card"><img src="dist/assets/img/worke5.jpg" onclick="viewImage('worke5.jpg')"><p style="font-size:12px;text-align:center;padding:5px;">项目总结复盘</p></div>
+            </div>
+            <p style="font-size:11px;color:#999;text-align:center;margin-top:10px;">(左右滑动切换 · 点击放大查看)</p>` 
         },
         { title: '工作技能', type: 'skill' },
         { title: '性格与爱好', type: 'special' }
     ];
 
-    // 初始化鱼群
     fishData.forEach((data) => {
         const fish = document.createElement('div');
         fish.className = 'fish';
@@ -126,7 +127,6 @@
             requestAnimationFrame(move);
         }
         move();
-
         fish.onclick = () => {
             if (data.type === 'skill') openSkillFolder();
             else if (data.type === 'special') startDeepDive();
@@ -134,16 +134,22 @@
         };
     });
 
-    // --- 性格与爱好：多级引导逻辑 ---
+    function openSkillFolder() {
+        const html = `<h3 style="color:var(--teal);margin-top:0;">工作技能详情</h3><div class="folder-grid">
+            <div class="folder-item" onclick="viewImage('image_2387a3.jpg')"><div class="folder-icon">🎬</div><div style="font-size:12px;">视频剪辑</div></div>
+            <div class="folder-item" onclick="viewImage('image_2387e2.jpg')"><div class="folder-icon">🎨</div><div style="font-size:12px;">创意设计</div></div>
+            <div class="folder-item" onclick="viewImage('image_238805.jpg')"><div class="folder-icon">📑</div><div style="font-size:12px;">数据SOP</div></div>
+        </div>`;
+        showModal(html);
+    }
+
     function startDeepDive() {
         document.getElementById('overlay').style.display = 'block';
         document.querySelectorAll('.fish').forEach(f => f.style.opacity = '0');
-        
         const guide = document.createElement('div');
         guide.id = 'guide-text';
         guide.innerText = "你想了解我的什么呢？";
         document.body.appendChild(guide);
-
         const options = [{name:'性格', type:'char'}, {name:'爱好', type:'hobby'}];
         options.forEach((opt, i) => {
             const btn = document.createElement('div');
@@ -153,7 +159,6 @@
             btn.style.left = i === 0 ? 'calc(50% - 140px)' : 'calc(50% + 20px)';
             btn.innerText = opt.name;
             document.body.appendChild(btn);
-
             btn.onclick = (e) => {
                 e.stopPropagation();
                 guide.remove();
@@ -163,12 +168,10 @@
         });
     }
 
-    // --- 1. 性格：环形防重叠弹射 ---
     function showCharTags() {
         const radius = Math.min(window.innerWidth, window.innerHeight) * 0.35;
         const centerX = window.innerWidth / 2;
         const centerY = window.innerHeight / 2;
-
         charTags.forEach((text, i) => {
             const tag = document.createElement('div');
             tag.className = 'bubble-common char-tag-float';
@@ -176,20 +179,15 @@
             tag.style.width = size + 'px'; tag.style.height = size + 'px';
             tag.style.fontSize = '12px'; tag.innerText = text;
             tag.style.background = ['#E0F7FA', '#B2EBF2', '#E1F5FE', '#B3E5FC'][i % 4];
-            
-            // 初始位置
             tag.style.left = (centerX - size/2) + 'px';
             tag.style.top = (centerY - size/2) + 'px';
             tag.style.opacity = '0';
             document.body.appendChild(tag);
-
-            // 环形算法
             const baseAngle = (i / charTags.length) * Math.PI * 2;
             const randomOffset = (Math.random() - 0.5) * 0.2; 
             const finalAngle = baseAngle + randomOffset;
             const targetX = centerX + Math.cos(finalAngle) * radius - size / 2;
             const targetY = centerY + Math.sin(finalAngle) * radius - size / 2;
-
             setTimeout(() => {
                 tag.style.opacity = '1';
                 tag.style.left = targetX + 'px';
@@ -198,7 +196,6 @@
         });
     }
 
-    // --- 2. 爱好分流 ---
     function showHobbySub() {
         const subs = [{name:'✈️ 旅游', id:'travel'}, {name:'🌊 运动', id:'sport'}, {name:'🎧 听歌', id:'music'}];
         subs.forEach((s, i) => {
@@ -210,7 +207,6 @@
             b.style.top = (window.innerHeight/2 - 50 + Math.sin(a)*180)+'px';
             b.innerText = s.name;
             document.body.appendChild(b);
-
             b.onclick = (e) => {
                 e.stopPropagation();
                 document.querySelectorAll('.hobby-item').forEach(el => el.remove());
@@ -221,32 +217,13 @@
         });
     }
 
-    // --- 3. 运动：双子球 ---
-    function showSportOptions() {
-        const sports = ["🏊‍♂️ 游泳", "🎾 网球"];
-        sports.forEach((s, i) => {
-            const b = document.createElement('div');
-            b.className = 'bubble-common sport-opt';
-            b.style.width = '110px'; b.style.height = '110px';
-            b.style.top = '50%';
-            b.style.left = i === 0 ? 'calc(50% - 130px)' : 'calc(50% + 20px)';
-            b.innerText = s;
-            document.body.appendChild(b);
-            b.onclick = () => {
-                const img = s.includes("游泳") ? "游泳.png" : "网球.png";
-                viewImage(img);
-            };
-        });
-    }
-
-    // --- 4. 听歌：滚动唱片机 ---
     function showMusicPlayer() {
         const musicHtml = `
             <h3 style="color:var(--teal);margin-top:0;">我的单曲循环</h3>
             <div class="record-player">
                 ${[1,2,3,4,5,6].map(i => `
                     <div class="record-item">
-                        <img src="dist/assets/img/song${i}.jpg" onerror="this.src='https://via.placeholder.com/150?text=Song+${i}'">
+                        <img src="dist/assets/img/p${i}.jpg">
                         <p style="font-size:12px;margin-top:10px;font-weight:bold;color:var(--teal);">Track ${i}</p>
                     </div>
                 `).join('')}
@@ -256,7 +233,6 @@
         showModal(musicHtml);
     }
 
-    // --- 5. 旅游：贝壳逻辑 ---
     function startTravelShells() {
         isRotating = true;
         travelCities.forEach(city => {
@@ -280,14 +256,21 @@
         requestAnimationFrame(updateShells);
     }
 
-    // --- 工具函数 ---
-    function openSkillFolder() {
-        const html = `<h3 style="color:var(--teal);margin-top:0;">工作技能文件夹</h3><div class="folder-grid">
-            <div class="folder-item" onclick="viewImage('skill_video.jpg')"><div class="folder-icon">🎬</div><div style="font-size:12px;">视频剪辑</div></div>
-            <div class="folder-item" onclick="viewImage('skill_design.jpg')"><div class="folder-icon">🎨</div><div style="font-size:12px;">创意设计</div></div>
-            <div class="folder-item" onclick="viewImage('skill_sop.jpg')"><div class="folder-icon">📑</div><div style="font-size:12px;">数据SOP</div></div>
-        </div>`;
-        showModal(html);
+    function showSportOptions() {
+        const sports = ["🏊‍♂️ 游泳", "🎾 网球"];
+        sports.forEach((s, i) => {
+            const b = document.createElement('div');
+            b.className = 'bubble-common sport-opt';
+            b.style.width = '110px'; b.style.height = '110px';
+            b.style.top = '50%';
+            b.style.left = i === 0 ? 'calc(50% - 130px)' : 'calc(50% + 20px)';
+            b.innerText = s;
+            document.body.appendChild(b);
+            b.onclick = () => {
+                const img = s.includes("游泳") ? "游泳.png" : "网球.png";
+                viewImage(img);
+            };
+        });
     }
 
     function showModal(html) {
