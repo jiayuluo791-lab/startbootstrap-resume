@@ -5,226 +5,199 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>家渝的个人鱼塘</title>
     <style>
-        :root { --teal: #00796b; --glow: rgba(178, 235, 242, 0.6); }
+        :root { --teal: #00796b; --glow: rgba(178, 235, 242, 0.5); }
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "PingFang SC", sans-serif; background-color: #000b14; }
         body { background-image: url("dist/assets/img/water.jpg"); background-size: cover; background-position: center; }
         
+        /* 萤火虫画布 */
         #fireflyCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
+        /* 水母：极慢悬浮 */
         .jellyfish {
             position: absolute; width: 150px; height: auto; z-index: 2; pointer-events: none;
-            opacity: 0.7; animation: JellyMovement 45s linear infinite; transition: opacity 0.5s;
+            opacity: 0.6; animation: JellyMovement 45s linear infinite;
         }
         @keyframes JellyMovement {
             0% { transform: translate(0, 0) rotate(0deg); }
-            50% { transform: translate(80px, 120px) rotate(8deg); }
+            50% { transform: translate(60px, 100px) rotate(5deg); }
             100% { transform: translate(0, 0) rotate(0deg); }
         }
 
+        /* 中心头像 */
         #profile-avatar { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
             width: 210px; height: 210px; border-radius: 50%; 
-            border: 7px solid rgba(255, 255, 255, 0.3); 
+            border: 6px solid rgba(255, 255, 255, 0.2); 
             box-shadow: 0 0 50px var(--glow); z-index: 5; 
-            object-fit: cover; animation: AvatarFloat 5s ease-in-out infinite; 
+            object-fit: cover; animation: AvatarFloat 6s ease-in-out infinite; 
         }
-        @keyframes AvatarFloat { 0%, 100% { transform: translate(-50%, -50%) translateY(0px); } 50% { transform: translate(-50%, -50%) translateY(-12px); } }
+        @keyframes AvatarFloat { 0%, 100% { transform: translate(-50%, -50%) translateY(0px); } 50% { transform: translate(-50%, -50%) translateY(-15px); } }
 
-        .fish { position: absolute; cursor: pointer; z-index: 10; display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s; }
+        /* 鱼群 */
+        .fish { position: absolute; cursor: pointer; z-index: 10; display: flex; flex-direction: column; align-items: center; }
         .fish img { width: 110px; height: auto; }
-        .fish div { font-size: 15px; color: var(--teal); font-weight: bold; margin-top: 5px; text-shadow: 0 0 6px #fff; }
+        .fish div { font-size: 15px; color: var(--teal); font-weight: bold; margin-top: 5px; text-shadow: 0 0 8px #fff; }
 
-        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(6px); z-index: 90; }
+        /* 弹窗系统 */
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); z-index: 90; }
         #main-modal, #image-viewer { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 25px; background: #fff; z-index: 150; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
-        #main-modal { width: 85%; max-width: 480px; padding: 25px; max-height: 75vh; overflow-y: auto; }
-        #image-viewer { width: 90%; max-width: 1000px; background: none; box-shadow: none; }
-        #image-viewer img { width: 100%; border-radius: 15px; }
-        .close-x { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 22px; color: #666; background: #eee; width: 32px; height: 32px; border-radius: 50%; text-align: center; line-height: 32px; }
+        #main-modal { width: 85%; max-width: 450px; padding: 30px; max-height: 80vh; overflow-y: auto; }
+        #image-viewer { width: 95%; max-width: 1000px; background: none; box-shadow: none; }
+        #image-viewer img { width: 100%; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        .close-x { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 24px; color: #999; width: 35px; height: 35px; text-align: center; line-height: 35px; background: #f0f0f0; border-radius: 50%; }
 
-        .shell-option { position: fixed; width: 125px; height: 125px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; color: var(--teal); font-weight: bold; transform: translate(-50%, -50%) scale(0); opacity: 0; transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .shell-option span { position: relative; z-index: 2; font-size: 16px; text-shadow: 0 0 5px #fff; }
+        /* 内容布局 */
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
+        .grid-item { text-align: center; cursor: pointer; transition: transform 0.2s; }
+        .grid-item:active { transform: scale(0.9); }
+        .icon-box { background: #f8fafc; border-radius: 18px; padding: 15px; font-size: 32px; margin-bottom: 8px; border: 1px solid #edf2f7; }
+        .scroll-x { display: flex; overflow-x: auto; gap: 15px; padding: 10px 0; scroll-snap-type: x mandatory; }
+        .scroll-x img { width: 240px; border-radius: 12px; scroll-snap-align: center; flex-shrink: 0; border: 1px solid #eee; }
+        
+        /* 唱片机 */
+        .record-player { display: flex; overflow-x: auto; gap: 20px; padding: 20px 0; scrollbar-width: none; align-items: center; }
+        .record-item { flex: 0 0 160px; text-align: center; }
+        .record-item img { width: 150px; height: 150px; border-radius: 50%; border: 10px solid #1a1a1a; object-fit: cover; }
+        .record-item.active img { animation: Spin 12s linear infinite; }
+        @keyframes Spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* 贝壳系统 */
+        .shell-option { position: fixed; width: 130px; height: 130px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; color: var(--teal); font-weight: bold; transform: translate(-50%, -50%) scale(0); opacity: 0; transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .shell-option img { position: absolute; width: 100%; height: 100%; z-index: -1; }
         .shell-unfold { transform: translate(-50%, -50%) scale(1) !important; opacity: 1 !important; }
-
-        .work-scroll, .record-player { display: flex; overflow-x: auto; gap: 15px; padding: 10px 0; scroll-snap-type: x mandatory; scrollbar-width: none; }
-        .work-scroll img { width: 220px; border-radius: 12px; scroll-snap-align: center; cursor: pointer; }
-        .record-item { flex: 0 0 150px; text-align: center; }
-        .record-item img { width: 140px; height: 140px; border-radius: 50%; border: 10px solid #222; object-fit: cover; }
-        .record-item.is-selected img { animation: RecordSpin 12s linear infinite; }
-        @keyframes RecordSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
 <canvas id="fireflyCanvas"></canvas>
-<img class="jellyfish" src="dist/assets/img/watermom.png" style="top:10%; left:5%;">
-<img class="jellyfish" src="dist/assets/img/watermom.png" style="bottom:15%; right:8%; animation-delay: -15s; transform: scaleX(-1);">
+<img class="jellyfish" src="dist/assets/img/watermom.png" style="top:12%; left:8%;">
+<img class="jellyfish" src="dist/assets/img/watermom.png" style="bottom:18%; right:10%; animation-delay: -20s; transform: scaleX(-1);">
 
 <img id="profile-avatar" src="dist/assets/img/profile.jpg">
 <div id="overlay" onclick="closeAll()"></div>
 
 <div id="main-modal"><div class="close-x" onclick="closeModal()">×</div><div id="modal-body"></div></div>
-<div id="image-viewer"><div class="close-x" onclick="closeViewer()" style="top:-40px; right:0;">×</div><img id="full-img" src=""></div>
+<div id="image-viewer"><div class="close-x" onclick="closeViewer()" style="top:-45px; right:0;">×</div><img id="full-img" src=""></div>
 
 <script>
-    // 1. 萤火虫逻辑
+    // 1. 萤火虫 Canvas
     const canvas = document.getElementById('fireflyCanvas');
     const ctx = canvas.getContext('2d');
-    let fireflies = [];
-    function initCanvas() {
+    let fires = [];
+    function init() {
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        fireflies = Array.from({length: 50}, () => ({
+        fires = Array.from({length: 55}, () => ({
             x: Math.random() * canvas.width,
-            y: canvas.height - (Math.random() * canvas.height * 0.4),
-            r: Math.random() * 2 + 1,
+            y: canvas.height - (Math.random() * canvas.height * 0.45),
+            r: Math.random() * 2.5 + 0.5,
             vx: (Math.random() - 0.5) * 0.4,
             vy: (Math.random() - 0.5) * 0.3,
             a: Math.random(),
-            ds: Math.random() * 0.01 + 0.005
+            s: Math.random() * 0.01 + 0.005
         }));
     }
-    function draw() {
+    function render() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        fireflies.forEach(f => {
-            f.x += f.vx; f.y += f.vy; f.a += f.ds;
-            if(f.a > 0.8 || f.a < 0.2) f.ds *= -1;
+        fires.forEach(f => {
+            f.x += f.vx; f.y += f.vy; f.a += f.s;
+            if(f.a > 0.8 || f.a < 0.2) f.s *= -1;
             ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI*2);
             ctx.fillStyle = `rgba(178, 235, 242, ${f.a})`;
             ctx.shadowBlur = 10; ctx.shadowColor = "#b2ebf2";
             ctx.fill();
         });
-        requestAnimationFrame(draw);
+        requestAnimationFrame(render);
     }
-    initCanvas(); draw(); window.onresize = initCanvas;
+    init(); render(); window.onresize = init;
 
-    // 2. 鱼群逻辑
+    // 2. 核心逻辑
     const fishData = [
-        { title: '基础信息', type: 'info', content: `<h3>基础信息</h3><p><b>罗家渝</b> | 华南农大 2023级</p><p>📞 18998055663<br>📧 2304362354@qq.com</p>` },
-        { title: '工作经历', type: 'work', content: `<h3>项目实战</h3><div class="work-scroll">${[1,2,3,4,5].map(i=>`<img src="dist/assets/img/worke${i}.jpg" onclick="viewImage('worke${i}.jpg')">`).join('')}</div>` },
+        { title: '基础信息', type: 'info' },
+        { title: '工作经历', type: 'work' },
         { title: '工作技能', type: 'skill' },
         { title: '性格与爱好', type: 'special' }
     ];
 
-    fishData.forEach((data) => {
-        const fish = document.createElement('div'); fish.className = 'fish';
-        fish.innerHTML = `<img src="dist/assets/img/fish1.png"><div>${data.title}</div>`;
-        document.body.appendChild(fish);
-        let px = Math.random() * (window.innerWidth - 120), py = Math.random() * (window.innerHeight - 120);
-        let vx = (Math.random() - 0.5) * 2, vy = (Math.random() - 0.5) * 2;
-        function moveFish() {
+    fishData.forEach((d) => {
+        const f = document.createElement('div'); f.className = 'fish';
+        f.innerHTML = `<img src="dist/assets/img/fish1.png"><div>${d.title}</div>`;
+        document.body.appendChild(f);
+        let px = Math.random()*(window.innerWidth-120), py = Math.random()*(window.innerHeight-120);
+        let vx = (Math.random()-0.5)*2.2, vy = (Math.random()-0.5)*2.2;
+        function move() {
             px += vx; py += vy;
-            if(px < 0 || px > window.innerWidth-110) vx *= -1;
-            if(py < 0 || py > window.innerHeight-110) vy *= -1;
-            fish.style.left = px+'px'; fish.style.top = py+'px';
-            fish.querySelector('img').style.transform = vx > 0 ? 'scaleX(1)' : 'scaleX(-1)';
-            requestAnimationFrame(moveFish);
+            if(px<0 || px>window.innerWidth-110) vx*=-1; if(py<0 || py>window.innerHeight-110) vy*=-1;
+            f.style.left = px+'px'; f.style.top = py+'px';
+            f.querySelector('img').style.transform = vx>0 ? 'scaleX(1)':'scaleX(-1)';
+            requestAnimationFrame(move);
         }
-        moveFish();
-        fish.onclick = (e) => {
-            e.stopPropagation();
-            if (data.type === 'skill') openSkillFolder();
-            else if (data.type === 'special') startDeepDive();
-            else showModal(data.content);
-        };
+        move();
+        f.onclick = () => {
+            if(d.type === 'info') showModal(`<h3 style="color:var(--teal)">个人信息</h3><p><b>罗家渝</b><br>华南农大 农林经管<br>📞 18998055663</p>`);
+            else if(d.type === 'work') showModal(`<h3 style="color:var(--teal)">项目实战</h3><div class="scroll-x">${[1,2,3,4,5].map(i=>`<img src="dist/assets/img/worke${i}.jpg" onclick="viewImage('worke${i}.jpg')">`).join('')}</div>`);
+            else if(d.type === 'skill') openSkill();
+            else startDive();
+        }
     });
 
-    // 3. 技能
-    function openSkillFolder() {
-        const html = `<h3>核心技能</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;text-align:center;">
-            <div onclick="viewImage('image_2387a3.jpg')"><div style="font-size:30px;background:#f5f5f5;border-radius:12px;padding:10px;">🎬</div><div style="font-size:12px;">视频剪辑</div></div>
-            <div onclick="viewImage('image_2387e2.jpg')"><div style="font-size:30px;background:#f5f5f5;border-radius:12px;padding:10px;">🎨</div><div style="font-size:12px;">视觉设计</div></div>
-            <div onclick="viewImage('image_238805.jpg')"><div style="font-size:30px;background:#f5f5f5;border-radius:12px;padding:10px;">📊</div><div style="font-size:12px;">数据SOP</div></div>
+    // ✅ 工作技能：纯净图标化，修正文件名
+    function openSkill() {
+        const h = `<h3 style="color:var(--teal)">核心能力</h3>
+            <div class="grid-3">
+                <div class="grid-item" onclick="viewImage('image_2387a3.jpg')"><div class="icon-box">🎬</div><div style="font-size:13px;font-weight:bold;">视频剪辑</div></div>
+                <div class="grid-item" onclick="viewImage('image_2387e2.jpg')"><div class="icon-box">🎨</div><div style="font-size:13px;font-weight:bold;">视觉设计</div></div>
+                <div class="grid-item" onclick="viewImage('image_238805.jpg')"><div class="icon-box">📑</div><div style="font-size:13px;font-weight:bold;">数据/SOP</div></div>
+            </div>`;
+        showModal(h);
+    }
+
+    // ✅ 唱片机：p1-p6
+    function showMusic() {
+        const h = `<h3 style="color:var(--teal)">我的唱片</h3><div class="record-player" id="rp">
+            ${[1,2,3,4,5,6].map((i,idx)=>`<div class="record-item ${idx===0?'active':''}"><img src="dist/assets/img/p${i}.jpg"></div>`).join('')}
         </div>`;
-        showModal(html);
-    }
-
-    // 4. 性格爱好 (关键修复点)
-    function startDeepDive() {
-        document.getElementById('overlay').style.display = 'block';
-        document.querySelectorAll('.fish, .jellyfish').forEach(f => f.style.opacity = '0');
-        
-        const opts = [{name:'性格', type:'char'}, {name:'爱好', type:'hobby'}];
-        opts.forEach((opt, i) => {
-            const btn = document.createElement('div'); btn.className = 'shell-option dive-opt';
-            btn.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${opt.name}</span>`;
-            btn.style.top = '50%'; btn.style.left = i === 0 ? 'calc(50% - 130px)' : 'calc(50% + 30px)';
-            document.body.appendChild(btn); 
-            setTimeout(() => btn.classList.add('shell-unfold'), 50);
-            
-            btn.onclick = (e) => { 
-                e.stopPropagation(); 
-                document.querySelectorAll('.dive-opt').forEach(el => el.remove()); 
-                if(opt.type === 'hobby') showHobbySub(); 
-                else showModal(`<h3>性格标签</h3><div style="display:flex;flex-wrap:wrap;gap:10px;padding:10px;">${['ENTJ','积极','社牛','爱笑'].map(t=>`<span style="background:#e0f2f1;color:#00796b;padding:5px 12px;border-radius:15px;font-weight:bold;">${t}</span>`).join('')}</div>`);
-            };
-        });
-    }
-
-    function showHobbySub() {
-        const subs = [{name:'✈️ 旅游', id:'travel'}, {name:'🌊 运动', id:'sport'}, {name:'🎧 听歌', id:'music'}];
-        subs.forEach((s, i) => {
-            const b = document.createElement('div'); b.className = 'shell-option hobby-item';
-            b.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span style="font-size:12px;">${s.name}</span>`;
-            const a = (i/3)*Math.PI*2; 
-            b.style.left = (window.innerWidth/2 + Math.cos(a)*170)+'px'; 
-            b.style.top = (window.innerHeight/2 + Math.sin(a)*170)+'px';
-            document.body.appendChild(b); 
-            setTimeout(() => b.classList.add('shell-unfold'), 50);
-            b.onclick = (e) => { 
-                e.stopPropagation(); 
-                document.querySelectorAll('.hobby-item').forEach(el => el.remove()); 
-                if(s.id === 'music') showMusicPlayer(); else showModal('热爱生活，持续探索中...');
-            };
-        });
-    }
-
-    function showMusicPlayer() {
-        const html = `<h3>我的唱片</h3><div class="record-player" id="rp">
-            ${[1,2,3,4,5,6].map((i,idx)=>`<div class="record-item ${idx===0?'is-selected':''}"><img src="dist/assets/img/p${i}.jpg"></div>`).join('')}
-        </div>`;
-        showModal(html);
+        showModal(h);
         const rp = document.getElementById('rp');
         rp.onscroll = () => {
             const center = rp.scrollLeft + rp.offsetWidth/2;
             rp.querySelectorAll('.record-item').forEach(it => {
                 const ic = it.offsetLeft + it.offsetWidth/2;
-                Math.abs(ic - center) < 70 ? it.classList.add('is-selected') : it.classList.remove('is-selected');
+                Math.abs(ic - center) < 80 ? it.classList.add('active') : it.classList.remove('active');
             });
         };
     }
 
-    // 5. 弹窗与关闭 (终极保险逻辑)
-    function showModal(h) { 
-        document.getElementById('overlay').style.display='block'; 
-        document.getElementById('modal-body').innerHTML=h; 
-        document.getElementById('main-modal').style.display='block'; 
-    }
-    function viewImage(s) { 
-        document.getElementById('full-img').src="dist/assets/img/"+s; 
-        document.getElementById('image-viewer').style.display='block'; 
-        document.getElementById('overlay').style.display='block'; 
-    }
-    function closeModal() { document.getElementById('main-modal').style.display='none'; }
-    function closeViewer() { document.getElementById('image-viewer').style.display='none'; }
-    
-    // ✅ 核心修复：点击 overlay 或调用此函数时，强制恢复所有鱼
-    function closeAll() { 
-        closeModal(); 
-        closeViewer(); 
-        document.getElementById('overlay').style.display = 'none';
-        
-        // 强制恢复透明度并确保显示
-        const elements = document.querySelectorAll('.fish, .jellyfish');
-        elements.forEach(el => {
-            el.style.opacity = '1';
-            el.style.visibility = 'visible';
-            el.style.display = 'flex'; // 针对 fish 容器
-            if(el.classList.contains('jellyfish')) el.style.display = 'block';
+    function startDive() {
+        document.getElementById('overlay').style.display='block';
+        document.querySelectorAll('.fish, .jellyfish').forEach(f => f.style.opacity='0');
+        const opts = [{n:'性格', t:'c'}, {n:'爱好', t:'h'}];
+        opts.forEach((o, i) => {
+            const b = document.createElement('div'); b.className = 'shell-option d-opt';
+            b.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${o.n}</span>`;
+            b.style.top = '50%'; b.style.left = i === 0 ? 'calc(50% - 135px)' : 'calc(50% + 35px)';
+            document.body.appendChild(b); setTimeout(() => b.classList.add('shell-unfold'), 50);
+            b.onclick = (e) => { e.stopPropagation(); document.querySelectorAll('.d-opt').forEach(el => el.remove()); 
+                if(o.t === 'h') showHobby(); else showModal('ENTJ | 爱笑 | 社牛大师');
+            };
         });
-
-        // 清理贝壳
-        document.querySelectorAll('.dive-opt, .hobby-item').forEach(el => el.remove()); 
     }
+
+    function showHobby() {
+        const subs = [{n:'✈️ 旅游', i:'t'}, {n:'🌊 运动', i:'s'}, {n:'🎧 音乐', i:'m'}];
+        subs.forEach((s, i) => {
+            const b = document.createElement('div'); b.className = 'shell-option h-opt';
+            b.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span style="font-size:12px;">${s.n}</span>`;
+            const a = (i/3)*Math.PI*2; b.style.left = (window.innerWidth/2 + Math.cos(a)*180)+'px'; b.style.top = (window.innerHeight/2 + Math.sin(a)*180)+'px';
+            document.body.appendChild(b); setTimeout(() => b.classList.add('shell-unfold'), 50);
+            b.onclick = (e) => { e.stopPropagation(); if(s.i==='m') showMusic(); else closeModal(); };
+        });
+    }
+
+    function showModal(h) { document.getElementById('overlay').style.display='block'; document.getElementById('modal-body').innerHTML=h; document.getElementById('main-modal').style.display='block'; }
+    function viewImage(s) { document.getElementById('full-img').src="dist/assets/img/"+s; document.getElementById('image-viewer').style.display='block'; document.getElementById('overlay').style.display='block'; }
+    function closeModal() { document.getElementById('main-modal').style.display='none'; document.getElementById('overlay').style.display='none'; }
+    function closeViewer() { document.getElementById('image-viewer').style.display='none'; if(document.getElementById('main-modal').style.display==='none') document.getElementById('overlay').style.display='none'; }
+    function closeAll() { closeModal(); closeViewer(); document.querySelectorAll('.fish, .jellyfish').forEach(f => f.style.opacity='1'); document.querySelectorAll('.d-opt, .h-opt').forEach(el => el.remove()); }
 </script>
 </body>
 </html>
