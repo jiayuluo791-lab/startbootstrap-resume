@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>家渝的个人鱼塘</title>
+    <title>i have a sea</title>
     <style>
         :root { --teal: #00796b; --glow: rgba(178, 235, 242, 0.6); }
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "PingFang SC", sans-serif; background-color: #000b14; }
@@ -153,30 +153,38 @@
         showModal(html);
     }
 
-    function startDeepDive() {
+ function startDeepDive() {
         document.getElementById('overlay').style.display = 'block';
         document.querySelectorAll('.fish, .jellyfish').forEach(f => f.style.opacity = '0');
+        
         const opts = [{name:'性格', type:'char'}, {name:'爱好', type:'hobby'}];
         opts.forEach((opt, i) => {
-            const btn = document.createElement('div'); btn.className = 'shell-option dive-opt';
+            const btn = document.createElement('div'); 
+            btn.className = 'shell-option dive-opt';
             btn.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${opt.name}</span>`;
-            btn.style.top = '50%'; btn.style.left = i === 0 ? 'calc(50% - 130px)' : 'calc(50% + 30px)';
-            document.body.appendChild(btn); setTimeout(() => btn.classList.add('shell-unfold'), 50);
-            btn.onclick = (e) => { e.stopPropagation(); document.querySelectorAll('.dive-opt').forEach(el => el.remove()); 
-               // 请替换 startDive 函数中的判断逻辑
-if (o.t === 'h') {
-    showHobby(); 
-} else {
-    // 修复：性格部分改用更美观的展示
-    showModal(`
-        <h3 style="color:var(--teal)">我的性格标签</h3>
-        <div style="display:flex; flex-wrap:wrap; gap:10px; padding:10px;">
-            ${['ENTJ', '爱笑', '社牛大师', '偶尔工作狂', '想象力丰富', '说干就干'].map(tag => 
-                `<span style="background:#e0f2f1; color:#00796b; padding:5px 12px; border-radius:15px; font-weight:bold;">${tag}</span>`
-            ).join('')}
-        </div>
-    `);
-}
+            btn.style.top = '50%'; 
+            btn.style.left = i === 0 ? 'calc(50% - 130px)' : 'calc(50% + 30px)';
+            document.body.appendChild(btn); 
+            
+            setTimeout(() => btn.classList.add('shell-unfold'), 50);
+            
+            btn.onclick = (e) => { 
+                e.stopPropagation(); 
+                document.querySelectorAll('.dive-opt').forEach(el => el.remove()); 
+                
+                // ✅ 这里的判断逻辑已对齐变量名
+                if (opt.type === 'hobby') {
+                    showHobbySub(); // 修复：之前这里函数名写错了或没对上
+                } else {
+                    showModal(`
+                        <h3 style="color:var(--teal)">我的性格标签</h3>
+                        <div style="display:flex; flex-wrap:wrap; gap:10px; padding:10px;">
+                            ${['ENTJ', '爱笑', '社牛大师', '积极主动', '想象力丰富', '执行力强'].map(tag => 
+                                `<span style="background:#e0f2f1; color:#00796b; padding:5px 12px; border-radius:15px; font-weight:bold; font-size:14px;">${tag}</span>`
+                            ).join('')}
+                        </div>
+                    `);
+                }
             };
         });
     }
@@ -214,7 +222,17 @@ if (o.t === 'h') {
     function viewImage(s) { document.getElementById('full-img').src="dist/assets/img/"+s; document.getElementById('image-viewer').style.display='block'; document.getElementById('overlay').style.display='block'; }
     function closeModal() { document.getElementById('main-modal').style.display='none'; document.getElementById('overlay').style.display='none'; }
     function closeViewer() { document.getElementById('image-viewer').style.display='none'; if(document.getElementById('main-modal').style.display==='none') document.getElementById('overlay').style.display='none'; }
-    function closeAll() { closeModal(); closeViewer(); document.querySelectorAll('.fish, .jellyfish').forEach(f => f.style.opacity='1'); document.querySelectorAll('.dive-opt, .hobby-item').forEach(el => el.remove()); }
-</script>
+    function closeAll() { 
+        closeModal(); 
+        closeViewer(); 
+        // ✅ 恢复鱼群和水母的可见度
+        document.querySelectorAll('.fish, .jellyfish').forEach(f => {
+            f.style.opacity = '1';
+        }); 
+        // ✅ 清理所有层级的贝壳按钮
+        document.querySelectorAll('.dive-opt, .hobby-item, .shell-option').forEach(el => {
+            if(!el.classList.contains('static')) el.remove(); // 保护静态元素，只删除动态生成的
+        }); 
+    }</script>
 </body>
 </html>
