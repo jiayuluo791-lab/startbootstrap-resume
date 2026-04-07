@@ -17,53 +17,30 @@
             position: absolute; width: 150px; height: auto; z-index: 2; pointer-events: none;
             opacity: 0.7; animation: JellyMovement 45s linear infinite;
         }
-/* ✅ 1. 只有这一个动画定义，不要重复！ */
-@keyframes scatterAnim {
-    0% { 
-        opacity: 0; 
-        transform: translate(-50%, -50%) scale(0); 
-    }
-    30% { 
-        opacity: 1; 
-        transform: translate(-50%, -50%) scale(1.1); 
-    }
-    100% { 
-        opacity: 1; /* 终点透明度必须是 1 */
-        transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--tr)); 
-    }
-}
 
-/* ✅ 2. 只有这一个标签样式 */
-.char-tag-scatter {
-    position: fixed; 
-    padding: 10px 20px; 
-    background: #e0f2f1; 
-    color: #00796b; 
-    border-radius: 20px;
-    font-weight: bold; 
-    font-size: 14px; 
-    pointer-events: none; 
-    z-index: 200; 
-    border: 1.5px solid #b2dfdb;
-    /* 核心：forwards 锁死终点 */
-    animation: scatterAnim 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-}
+        /* ✅ 唯一的性格标签动画定义 */
+        @keyframes scatterAnim {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+            30% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+            100% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--tr)); }
+        }
+
+        .char-tag-scatter {
+            position: fixed; padding: 10px 20px; background: #e0f2f1; color: #00796b; border-radius: 20px;
+            font-weight: bold; font-size: 14px; pointer-events: none; z-index: 200; border: 1.5px solid #b2dfdb;
+            /* forwards 确保动画结束不消失 */
+            animation: scatterAnim 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* ✅ 中心头像：已缩小 */
         #profile-avatar { 
-    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-    
-    /* ✅ 修改：把宽度和高度从 210px 缩小到 150px (你可以根据喜好调整这个数字) */
-    width: 150px; 
-    height: 150px; 
-    
-    border-radius: 50%; 
-    
-    /* ✅ 修改：边框也稍微细一点，更精致 */
-    border: 5px solid rgba(255, 255, 255, 0.3); 
-    
-    box-shadow: 0 0 35px var(--glow); z-index: 5; 
-    object-fit: cover; animation: AvatarFloat 5s ease-in-out infinite; 
-}
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            width: 150px; height: 150px; 
+            border-radius: 50%; 
+            border: 5px solid rgba(255, 255, 255, 0.3); 
+            box-shadow: 0 0 35px var(--glow); z-index: 5; 
+            object-fit: cover; animation: AvatarFloat 5s ease-in-out infinite; 
+        }
         @keyframes AvatarFloat { 0%, 100% { transform: translate(-50%, -50%) translateY(0px); } 50% { transform: translate(-50%, -50%) translateY(-12px); } }
 
         /* 鱼群 */
@@ -88,14 +65,6 @@
         .work-scroll { display: flex; overflow-x: auto; gap: 15px; padding: 10px 0; scroll-snap-type: x mandatory; scrollbar-width: none; }
         .work-scroll::-webkit-scrollbar { display: none; }
         .work-scroll img { width: 220px; border-radius: 12px; scroll-snap-align: center; cursor: pointer; border: 1px solid #eee; flex-shrink: 0; }
-
-        /* 性格标签散落动画 */
-        .char-tag-scatter {
-            position: fixed; padding: 8px 18px; background: #e0f2f1; color: #00796b; border-radius: 20px;
-            font-weight: bold; font-size: 14px; pointer-events: none; z-index: 200; border: 1px solid #b2dfdb;
-            animation: scatterAnim 4s ease-out forwards;
-        }
-       
 
         /* 唱片机 */
         .record-player { display: flex; overflow-x: auto; gap: 25px; padding: 20px 10px; scrollbar-width: none; }
@@ -179,7 +148,6 @@
         };
     });
 
-    // ✅ 3. 工作技能：正确匹配 skill_video.jpg 等
     function openSkillFolder() {
         const html = `<h3>核心技能详情</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;text-align:center;">
             <div onclick="viewImage('skill_video.jpg')"><div style="font-size:30px;background:#f5f5f5;border-radius:12px;padding:10px;">🎬</div><div style="font-size:12px;">视频剪辑</div></div>
@@ -189,24 +157,24 @@
         showModal(html);
     }
 
-    // ✅ 4. 性格爱好：深潜逻辑
     function startDeepDive() {
         document.getElementById('overlay').style.display = 'block';
-       document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'none'); const opts = [{name:'性格标签', type:'char'}, {name:'兴趣爱好', type:'hobby'}];
+        document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'none'); 
+        const opts = [{name:'性格标签', type:'char'}, {name:'兴趣爱好', type:'hobby'}];
         opts.forEach((opt, i) => {
             const btn = document.createElement('div'); btn.className = 'shell-option dive-opt';
             btn.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${opt.name}</span>`;
-           // 设置贝壳垂直居中
-btn.style.top = '50%'; 
-
-// 精准定位在中心点两侧：第一个在左边 160px，第二个在右边 160px
-// 这里的 160px 刚好避开了你 210px 宽的头像
-if (i === 0) {
-    btn.style.left = 'calc(50% - 160px)'; // 左侧贝壳
-} else {
-    btn.style.left = 'calc(50% + 160px)'; // 右侧贝壳
-} document.body.appendChild(btn); setTimeout(() => btn.classList.add('shell-unfold'), 50);
-            btn.onclick = (e) => { e.stopPropagation(); 
+            btn.style.top = '50%'; 
+            // 贝壳位置配合头像缩小进行微调
+            if (i === 0) {
+                btn.style.left = 'calc(50% - 125px)'; 
+            } else {
+                btn.style.left = 'calc(50% + 125px)'; 
+            } 
+            document.body.appendChild(btn); 
+            setTimeout(() => btn.classList.add('shell-unfold'), 50);
+            btn.onclick = (e) => { 
+                e.stopPropagation(); 
                 if(opt.type === 'char') scatterTags(); 
                 else {
                     document.querySelectorAll('.dive-opt').forEach(el => el.remove());
@@ -216,27 +184,24 @@ if (i === 0) {
         });
     }
 
-  function scatterTags() {
-    const tags = ['ENTJ', '行动派', '社牛大师', '拒绝拖延', '想象力丰富', '说干就干', '爱笑', '偶尔工作狂', '有个设计梦', '第一喜欢海边', '执行力极强', '探索欲Max'];
-    
-    tags.forEach((text, i) => {
-        const el = document.createElement('div');
-        el.className = 'char-tag-scatter'; // 它会自动去套用上面的 CSS
-        el.innerText = text;
-        el.style.left = '50%'; 
-        el.style.top = '50%';
-        
-        const angle = (i / tags.length) * Math.PI * 2; 
-        const dist = 220 + Math.random() * 80; 
-        
-        el.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
-        el.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
-        el.style.setProperty('--tr', (Math.random() - 0.5) * 30 + 'deg');
-        
-        el.style.animationDelay = (i * 0.08) + 's'; // 稍微错开一点点
-        document.body.appendChild(el);
-    });
-}
+    function scatterTags() {
+        const tags = ['ENTJ', '行动派', '社牛大师', '拒绝拖延', '想象力丰富', '说干就干', '爱笑', '偶尔工作狂', '有个设计梦', '第一喜欢海边', '执行力极强', '探索欲Max'];
+        tags.forEach((text, i) => {
+            const el = document.createElement('div');
+            el.className = 'char-tag-scatter';
+            el.innerText = text;
+            el.style.left = '50%'; 
+            el.style.top = '50%';
+            const angle = (i / tags.length) * Math.PI * 2; 
+            const dist = 200 + Math.random() * 80; 
+            el.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+            el.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+            el.style.setProperty('--tr', (Math.random() - 0.5) * 30 + 'deg');
+            el.style.animationDelay = (i * 0.08) + 's';
+            document.body.appendChild(el);
+        });
+    }
+
     function showHobbySub() {
         const subs = [
             {name:'✈️ 旅游', c:'<h3>热爱旅行</h3><p>喜欢探索未知的城市和风景，捕捉自然灵感，追求“原生感”的视觉表达。</p>'},
@@ -247,15 +212,18 @@ if (i === 0) {
         subs.forEach((s, i) => {
             const b = document.createElement('div'); b.className = 'shell-option hobby-item';
             b.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span style="font-size:12px;">${s.name}</span>`;
-            const a = (i/subs.length)*Math.PI*2; b.style.left = (window.innerWidth/2 + Math.cos(a)*170)+'px'; b.style.top = (window.innerHeight/2 + Math.sin(a)*170)+'px';
-            document.body.appendChild(b); setTimeout(() => b.classList.add('shell-unfold'), 50);
-            b.onclick = (e) => { e.stopPropagation(); 
+            const a = (i/subs.length)*Math.PI*2; 
+            b.style.left = (window.innerWidth/2 + Math.cos(a)*170)+'px'; 
+            b.style.top = (window.innerHeight/2 + Math.sin(a)*170)+'px';
+            document.body.appendChild(b); 
+            setTimeout(() => b.classList.add('shell-unfold'), 50);
+            b.onclick = (e) => { 
+                e.stopPropagation(); 
                 if(s.id === 'music') showMusicPlayer(); else showModal(s.c);
             };
         });
     }
 
-    // ✅ 5. 音乐：匹配 p1.jpg - p6.jpg
     function showMusicPlayer() {
         const html = `<h3>我的唱片集</h3><div class="record-player" id="rp">
             ${[1,2,3,4,5,6].map((i,idx)=>`<div class="record-item ${idx===0?'is-selected':''}"><img src="dist/assets/img/p${i}.jpg"></div>`).join('')}
@@ -271,27 +239,21 @@ if (i === 0) {
         };
     }
 
-    // 通用控制
     function showModal(h) { document.getElementById('overlay').style.display='block'; document.getElementById('modal-body').innerHTML=h; document.getElementById('main-modal').style.display='block'; }
     function viewImage(s) { document.getElementById('full-img').src="dist/assets/img/"+s; document.getElementById('image-viewer').style.display='block'; document.getElementById('overlay').style.display='block'; }
     function closeModal() { document.getElementById('main-modal').style.display='none'; document.getElementById('overlay').style.display='none'; }
     function closeViewer() { document.getElementById('image-viewer').style.display='none'; if(document.getElementById('main-modal').style.display==='none') document.getElementById('overlay').style.display='none'; }
     
     function closeAll() { 
-    // 1. 关闭所有弹窗
-    document.getElementById('main-modal').style.display='none'; 
-    document.getElementById('image-viewer').style.display='none'; 
-    document.getElementById('overlay').style.display='none'; 
-
-    // 2. 【核心修复】让鱼群和水母重新出现
-    document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => {
-        f.style.display = 'flex'; // 重新显示
-        f.style.opacity = '1';    // 确保透明度是满的
-    }); 
-
-    // 3. 清理掉屏幕上散落的贝壳和性格标签
-    document.querySelectorAll('.dive-opt, .hobby-item, .char-tag-scatter').forEach(el => el.remove()); 
-}
+        document.getElementById('main-modal').style.display='none'; 
+        document.getElementById('image-viewer').style.display='none'; 
+        document.getElementById('overlay').style.display='none'; 
+        document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => {
+            f.style.display = 'flex';
+            f.style.opacity = '1';
+        }); 
+        document.querySelectorAll('.dive-opt, .hobby-item, .char-tag-scatter').forEach(el => el.remove()); 
+    }
 </script>
 </body>
 </html>
