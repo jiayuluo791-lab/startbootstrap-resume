@@ -173,20 +173,33 @@
     }
 
     function startDeepDive() {
-        document.getElementById('overlay').style.display = 'block';
-        document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'none'); 
-        const opts = [{name:'性格标签', type:'char'}, {name:'兴趣爱好', type:'hobby'}];
-        opts.forEach((opt, i) => {
-            const btn = document.createElement('div'); btn.className = 'shell-option dive-opt';
-            btn.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${opt.name}</span>`;
-            btn.style.top = '50%'; 
-            // ✅ 贝壳位置随放大后的头像自动避让
-            btn.style.left = i === 0 ? 'calc(50% - 145px)' : 'calc(50% + 145px)'; 
-            document.body.appendChild(btn); 
-            setTimeout(() => btn.classList.add('shell-unfold'), 50);
-            btn.onclick = (e) => { e.stopPropagation(); if(opt.type === 'char') scatterTags(); else { btn.remove(); showHobbySub(); } };
-        });
-    }
+    const overlay = document.getElementById('overlay');
+    overlay.style.display = 'block';
+    // 隐藏主页鱼群和水母
+    document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'none'); 
+
+    const opts = [{name:'性格标签', type:'char'}, {name:'兴趣爱好', type:'hobby'}];
+    opts.forEach((opt, i) => {
+        const btn = document.createElement('div'); 
+        btn.className = 'shell-option dive-opt'; // 标记为 dive-opt 方便清除
+        btn.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${opt.name}</span>`;
+        btn.style.top = '50%'; 
+        btn.style.left = i === 0 ? 'calc(50% - 145px)' : 'calc(50% + 145px)'; 
+        document.body.appendChild(btn); 
+        setTimeout(() => btn.classList.add('shell-unfold'), 50);
+
+        btn.onclick = (e) => { 
+            e.stopPropagation(); 
+            if(opt.type === 'char') {
+                scatterTags(); 
+            } else { 
+                // ✅ 核心修改：点击爱好后，先把当前的两个大贝壳删掉
+                document.querySelectorAll('.dive-opt').forEach(el => el.remove());
+                showHobbySub(); 
+            } 
+        };
+    });
+}
 
     function scatterTags() {
         const tags = ['ENTJ', '行动派', '社牛', '拒绝拖延', '想象力', '执行力', '爱笑', '工作狂', '设计梦', '探索欲'];
@@ -221,10 +234,22 @@
     function closeModal() { document.getElementById('main-modal').style.display='none'; document.getElementById('overlay').style.display='none'; }
     function closeViewer() { document.getElementById('image-viewer').style.display='none'; if(document.getElementById('main-modal').style.display==='none') document.getElementById('overlay').style.display='none'; }
     function closeAll() { 
-        closeModal(); closeViewer(); 
-        document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'flex'); 
-        document.querySelectorAll('.dive-opt, .hobby-item, .char-tag-scatter').forEach(el => el.remove()); 
-    }
+    // 1. 关闭所有可能的弹窗
+    document.getElementById('main-modal').style.display = 'none';
+    document.getElementById('image-viewer').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none'; 
+
+    // 2. 重新显示主页的鱼和水母
+    document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => {
+        f.style.display = 'flex';
+        if(f.classList.contains('jellyfish')) f.style.display = 'block'; // 水母通常是 block
+    });
+
+    // 3. ✅ 核心修改：清除所有深层互动的临时元素
+    // 包括：性格标签(.char-tag-scatter)、父级贝壳(.dive-opt)、爱好子贝壳(.hobby-item)
+    const elementsToRemove = document.querySelectorAll('.dive-opt, .hobby-item, .char-tag-scatter');
+    elementsToRemove.forEach(el => el.remove()); 
+}
 </script>
 </body>
 </html>
