@@ -9,13 +9,11 @@
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "PingFang SC", sans-serif; background-color: #000b14; }
         body { background-image: url("dist/assets/img/water.jpg"); background-size: cover; background-position: center; }
         
-        /* ✅ 画布：高性能萤火虫 */
         #fireflyCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-        /* ✅ 水母：极慢运动 (45s)，低负载 */
         .jellyfish {
             position: absolute; width: 150px; height: auto; z-index: 2; pointer-events: none;
-            opacity: 0.7; animation: JellyMovement 45s linear infinite;
+            opacity: 0.7; animation: JellyMovement 45s linear infinite; transition: opacity 0.5s;
         }
         @keyframes JellyMovement {
             0% { transform: translate(0, 0) rotate(0deg); }
@@ -23,7 +21,6 @@
             100% { transform: translate(0, 0) rotate(0deg); }
         }
 
-        /* 中心头像 */
         #profile-avatar { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
             width: 210px; height: 210px; border-radius: 50%; 
@@ -33,12 +30,10 @@
         }
         @keyframes AvatarFloat { 0%, 100% { transform: translate(-50%, -50%) translateY(0px); } 50% { transform: translate(-50%, -50%) translateY(-12px); } }
 
-        /* 鱼群 */
         .fish { position: absolute; cursor: pointer; z-index: 10; display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s; }
         .fish img { width: 110px; height: auto; }
         .fish div { font-size: 15px; color: var(--teal); font-weight: bold; margin-top: 5px; text-shadow: 0 0 6px #fff; }
 
-        /* 弹窗与遮罩 */
         #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(6px); z-index: 90; }
         #main-modal, #image-viewer { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 25px; background: #fff; z-index: 150; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
         #main-modal { width: 85%; max-width: 480px; padding: 25px; max-height: 75vh; overflow-y: auto; }
@@ -46,13 +41,11 @@
         #image-viewer img { width: 100%; border-radius: 15px; }
         .close-x { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 22px; color: #666; background: #eee; width: 32px; height: 32px; border-radius: 50%; text-align: center; line-height: 32px; }
 
-        /* 贝壳选项 */
         .shell-option { position: fixed; width: 125px; height: 125px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; color: var(--teal); font-weight: bold; transform: translate(-50%, -50%) scale(0); opacity: 0; transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .shell-option span { position: relative; z-index: 2; font-size: 16px; text-shadow: 0 0 5px #fff; }
         .shell-option img { position: absolute; width: 100%; height: 100%; z-index: -1; }
         .shell-unfold { transform: translate(-50%, -50%) scale(1) !important; opacity: 1 !important; }
 
-        /* 经历滑动 & 唱片机 */
         .work-scroll, .record-player { display: flex; overflow-x: auto; gap: 15px; padding: 10px 0; scroll-snap-type: x mandatory; scrollbar-width: none; }
         .work-scroll img { width: 220px; border-radius: 12px; scroll-snap-align: center; cursor: pointer; }
         .record-item { flex: 0 0 150px; text-align: center; }
@@ -74,7 +67,7 @@
 <div id="image-viewer"><div class="close-x" onclick="closeViewer()" style="top:-40px; right:0;">×</div><img id="full-img" src=""></div>
 
 <script>
-    // ✅ 1. 50个微小青色光点 (Canvas 保证不卡)
+    // 1. 萤火虫逻辑
     const canvas = document.getElementById('fireflyCanvas');
     const ctx = canvas.getContext('2d');
     let fireflies = [];
@@ -104,7 +97,7 @@
     }
     initCanvas(); draw(); window.onresize = initCanvas;
 
-    // ✅ 2. 数据定义
+    // 2. 鱼群逻辑
     const fishData = [
         { title: '基础信息', type: 'info', content: `<h3>基础信息</h3><p><b>罗家渝</b> | 华南农大 2023级</p><p>📞 18998055663<br>📧 2304362354@qq.com</p>` },
         { title: '工作经历', type: 'work', content: `<h3>项目实战</h3><div class="work-scroll">${[1,2,3,4,5].map(i=>`<img src="dist/assets/img/worke${i}.jpg" onclick="viewImage('worke${i}.jpg')">`).join('')}</div>` },
@@ -112,7 +105,6 @@
         { title: '性格与爱好', type: 'special' }
     ];
 
-    // 生成鱼群
     fishData.forEach((data) => {
         const fish = document.createElement('div'); fish.className = 'fish';
         fish.innerHTML = `<img src="dist/assets/img/fish1.png"><div>${data.title}</div>`;
@@ -128,14 +120,15 @@
             requestAnimationFrame(moveFish);
         }
         moveFish();
-        fish.onclick = () => {
+        fish.onclick = (e) => {
+            e.stopPropagation();
             if (data.type === 'skill') openSkillFolder();
             else if (data.type === 'special') startDeepDive();
             else showModal(data.content);
         };
     });
 
-    // ✅ 3. 技能图片精准修复
+    // 3. 技能
     function openSkillFolder() {
         const html = `<h3>核心技能</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;text-align:center;">
             <div onclick="viewImage('image_2387a3.jpg')"><div style="font-size:30px;background:#f5f5f5;border-radius:12px;padding:10px;">🎬</div><div style="font-size:12px;">视频剪辑</div></div>
@@ -145,7 +138,7 @@
         showModal(html);
     }
 
-    // ✅ 4. 性格与爱好板块修复
+    // 4. 性格爱好 (关键修复点)
     function startDeepDive() {
         document.getElementById('overlay').style.display = 'block';
         document.querySelectorAll('.fish, .jellyfish').forEach(f => f.style.opacity = '0');
@@ -185,7 +178,6 @@
         });
     }
 
-    // ✅ 5. 音乐板块 (p1-p6)
     function showMusicPlayer() {
         const html = `<h3>我的唱片</h3><div class="record-player" id="rp">
             ${[1,2,3,4,5,6].map((i,idx)=>`<div class="record-item ${idx===0?'is-selected':''}"><img src="dist/assets/img/p${i}.jpg"></div>`).join('')}
@@ -201,16 +193,36 @@
         };
     }
 
-    // ✅ 6. 核心工具函数：彻底解决消失问题
-    function showModal(h) { document.getElementById('overlay').style.display='block'; document.getElementById('modal-body').innerHTML=h; document.getElementById('main-modal').style.display='block'; }
-    function viewImage(s) { document.getElementById('full-img').src="dist/assets/img/"+s; document.getElementById('image-viewer').style.display='block'; document.getElementById('overlay').style.display='block'; }
-    function closeModal() { document.getElementById('main-modal').style.display='none'; if(document.getElementById('image-viewer').style.display==='none') document.getElementById('overlay').style.display='none'; }
-    function closeViewer() { document.getElementById('image-viewer').style.display='none'; if(document.getElementById('main-modal').style.display==='none') document.getElementById('overlay').style.display='none'; }
+    // 5. 弹窗与关闭 (终极保险逻辑)
+    function showModal(h) { 
+        document.getElementById('overlay').style.display='block'; 
+        document.getElementById('modal-body').innerHTML=h; 
+        document.getElementById('main-modal').style.display='block'; 
+    }
+    function viewImage(s) { 
+        document.getElementById('full-img').src="dist/assets/img/"+s; 
+        document.getElementById('image-viewer').style.display='block'; 
+        document.getElementById('overlay').style.display='block'; 
+    }
+    function closeModal() { document.getElementById('main-modal').style.display='none'; }
+    function closeViewer() { document.getElementById('image-viewer').style.display='none'; }
     
-    // ✅ 终极修复：确保所有鱼群、水母回归，清理所有贝壳
+    // ✅ 核心修复：点击 overlay 或调用此函数时，强制恢复所有鱼
     function closeAll() { 
-        closeModal(); closeViewer(); 
-        document.querySelectorAll('.fish, .jellyfish').forEach(f => { f.style.opacity = '1'; }); 
+        closeModal(); 
+        closeViewer(); 
+        document.getElementById('overlay').style.display = 'none';
+        
+        // 强制恢复透明度并确保显示
+        const elements = document.querySelectorAll('.fish, .jellyfish');
+        elements.forEach(el => {
+            el.style.opacity = '1';
+            el.style.visibility = 'visible';
+            el.style.display = 'flex'; // 针对 fish 容器
+            if(el.classList.contains('jellyfish')) el.style.display = 'block';
+        });
+
+        // 清理贝壳
         document.querySelectorAll('.dive-opt, .hobby-item').forEach(el => el.remove()); 
     }
 </script>
