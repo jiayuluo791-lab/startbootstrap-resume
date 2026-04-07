@@ -60,7 +60,25 @@
         #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(6px); z-index: 90; }
         #main-modal, #image-viewer { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 25px; background: #fff; z-index: 150; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
         #main-modal { width: 85%; max-width: 480px; padding: 25px; max-height: 75vh; overflow-y: auto; }
-        #image-viewer { width: 90%; max-width: 1000px; background: none; box-shadow: none; }
+        /* ✅ 专门为工作经历准备的 2x2 网格布局 */
+.work-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; /* 分成两列 */
+    gap: 12px;                      /* 照片间距 */
+    margin-top: 15px; 
+}
+
+.work-grid img { 
+    width: 100%;           
+    height: 110px;         /* 统一高度，让四张图对齐 */
+    object-fit: cover;     
+    border-radius: 12px;   
+    cursor: pointer;       
+    border: 1.5px solid #eee; 
+    transition: transform 0.2s;
+}
+
+.work-grid img:hover { transform: scale(1.05); border-color: var(--teal); }#image-viewer { width: 90%; max-width: 1000px; background: none; box-shadow: none; }
         #image-viewer img { width: 100%; border-radius: 15px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
         .close-x { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 22px; color: #666; background: #eee; width: 32px; height: 32px; border-radius: 50%; text-align: center; line-height: 32px; z-index: 10; }
 
@@ -137,8 +155,16 @@
     // 2. 鱼群数据
     const fishData = [
         { title: '基础信息', type: 'info', content: `<h3>基础信息</h3><p><b>罗家渝</b> | 华南农大 2023级</p><p>📞 18998055663<br>📧 2304362354@qq.com</p>` },
-        { title: '工作经历', type: 'work', content: `<h3>项目实战</h3><div class="work-scroll">${[1,2,3,4,5].map(i=>`<img src="dist/assets/img/worke${i}.jpg" onclick="viewImage('worke${i}.jpg')">`).join('')}</div>` },
-        { title: '工作技能', type: 'skill' },
+        { 
+    title: '工作经历', 
+    content: `<h3>项目实战</h3>
+              <div class="work-grid">
+                  <img src="dist/assets/img/worke1.jpg" onclick="viewImage('worke1.jpg')">
+                  <img src="dist/assets/img/worke2.jpg" onclick="viewImage('worke2.jpg')">
+                  <img src="dist/assets/img/worke3.jpg" onclick="viewImage('worke3.jpg')">
+                  <img src="dist/assets/img/worke4.jpg" onclick="viewImage('worke4.jpg')">
+              </div>` 
+},{ title: '工作技能', type: 'skill' },
         { title: '性格与爱好', type: 'special' }
     ];
 
