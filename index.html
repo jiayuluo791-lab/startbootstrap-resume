@@ -17,25 +17,26 @@
             position: absolute; width: 150px; height: auto; z-index: 2; pointer-events: none;
             opacity: 0.7; animation: JellyMovement 45s linear infinite;
         }
+/* ✅ 1. 只有这一个动画定义，不要重复！ */
+@keyframes scatterAnim {
+    0% { 
+        opacity: 0; 
+        transform: translate(-50%, -50%) scale(0); 
+    }
+    30% { 
+        opacity: 1; 
+        transform: translate(-50%, -50%) scale(1.1); 
+    }
+    100% { 
+        opacity: 1; /* 终点透明度必须是 1 */
+        transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--tr)); 
+    }
+}
 
-        /* ✅ 性格标签动画：确保 100% 时 opacity 为 1 且不消失 */
-        @keyframes scatterAnim {
-            0% { 
-                opacity: 0; 
-                transform: translate(-50%, -50%) scale(0); 
-            }
-            30% { 
-                opacity: 1; 
-                transform: translate(-50%, -50%) scale(1.1); 
-            }
-            100% { 
-                opacity: 1; 
-                transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--tr)); 
-            }
-        }
+/* ✅ 2. 只有这一个标签样式 */
 .char-tag-scatter {
     position: fixed; 
-    padding: 8px 18px; 
+    padding: 10px 20px; 
     background: #e0f2f1; 
     color: #00796b; 
     border-radius: 20px;
@@ -43,7 +44,10 @@
     font-size: 14px; 
     pointer-events: none; 
     z-index: 200; 
-    border: 1px solid #b2dfdb;
+    border: 1.5px solid #b2dfdb;
+    /* 核心：forwards 锁死终点 */
+    animation: scatterAnim 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
 }
         /* 中心头像 */
         #profile-avatar { 
@@ -84,11 +88,7 @@
             font-weight: bold; font-size: 14px; pointer-events: none; z-index: 200; border: 1px solid #b2dfdb;
             animation: scatterAnim 4s ease-out forwards;
         }
-        @keyframes scatterAnim {
-            0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
-            15% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
-            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.8) rotate(var(--tr)); }
-        }
+       
 
         /* 唱片机 */
         .record-player { display: flex; overflow-x: auto; gap: 25px; padding: 20px 10px; scrollbar-width: none; }
@@ -209,14 +209,13 @@ if (i === 0) {
         });
     }
 
-   function scatterTags() {
+  function scatterTags() {
     const tags = ['ENTJ', '行动派', '社牛大师', '拒绝拖延', '想象力丰富', '说干就干', '爱笑', '偶尔工作狂', '有个设计梦', '第一喜欢海边', '执行力极强', '探索欲Max'];
     
     tags.forEach((text, i) => {
         const el = document.createElement('div');
-        el.className = 'char-tag-scatter'; // 只要写了这一行，它就会自动去套用上面 CSS 里的动画
+        el.className = 'char-tag-scatter'; // 它会自动去套用上面的 CSS
         el.innerText = text;
-        
         el.style.left = '50%'; 
         el.style.top = '50%';
         
@@ -227,7 +226,7 @@ if (i === 0) {
         el.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
         el.style.setProperty('--tr', (Math.random() - 0.5) * 30 + 'deg');
         
-        el.style.animationDelay = (i * 0.05) + 's';
+        el.style.animationDelay = (i * 0.08) + 's'; // 稍微错开一点点
         document.body.appendChild(el);
     });
 }
