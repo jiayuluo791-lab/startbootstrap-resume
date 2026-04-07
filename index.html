@@ -35,7 +35,7 @@
         /* ✅ 中心头像：已缩小 */
         #profile-avatar { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 150px; height: 150px; 
+            width: 190px; height: 190px; 
             border-radius: 50%; 
             border: 5px solid rgba(255, 255, 255, 0.3); 
             box-shadow: 0 0 35px var(--glow); z-index: 5; 
@@ -167,9 +167,9 @@
             btn.style.top = '50%'; 
             // 贝壳位置配合头像缩小进行微调
             if (i === 0) {
-                btn.style.left = 'calc(50% - 125px)'; 
+                btn.style.left = 'calc(50% - 145px)'; 
             } else {
-                btn.style.left = 'calc(50% + 125px)'; 
+                btn.style.left = 'calc(50% + 145px)'; 
             } 
             document.body.appendChild(btn); 
             setTimeout(() => btn.classList.add('shell-unfold'), 50);
