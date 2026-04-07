@@ -19,9 +19,9 @@
             width: 220px; height: 220px; border-radius: 50%; 
             border: 8px solid rgba(255, 255, 255, 0.4); 
             box-shadow: 0 0 40px rgba(255, 255, 255, 0.6); z-index: 5; 
-            object-fit: cover; animation: float 4s ease-in-out infinite; 
+            object-fit: cover; animation: float AvatarFloat 4s ease-in-out infinite; 
         }
-        @keyframes float { 0%, 100% { transform: translate(-50%, -50%) translateY(0px); } 50% { transform: translate(-50%, -50%) translateY(-15px); } }
+        @keyframes AvatarFloat { 0%, 100% { transform: translate(-50%, -50%) translateY(0px); } 50% { transform: translate(-50%, -50%) translateY(-15px); } }
 
         /* 鱼群 */
         .fish { position: absolute; cursor: pointer; z-index: 10; display: flex; flex-direction: column; align-items: center; transition: opacity 0.5s; }
@@ -35,16 +35,43 @@
         #image-viewer { width: 95%; max-width: 1000px; background: none; box-shadow: none; overflow: visible; }
         #image-viewer img { width: 100%; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-        /* 气泡通用样式 */
-        .bubble-common { 
-            position: fixed; border-radius: 50%; 
-            background: radial-gradient(circle at 30% 30%, #fff, rgba(178,235,242,0.4)); 
-            backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; 
-            cursor: pointer; z-index: 100; color: var(--teal); border: 1px solid #fff; 
-            transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1); 
-            text-align: center; box-sizing: border-box; font-weight: bold; 
+        /* ✅ 贝壳选项样式 (代替球) */
+        .shell-option { 
+            position: fixed; width: 130px; height: 130px; 
+            display: flex; justify-content: center; align-items: center; 
+            cursor: pointer; z-index: 100; color: var(--teal); 
+            font-weight: bold; transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1); 
+            text-align: center; box-sizing: border-box; 
+            transform: translate(-50%, -50%) scale(0); opacity: 0; 
+            animation: ShellFloat 6s ease-in-out infinite, ShellBreath 3s ease-in-out infinite;
         }
+        .shell-option img { position: absolute; width: 100%; height: 100%; z-index: -1; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1)); }
         
+        /* 贝壳浮动和呼吸动画 */
+        @keyframes ShellFloat { 0%, 100% { margin-top: 0px; } 50% { margin-top: -10px; } }
+        @keyframes ShellBreath { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.1); } }
+
+        /* 舒展动画类 */
+        .shell-unfold { transform: translate(-50%, -50%) scale(1) !important; opacity: 1 !important; }
+
+        /* ✅ 唱片机样式：转起来 */
+        .record-player { display: flex; overflow-x: auto; gap: 30px; padding: 30px 0; scroll-snap-type: x mandatory; scrollbar-width: none; align-items: center; }
+        .record-player::-webkit-scrollbar { display: none; }
+        .record-item { flex: 0 0 160px; scroll-snap-align: center; text-align: center; position: relative; }
+        .record-item img { 
+            width: 150px; height: 150px; border-radius: 50%; 
+            border: 12px solid #222; box-shadow: 0 8px 25px rgba(0,0,0,0.4); 
+            object-fit: cover; transition: transform 0.5s; 
+            /* ✅ 核心修改：默认自动播放旋转 */
+            animation: RecordSpin 10s linear infinite;
+        }
+        /* 唱片旋转动画 */
+        @keyframes RecordSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* ✅ 只有居中（选中）的唱片才转动 */
+        .record-item.is-selected img { animation-play-state: running; }
+        .record-item:not(.is-selected) img { animation-play-state: paused; }
+
         #guide-text { position: fixed; top: 35%; left: 50%; transform: translateX(-50%); color: white; font-size: 22px; z-index: 110; font-weight: bold; text-shadow: 0 2px 10px rgba(0,0,0,0.3); pointer-events: none; }
 
         /* 技能文件夹 */
@@ -53,17 +80,10 @@
         .folder-icon { width: 60px; height: 60px; background: #f5f5f5; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 5px; border: 1px solid #eee; transition: transform 0.2s; }
         .folder-item:hover .folder-icon { transform: scale(1.1); }
 
-        /* 唱片机 */
-        .record-player { display: flex; overflow-x: auto; gap: 20px; padding: 20px 0; scroll-snap-type: x mandatory; scrollbar-width: none; }
-        .record-player::-webkit-scrollbar { display: none; }
-        .record-item { flex: 0 0 150px; scroll-snap-align: center; text-align: center; }
-        .record-item img { width: 140px; height: 140px; border-radius: 50%; border: 10px solid #222; animation: spin 8s linear infinite; animation-play-state: paused; box-shadow: 0 5px 15px rgba(0,0,0,0.3); object-fit: cover; }
-        .record-item:hover img { animation-play-state: running; }
-
-        /* 贝壳与运动 */
-        .shell-item { position: fixed; width: 70px; height: 70px; display: none; flex-direction: column; align-items: center; z-index: 100; cursor: pointer; }
-        .shell-item img { width: 100%; }
-        .shell-item span { font-size: 10px; background: rgba(255,255,255,0.8); padding: 2px 5px; border-radius: 5px; margin-top: -5px; color: var(--teal); font-weight: bold; }
+        /* 贝壳 (用于旅游和爱好子项，保留原样式但微调) */
+        .shell-sub-item { position: fixed; width: 75px; height: 75px; display: none; flex-direction: column; align-items: center; z-index: 100; cursor: pointer; transition: all 0.5s; }
+        .shell-sub-item img { width: 100%; filter: drop-shadow(0 3px 8px rgba(0,0,0,0.1)); }
+        .shell-sub-item span { font-size: 11px; background: rgba(255,255,255,0.8); padding: 3px 6px; border-radius: 5px; margin-top: -8px; color: var(--teal); font-weight: bold; }
 
         /* 工作经历滑动 */
         .work-gallery { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; padding: 10px 0; }
@@ -71,6 +91,8 @@
         .work-card img { width: 100%; cursor: pointer; display: block; }
 
         .close-x { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 24px; color: #999; z-index: 170; width: 30px; height: 30px; text-align: center; line-height: 30px; background: #fff; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        /* 子气泡通用 (用于性格标签) */
+        .bubble-common { position: fixed; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, rgba(178,235,242,0.4)); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; color: var(--teal); border: 1px solid #fff; transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1); text-align: center; box-sizing: border-box; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -134,31 +156,35 @@
         };
     });
 
-    function openSkillFolder() {
-        const html = `<h3 style="color:var(--teal);margin-top:0;">工作技能详情</h3><div class="folder-grid">
-            <div class="folder-item" onclick="viewImage('image_2387a3.jpg')"><div class="folder-icon">🎬</div><div style="font-size:12px;">视频剪辑</div></div>
-            <div class="folder-item" onclick="viewImage('image_2387e2.jpg')"><div class="folder-icon">🎨</div><div style="font-size:12px;">创意设计</div></div>
-            <div class="folder-item" onclick="viewImage('image_238805.jpg')"><div class="folder-icon">📑</div><div style="font-size:12px;">数据SOP</div></div>
-        </div>`;
-        showModal(html);
-    }
-
+    // --- ✅ 深度探索交互修正：贝壳代替球，加入动态设计 ---
     function startDeepDive() {
         document.getElementById('overlay').style.display = 'block';
         document.querySelectorAll('.fish').forEach(f => f.style.opacity = '0');
+        
         const guide = document.createElement('div');
         guide.id = 'guide-text';
         guide.innerText = "你想了解我的什么呢？";
         document.body.appendChild(guide);
+
         const options = [{name:'性格', type:'char'}, {name:'爱好', type:'hobby'}];
         options.forEach((opt, i) => {
+            // ✅ 使用贝壳图标作为容器
             const btn = document.createElement('div');
-            btn.className = 'bubble-common dive-opt';
-            btn.style.width = '120px'; btn.style.height = '120px';
+            btn.className = 'shell-option dive-opt';
+            btn.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${opt.name}</span>`;
+            
+            // 设置位置
             btn.style.top = '50%';
             btn.style.left = i === 0 ? 'calc(50% - 140px)' : 'calc(50% + 20px)';
-            btn.innerText = opt.name;
+            
+            // 加入随机的动效起始延迟，让它们浮动错开
+            btn.style.animationDelay = (i * 0.5) + 's';
+            
             document.body.appendChild(btn);
+
+            // 触发舒展动画
+            setTimeout(() => btn.classList.add('shell-unfold'), 50);
+
             btn.onclick = (e) => {
                 e.stopPropagation();
                 guide.remove();
@@ -168,6 +194,77 @@
         });
     }
 
+    // --- 爱好分流 (同样使用贝壳图标) ---
+    function showHobbySub() {
+        const subs = [{name:'✈️ 旅游', id:'travel'}, {name:'🌊 运动', id:'sport'}, {name:'🎧 听歌', id:'music'}];
+        subs.forEach((s, i) => {
+            const b = document.createElement('div');
+            b.className = 'shell-option hobby-item';
+            b.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span style="font-size:12px;">${s.name}</span>`;
+            
+            const a = (i/3)*Math.PI*2;
+            const radius = 180;
+            b.style.left = (window.innerWidth/2 + Math.cos(a)*radius)+'px';
+            b.style.top = (window.innerHeight/2 + Math.sin(a)*radius)+'px';
+            b.style.animationDelay = (i * 0.3) + 's';
+
+            document.body.appendChild(b);
+            setTimeout(() => b.classList.add('shell-unfold'), 50);
+
+            b.onclick = (e) => {
+                e.stopPropagation();
+                document.querySelectorAll('.hobby-item').forEach(el => el.remove());
+                if(s.id === 'travel') startTravelShells();
+                else if(s.id === 'sport') showSportOptions();
+                else showMusicPlayer();
+            };
+        });
+    }
+
+    // --- ✅ 听歌：滚动唱片机 & 转起来逻辑 ---
+    function showMusicPlayer() {
+        const musicHtml = `
+            <h3 style="color:var(--teal);margin-top:0;">我的单曲循环</h3>
+            <div class="record-player" id="record-player">
+                ${[1,2,3,4,5,6].map((i, idx) => `
+                    <div class="record-item ${idx === 0 ? 'is-selected' : ''}">
+                        <img src="dist/assets/img/p${i}.jpg">
+                        <p style="font-size:12px;margin-top:10px;font-weight:bold;color:var(--teal);">Track ${i}</p>
+                    </div>
+                `).join('')}
+            </div>
+            <p style="font-size:11px;color:#999;text-align:center;">(左右滑动切换 · 只有居中的唱片会播放旋转)</p>
+        `;
+        showModal(musicHtml);
+        initRecordPlayerScript(); // 初始化旋转逻辑
+    }
+
+    // ✅ 唱片机滚动侦测，让居中的转起来
+    function initRecordPlayerScript() {
+        const player = document.getElementById('record-player');
+        const items = player.querySelectorAll('.record-item');
+        player.addEventListener('scroll', () => {
+            const playerCenter = player.scrollLeft + player.offsetWidth / 2;
+            items.forEach(item => {
+                const itemCenter = item.offsetLeft + item.offsetWidth / 2;
+                if (Math.abs(itemCenter - playerCenter) < item.offsetWidth / 2) {
+                    item.classList.add('is-selected');
+                } else {
+                    item.classList.remove('is-selected');
+                }
+            });
+        });
+    }
+
+    // --- 其余原逻辑保留与适配 ---
+    function openSkillFolder() {
+        const html = `<h3 style="color:var(--teal);margin-top:0;">工作技能详情</h3><div class="folder-grid">
+            <div class="folder-item" onclick="viewImage('image_2387a3.jpg')"><div class="folder-icon">🎬</div><div style="font-size:12px;">视频剪辑</div></div>
+            <div class="folder-item" onclick="viewImage('image_2387e2.jpg')"><div class="folder-icon">🎨</div><div style="font-size:12px;">创意设计</div></div>
+            <div class="folder-item" onclick="viewImage('image_238805.jpg')"><div class="folder-icon">📑</div><div style="font-size:12px;">数据SOP</div></div>
+        </div>`;
+        showModal(html);
+    }
     function showCharTags() {
         const radius = Math.min(window.innerWidth, window.innerHeight) * 0.35;
         const centerX = window.innerWidth / 2;
@@ -179,115 +276,46 @@
             tag.style.width = size + 'px'; tag.style.height = size + 'px';
             tag.style.fontSize = '12px'; tag.innerText = text;
             tag.style.background = ['#E0F7FA', '#B2EBF2', '#E1F5FE', '#B3E5FC'][i % 4];
-            tag.style.left = (centerX - size/2) + 'px';
-            tag.style.top = (centerY - size/2) + 'px';
-            tag.style.opacity = '0';
+            tag.style.left =centerX+'px'; tag.style.top=centerY+'px'; tag.style.transform='translate(-50%, -50%) scale(0)'; tag.style.opacity = '0';
             document.body.appendChild(tag);
             const baseAngle = (i / charTags.length) * Math.PI * 2;
-            const randomOffset = (Math.random() - 0.5) * 0.2; 
-            const finalAngle = baseAngle + randomOffset;
-            const targetX = centerX + Math.cos(finalAngle) * radius - size / 2;
-            const targetY = centerY + Math.sin(finalAngle) * radius - size / 2;
+            const randomOffset = (Math.random() - 0.5) * 0.2; const finalAngle = baseAngle + randomOffset;
+            const targetX = centerX + Math.cos(finalAngle) * radius;
+            const targetY = centerY + Math.sin(finalAngle) * radius;
             setTimeout(() => {
-                tag.style.opacity = '1';
-                tag.style.left = targetX + 'px';
-                tag.style.top = targetY + 'px';
+                tag.style.opacity = '1'; tag.style.transform = 'translate(-50%, -50%) scale(1)';
+                tag.style.left = targetX + 'px'; tag.style.top = targetY + 'px';
             }, 50 + (i * 30));
         });
     }
-
-    function showHobbySub() {
-        const subs = [{name:'✈️ 旅游', id:'travel'}, {name:'🌊 运动', id:'sport'}, {name:'🎧 听歌', id:'music'}];
-        subs.forEach((s, i) => {
-            const b = document.createElement('div');
-            b.className = 'bubble-common hobby-item';
-            b.style.width = '100px'; b.style.height = '100px';
-            const a = (i/3)*Math.PI*2;
-            b.style.left = (window.innerWidth/2 - 50 + Math.cos(a)*180)+'px';
-            b.style.top = (window.innerHeight/2 - 50 + Math.sin(a)*180)+'px';
-            b.innerText = s.name;
-            document.body.appendChild(b);
-            b.onclick = (e) => {
-                e.stopPropagation();
-                document.querySelectorAll('.hobby-item').forEach(el => el.remove());
-                if(s.id === 'travel') startTravelShells();
-                else if(s.id === 'sport') showSportOptions();
-                else showMusicPlayer();
-            };
-        });
-    }
-
-    function showMusicPlayer() {
-        const musicHtml = `
-            <h3 style="color:var(--teal);margin-top:0;">我的单曲循环</h3>
-            <div class="record-player">
-                ${[1,2,3,4,5,6].map(i => `
-                    <div class="record-item">
-                        <img src="dist/assets/img/p${i}.jpg">
-                        <p style="font-size:12px;margin-top:10px;font-weight:bold;color:var(--teal);">Track ${i}</p>
-                    </div>
-                `).join('')}
-            </div>
-            <p style="font-size:11px;color:#999;text-align:center;">(左右滑动切换 · 悬停旋转唱片)</p>
-        `;
-        showModal(musicHtml);
-    }
-
-    function startTravelShells() {
-        isRotating = true;
-        travelCities.forEach(city => {
-            const s = document.createElement('div');
-            s.className = 'shell-item';
-            s.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${city}</span>`;
-            document.body.appendChild(s);
-            s.style.display = 'flex';
-        });
-        updateShells();
-    }
-
-    function updateShells() {
-        if(!isRotating) return;
-        rotationAngle += 0.005;
-        document.querySelectorAll('.shell-item').forEach((s, i) => {
-            const a = rotationAngle + (i/travelCities.length)*Math.PI*2;
-            s.style.left = (window.innerWidth/2 - 35 + Math.cos(a)*220)+'px';
-            s.style.top = (window.innerHeight/2 - 35 + Math.sin(a)*220)+'px';
-        });
-        requestAnimationFrame(updateShells);
-    }
-
     function showSportOptions() {
         const sports = ["🏊‍♂️ 游泳", "🎾 网球"];
         sports.forEach((s, i) => {
             const b = document.createElement('div');
-            b.className = 'bubble-common sport-opt';
-            b.style.width = '110px'; b.style.height = '110px';
-            b.style.top = '50%';
-            b.style.left = i === 0 ? 'calc(50% - 130px)' : 'calc(50% + 20px)';
-            b.innerText = s;
+            b.className = 'shell-sub-item sport-opt';
+            b.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${s}</span>`;
+            b.style.top = '50%'; b.style.left = i === 0 ? 'calc(50% - 130px)' : 'calc(50% + 20px)';
             document.body.appendChild(b);
-            b.onclick = () => {
-                const img = s.includes("游泳") ? "游泳.png" : "网球.png";
-                viewImage(img);
-            };
+            b.style.display='flex';
+            b.onclick = () => viewImage(s.includes("游泳") ? "游泳.png" : "网球.png");
         });
     }
-
-    function showModal(html) {
-        document.getElementById('overlay').style.display = 'block';
-        document.getElementById('modal-body').innerHTML = html;
-        document.getElementById('main-modal').style.display = 'block';
-    }
-
-    function viewImage(src) {
-        document.getElementById('full-img').src = "dist/assets/img/" + src;
-        document.getElementById('image-viewer').style.display = 'block';
-        document.getElementById('overlay').style.display = 'block';
-    }
-
+    function startTravelShells() { isRotating = true; travelCities.forEach(city => {
+        const s = document.createElement('div');
+        s.className = 'shell-sub-item shell-item';
+        s.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${city}</span>`;
+        document.body.appendChild(s); s.style.display = 'flex';
+    }); updateShells(); }
+    function updateShells() { if(!isRotating) return; rotationAngle += 0.005;
+        document.querySelectorAll('.shell-item').forEach((s, i) => {
+            const a = rotationAngle + (i/travelCities.length)*Math.PI*2;
+            s.style.left = (window.innerWidth/2 + Math.cos(a)*220)+'px';
+            s.style.top = (window.innerHeight/2 + Math.sin(a)*220)+'px';
+    }); requestAnimationFrame(updateShells); }
+    function showModal(html) { document.getElementById('overlay').style.display = 'block'; document.getElementById('modal-body').innerHTML = html; document.getElementById('main-modal').style.display = 'block'; }
+    function viewImage(src) { document.getElementById('full-img').src = "dist/assets/img/" + src; document.getElementById('image-viewer').style.display = 'block'; document.getElementById('overlay').style.display = 'block'; }
     function closeModal() { document.getElementById('main-modal').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; }
     function closeViewer() { document.getElementById('image-viewer').style.display = 'none'; if(document.getElementById('main-modal').style.display === 'none') document.getElementById('overlay').style.display = 'none'; }
-    
     function closeAll() {
         closeModal(); closeViewer(); isRotating = false;
         document.querySelectorAll('.fish').forEach(f => f.style.opacity = '1');
