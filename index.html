@@ -15,27 +15,33 @@
         .fish img { width: 80px; height: auto; }
         .fish div { font-size: 14px; color: #00796b; font-weight: bold; margin-top: 5px; }
 
-        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); backdrop-filter: blur(8px); z-index: 90; }
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); z-index: 90; }
 
-        /* 技能文件夹样式 */
-        .folder-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 20px 10px; }
-        .folder-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.2s; }
-        .folder-item:hover { transform: scale(1.05); }
-        .folder-icon { width: 65px; height: 65px; background: #f0f0f0; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 8px; border: 1px solid #ddd; }
-        .folder-text { font-size: 12px; color: #333; font-weight: 500; }
+        /* 通用弹窗 */
+        #main-modal, #image-viewer { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 25px; background: #fff; z-index: 150; box-shadow: 0 20px 50px rgba(0,0,0,0.2); overflow-y: auto; }
+        #main-modal { width: 90%; max-width: 500px; padding: 30px; max-height: 80vh; }
+        
+        /* 技能文件夹 */
+        .folder-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 10px 0; }
+        .folder-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .folder-icon { width: 60px; height: 60px; background: #f5f5f5; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 5px; border: 1px solid #eee; }
+        
+        /* 图片查看器 */
+        #image-viewer { width: 95%; max-width: 1000px; background: none; box-shadow: none; overflow: visible; }
+        #image-viewer img { width: 100%; border-radius: 15px; }
 
-        /* 弹窗通用样式 */
-        #main-modal, #image-viewer { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 25px; background: #fff; z-index: 150; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
-        #main-modal { width: 90%; max-width: 450px; padding: 30px; }
-        #image-viewer { width: 95%; max-width: 900px; max-height: 90vh; background: none; box-shadow: none; }
-        #image-viewer img { width: 100%; height: auto; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        /* 工作经历滑动 */
+        .work-gallery { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; padding: 10px 0; }
+        .work-card { flex: 0 0 85%; scroll-snap-align: center; border-radius: 15px; overflow: hidden; border: 1px solid #eee; background: #fff; }
+        .work-card img { width: 100%; }
 
-        .close-x { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 24px; color: #999; z-index: 160; width: 30px; height: 30px; text-align: center; line-height: 30px; background: rgba(255,255,255,0.8); border-radius: 50%; }
+        .close-x { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 24px; color: #999; z-index: 170; width: 30px; height: 30px; text-align: center; line-height: 30px; background: #fff; border-radius: 50%; }
 
-        /* 气泡与贝壳 */
-        .bubble-common { position: fixed; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, rgba(178,235,242,0.3)); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; color: #00796b; border: 1px solid #fff; }
-        .shell-item { position: fixed; width: 75px; height: 75px; display: none; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; z-index: 100; }
+        /* 爱好气泡 */
+        .bubble-common { position: fixed; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, rgba(178,235,242,0.4)); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; color: #00796b; border: 1px solid #fff; transition: all 0.3s; }
+        .shell-item { position: fixed; width: 70px; height: 70px; display: none; flex-direction: column; align-items: center; z-index: 100; cursor: pointer; }
         .shell-item img { width: 100%; }
+        .shell-item span { font-size: 10px; background: rgba(255,255,255,0.8); padding: 2px 5px; border-radius: 5px; margin-top: -5px; }
     </style>
 </head>
 <body>
@@ -45,32 +51,41 @@
 
 <div id="main-modal">
     <div class="close-x" onclick="closeModal()">×</div>
-    <h3 style="color:#00796b; margin: 0 0 20px 5px; letter-spacing: 1px;">工作技能文件夹</h3>
-    <div class="folder-grid">
-        <div class="folder-item" onclick="viewImage('skill_video.jpg')">
-            <div class="folder-icon">🎬</div>
-            <div class="folder-text">视频剪辑</div>
-        </div>
-        <div class="folder-item" onclick="viewImage('skill_design.jpg')">
-            <div class="folder-icon">🎨</div>
-            <div class="folder-text">创意设计</div>
-        </div>
-        <div class="folder-item" onclick="viewImage('skill_sop.jpg')">
-            <div class="folder-icon">📑</div>
-            <div class="folder-text">数据与SOP</div>
-        </div>
-    </div>
+    <div id="modal-body"></div>
 </div>
 
 <div id="image-viewer">
-    <div class="close-x" onclick="closeViewer()" style="top: -40px; right: 0; color: #fff;">×</div>
+    <div class="close-x" onclick="closeViewer()" style="top:-40px; right:0;">×</div>
     <img id="full-img" src="">
 </div>
 
 <script>
+    const travelCities = ['南京', '北京', '沈阳', '云南', '重庆', '湖南', '广东', '广西', '马来西亚'];
+    let isRotating = false, rotationAngle = 0;
+
     const fishData = [
-        { title: '基础信息', type: 'info' },
-        { title: '工作经历', type: 'work' },
+        { 
+            title: '基础信息', 
+            type: 'info',
+            content: `
+                <h3 style="color:#00796b;">基础信息</h3>
+                <p><b>姓名：</b>罗家渝<br><b>专业：</b>华南农大 · 农林经管<br><b>身份：</b>中共预备党员</p>
+                <p><b>联系方式：</b><br>电话：18998055663<br>邮箱：2304362354@qq.com</p>
+                <p>🏅 连续两年获得校级奖学金 | CET-6</p>
+            `
+        },
+        { 
+            title: '工作经历', 
+            type: 'work',
+            content: `
+                <h3 style="color:#00796b;">工作经历</h3>
+                <div class="work-gallery">
+                    <div class="work-card"><img src="dist/assets/img/worke1.jpg" onclick="window.open('https://www.tiktok.com/@_babyfood')"><p style="font-size:12px;text-align:center;">TikTok食谱运营</p></div>
+                    <div class="work-card"><img src="dist/assets/img/worke2.jpg" onclick="window.open('https://xhslink.com/m/6RJ7BJGKedW')"><p style="font-size:12px;text-align:center;">美的空调小红书</p></div>
+                    <div class="work-card"><img src="dist/assets/img/worke3.jpg" onclick="window.open('https://xhslink.com/m/5dalT0qlOf5')"><p style="font-size:12px;text-align:center;">自媒体小红书</p></div>
+                </div>
+            `
+        },
         { title: '工作技能', type: 'skill' },
         { title: '性格与爱好', type: 'special' }
     ];
@@ -82,6 +97,7 @@
         document.body.appendChild(fish);
         let posX = Math.random() * (window.innerWidth - 100), posY = Math.random() * (window.innerHeight - 100);
         let velX = (Math.random() - 0.5) * 2, velY = (Math.random() - 0.5) * 2;
+
         function move() {
             posX += velX; posY += velY;
             if (posX < 0 || posX > window.innerWidth - 80) velX *= -1;
@@ -91,35 +107,102 @@
             requestAnimationFrame(move);
         }
         move();
+
         fish.onclick = () => {
-            if(data.type === 'skill') {
-                document.getElementById('overlay').style.display = 'block';
-                document.getElementById('main-modal').style.display = 'block';
-            } else if(data.type === 'special') {
+            if (data.type === 'skill') {
+                openSkillFolder();
+            } else if (data.type === 'special') {
                 startHobbyFlow();
             } else {
-                // 其他模块的简易展示逻辑
-                alert(data.title + " 模块建设中...");
+                showModal(data.content);
             }
         };
     });
 
-    function viewImage(imgName) {
-        document.getElementById('full-img').src = "dist/assets/img/" + imgName;
+    function showModal(html) {
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('modal-body').innerHTML = html;
+        document.getElementById('main-modal').style.display = 'block';
+    }
+
+    function openSkillFolder() {
+        const folderHtml = `
+            <h3 style="color:#00796b;">工作技能文件夹</h3>
+            <div class="folder-grid">
+                <div class="folder-item" onclick="viewImage('skill_video.jpg')"><div class="folder-icon">🎬</div><div style="font-size:12px;">视频剪辑</div></div>
+                <div class="folder-item" onclick="viewImage('skill_design.jpg')"><div class="folder-icon">🎨</div><div style="font-size:12px;">创意设计</div></div>
+                <div class="folder-item" onclick="viewImage('skill_sop.jpg')"><div class="folder-icon">📑</div><div style="font-size:12px;">数据SOP</div></div>
+            </div>
+        `;
+        showModal(folderHtml);
+    }
+
+    function viewImage(src) {
+        document.getElementById('full-img').src = "dist/assets/img/" + src;
         document.getElementById('image-viewer').style.display = 'block';
     }
 
-    function closeViewer() { document.getElementById('image-viewer').style.display = 'none'; }
-    function closeModal() { document.getElementById('main-modal').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; }
-    
-    function closeAll() {
-        closeModal();
-        closeViewer();
-        document.querySelectorAll('.bubble-common, .shell-item').forEach(b => b.remove());
+    function startHobbyFlow() {
+        document.getElementById('overlay').style.display = 'block';
+        const big = document.createElement('div');
+        big.className = 'bubble-common';
+        big.style.width = '140px'; big.style.height = '140px';
+        big.style.left = 'calc(50% - 70px)'; big.style.top = 'calc(50% - 70px)';
+        big.innerText = '性格与爱好';
+        document.body.appendChild(big);
+        big.onclick = (e) => {
+            e.stopPropagation();
+            big.remove();
+            ['网球','游泳','追星','旅游'].forEach((name, i) => {
+                const sub = document.createElement('div');
+                sub.className = 'bubble-common sub-b';
+                sub.style.width = '80px'; sub.style.height = '80px';
+                sub.innerText = name;
+                document.body.appendChild(sub);
+                const a = (i/4)*Math.PI*2;
+                sub.style.left = (window.innerWidth/2 - 40 + Math.cos(a)*160)+'px';
+                sub.style.top = (window.innerHeight/2 - 40 + Math.sin(a)*160)+'px';
+                sub.onclick = (ev) => {
+                    ev.stopPropagation();
+                    if(name === '旅游') startShells();
+                    else alert("你点击了 " + name);
+                };
+            });
+        };
     }
 
-    // 复用之前的性格与爱好逻辑 (略)
-    function startHobbyFlow() { document.getElementById('overlay').style.display = 'block'; /* ...同前... */ }
+    function startShells() {
+        document.querySelectorAll('.sub-b').forEach(b => b.remove());
+        isRotating = true;
+        travelCities.forEach((city, i) => {
+            const s = document.createElement('div');
+            s.className = 'shell-item';
+            s.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${city}</span>`;
+            document.body.appendChild(s);
+            s.style.display = 'flex';
+        });
+        updateShells();
+    }
+
+    function updateShells() {
+        if(!isRotating) return;
+        rotationAngle += 0.005;
+        const shells = document.querySelectorAll('.shell-item');
+        shells.forEach((s, i) => {
+            const a = rotationAngle + (i/shells.length)*Math.PI*2;
+            s.style.left = (window.innerWidth/2 - 35 + Math.cos(a)*220)+'px';
+            s.style.top = (window.innerHeight/2 - 35 + Math.sin(a)*220)+'px';
+        });
+        requestAnimationFrame(updateShells);
+    }
+
+    function closeModal() { document.getElementById('main-modal').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; }
+    function closeViewer() { document.getElementById('image-viewer').style.display = 'none'; }
+    function closeAll() {
+        closeModal(); closeViewer();
+        isRotating = false;
+        document.querySelectorAll('.bubble-common, .shell-item').forEach(el => el.remove());
+    }
 </script>
 </body>
 </html>
