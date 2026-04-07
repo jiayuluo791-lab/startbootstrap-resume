@@ -17,11 +17,20 @@
             position: absolute; width: 150px; height: auto; z-index: 2; pointer-events: none;
             opacity: 0.7; animation: JellyMovement 45s linear infinite;
         }
-        @keyframes JellyMovement {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            50% { transform: translate(80px, 120px) rotate(8deg); }
-            100% { transform: translate(0, 0) rotate(0deg); }
-        }
+        @keyframes scatterAnim {
+    0% { 
+        opacity: 0; 
+        transform: translate(-50%, -50%) scale(0); 
+    }
+    20% { 
+        opacity: 1; 
+        transform: translate(-50%, -50%) scale(1.1); 
+    }
+    100% { 
+        opacity: 1; /* 保持可见，不透明度设为 1 */
+        transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--tr)); 
+    }
+}
 
         /* 中心头像 */
         #profile-avatar { 
@@ -189,23 +198,36 @@ if (i === 0) {
     }
 
     // ✅ 性格标签漫天散落
-    function scatterTags() {
-        const tags = ['ENTJ', '行动派', '社牛大师', '拒绝拖延', '想象力丰富', '说干就干', '爱笑', '偶尔工作狂', '有个设计梦', '第一喜欢海边', '执行力极强', '探索欲Max'];
-        tags.forEach((text, i) => {
-            const el = document.createElement('div');
-            el.className = 'char-tag-scatter';
-            el.innerText = text;
-            el.style.left = '50%'; el.style.top = '50%';
-            const angle = Math.random() * Math.PI * 2;
-            const dist = Math.random() * 260 + 160;
-            el.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
-            el.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
-            el.style.setProperty('--tr', (Math.random() - 0.5) * 90 + 'deg');
-            el.style.animationDelay = (i * 0.1) + 's';
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 4200);
-        });
-    }
+   function scatterTags() {
+    const tags = ['ENTJ', '行动派', '社牛大师', '拒绝拖延', '想象力丰富', '说干就干', '爱笑', '偶尔工作狂', '有个设计梦', '第一喜欢海边', '执行力极强', '探索欲Max'];
+    
+    tags.forEach((text, i) => {
+        const el = document.createElement('div');
+        el.className = 'char-tag-scatter';
+        el.innerText = text;
+        
+        // 初始位置在中心
+        el.style.left = '50%'; 
+        el.style.top = '50%';
+        
+        // --- 防止重叠的关键：均匀分布角度 ---
+        // 我们不随机角度了，而是让标签按 360 度平分，这样它们会向四周均匀散开
+        const angle = (i / tags.length) * Math.PI * 2; 
+        
+        // 散开的距离：设置一个较大的范围（200px 到 350px 之间随机）
+        const dist = 200 + Math.random() * 150; 
+        
+        // 把计算好的位置传给 CSS
+        el.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+        el.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+        el.style.setProperty('--tr', (Math.random() - 0.5) * 40 + 'deg'); // 随机旋转一点点，更好看
+        
+        el.style.animationDelay = (i * 0.1) + 's';
+        document.body.appendChild(el);
+        
+        // 【重要】删掉之前的 setTimeout(..., 4000)，这样标签就不会被移除了
+    });
+}
 
     function showHobbySub() {
         const subs = [
