@@ -9,47 +9,27 @@
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "PingFang SC", sans-serif; background-color: #000b14; }
         body { background-image: url("dist/assets/img/water.jpg"); background-size: cover; background-position: center; }
         
-        /* 水母背景装饰 */
-        .jellyfish {
-            position: absolute; width: 150px; height: auto; z-index: 2; pointer-events: none;
-            opacity: 0.6; animation: JellyMovement 45s linear infinite;
-        }
-        @keyframes JellyMovement {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            50% { transform: translate(50px, 80px) rotate(5deg); }
-            100% { transform: translate(0, 0) rotate(0deg); }
-        }
+        .jellyfish { position: absolute; width: 150px; height: auto; z-index: 2; pointer-events: none; opacity: 0.6; animation: JellyMovement 45s linear infinite; }
+        @keyframes JellyMovement { 0% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(50px, 80px) rotate(5deg); } 100% { transform: translate(0, 0) rotate(0deg); } }
 
-        /* 中心头像 */
-        #profile-avatar { 
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 200px; height: 200px; border-radius: 50%; 
-            border: 6px solid rgba(255, 255, 255, 0.3); 
-            box-shadow: 0 0 40px var(--glow); z-index: 5; 
-            object-fit: cover;
-        }
+        #profile-avatar { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; border-radius: 50%; border: 6px solid rgba(255, 255, 255, 0.3); box-shadow: 0 0 40px var(--glow); z-index: 5; object-fit: cover; }
 
-        /* 鱼群 */
         .fish { position: absolute; cursor: pointer; z-index: 10; display: flex; flex-direction: column; align-items: center; }
         .fish img { width: 110px; height: auto; }
         .fish div { font-size: 15px; color: var(--teal); font-weight: bold; margin-top: 5px; text-shadow: 0 0 6px #fff; }
 
-        /* 弹窗系统 */
         #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 90; }
         #main-modal, #image-viewer { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 20px; background: #fff; z-index: 150; box-shadow: 0 15px 50px rgba(0,0,0,0.5); }
         #main-modal { width: 85%; max-width: 450px; padding: 25px; max-height: 75vh; overflow-y: auto; }
         #image-viewer { width: 95%; max-width: 1000px; background: none; box-shadow: none; }
         #image-viewer img { width: 100%; border-radius: 12px; }
-        
         .close-x { position: absolute; top: 12px; right: 12px; cursor: pointer; font-size: 20px; color: #666; background: #eee; width: 30px; height: 30px; border-radius: 50%; text-align: center; line-height: 30px; z-index: 10; }
 
-        /* 贝壳交互 */
         .shell-option { position: fixed; width: 125px; height: 125px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; color: var(--teal); font-weight: bold; transform: translate(-50%, -50%) scale(0); opacity: 0; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .shell-option span { position: relative; z-index: 2; font-size: 16px; text-shadow: 0 0 5px #fff; }
         .shell-option img { position: absolute; width: 100%; height: 100%; z-index: -1; }
         .shell-unfold { transform: translate(-50%, -50%) scale(1) !important; opacity: 1 !important; }
 
-        /* 滚动展示容器 */
         .scroll-box { display: flex; overflow-x: auto; gap: 15px; padding: 10px 5px; scrollbar-width: none; }
         .scroll-box::-webkit-scrollbar { display: none; }
         .scroll-box img { width: 180px; border-radius: 10px; flex-shrink: 0; cursor: pointer; border: 1px solid #eee; }
@@ -65,15 +45,13 @@
 <div id="image-viewer"><div class="close-x" onclick="closeAll()" style="top:-40px; right:0;">×</div><img id="full-img" src=""></div>
 
 <script>
-    // 1. 数据配置
     const fishList = [
-        { title: '基础信息', type: 'info', content: `<h3>基本信息</h3><p><b>罗家渝</b><br>华南农业大学<br>📞 18998055663<br>📧 2304362354@qq.com</p>` },
+        { title: '基础信息', type: 'info', content: `<h3>基本信息</h3><p><b>罗家渝</b><br>华南农业大学 2023级<br>📞 18998055663<br>📧 2304362354@qq.com</p>` },
         { title: '工作经历', type: 'work' },
         { title: '工作技能', type: 'skill' },
         { title: '性格与爱好', type: 'special' }
     ];
 
-    // 2. 生成鱼群
     fishList.forEach((data) => {
         const fish = document.createElement('div');
         fish.className = 'fish main-fish-item';
@@ -87,8 +65,7 @@
             px += vx; py += vy;
             if(px < 0 || px > window.innerWidth-110) vx *= -1;
             if(py < 0 || py > window.innerHeight-110) vy *= -1;
-            fish.style.left = px + 'px';
-            fish.style.top = py + 'px';
+            fish.style.left = px + 'px'; fish.style.top = py + 'px';
             fish.querySelector('img').style.transform = vx > 0 ? 'scaleX(1)' : 'scaleX(-1)';
             requestAnimationFrame(move);
         }
@@ -96,81 +73,85 @@
 
         fish.onclick = (e) => {
             e.stopPropagation();
-            if (data.type === 'work') openWorkGallery();
-            else if (data.type === 'skill') openSkillGallery();
+            if (data.type === 'work') openWork();
+            else if (data.type === 'skill') openSkills();
             else if (data.type === 'special') startDeepDive();
             else showModal(data.content);
         };
     });
 
-    // 3. 【工作经历】调用 worke1 - worke5
-    function openWorkGallery() {
-        const html = `<h3>项目实战经历</h3><div class="scroll-box">
-            ${[1,2,3,4,5].map(i => `<img src="dist/assets/img/worke${i}.jpg" onclick="viewImage('worke${i}.jpg')">`).join('')}
-        </div><p style="font-size:12px;color:#999;text-align:center;">向右滑动查看更多</p>`;
+    // 1. 工作经历 (worke1-worke5)
+    function openWork() {
+        const html = `<h3>项目实战</h3><div class="scroll-box">${[1,2,3,4,5].map(i => `<img src="dist/assets/img/worke${i}.jpg" onclick="viewImage('worke${i}.jpg')">`).join('')}</div>`;
         showModal(html);
     }
 
-    // 4. 【工作技能】调用 3 张详情图
-    function openSkillGallery() {
-        const html = `<h3>专业技能详情</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
-            <div onclick="viewImage('skill_video.jpg')"><div style="font-size:28px;background:#f5f5f5;border-radius:12px;padding:10px;">🎬</div><div style="font-size:11px;">视频剪辑</div></div>
-            <div onclick="viewImage('skill_design.jpg')"><div style="font-size:28px;background:#f5f5f5;border-radius:12px;padding:10px;">🎨</div><div style="font-size:11px;">视觉设计</div></div>
-            <div onclick="viewImage('skill_sop.jpg')"><div style="font-size:28px;background:#f5f5f5;border-radius:12px;padding:10px;">📊</div><div style="font-size:11px;">数据SOP</div></div>
+    // 2. 工作技能 (skill_video, skill_design, skill_sop)
+    function openSkills() {
+        const html = `<h3>核心技能</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
+            <div onclick="viewImage('skill_video.jpg')"><div style="font-size:28px;background:#f5f5f5;border-radius:12px;padding:10px;">🎬</div><div>视频剪辑</div></div>
+            <div onclick="viewImage('skill_design.jpg')"><div style="font-size:28px;background:#f5f5f5;border-radius:12px;padding:10px;">🎨</div><div>视觉设计</div></div>
+            <div onclick="viewImage('skill_sop.jpg')"><div style="font-size:28px;background:#f5f5f5;border-radius:12px;padding:10px;">📈</div><div>数据SOP</div></div>
         </div>`;
         showModal(html);
     }
 
-    // 5. 【性格与爱好】二级交互
+    // 3. 性格与爱好 (完整版：性格/旅游/运动/听歌)
     function startDeepDive() {
         document.getElementById('overlay').style.display = 'block';
         document.querySelectorAll('.main-fish-item').forEach(f => f.style.display = 'none');
         
-        const opts = [{n:'我的性格', t:'char'}, {n:'我的爱好', t:'hobby'}];
+        const opts = [{n:'我的性格', t:'c'}, {n:'我的爱好', t:'h'}];
         opts.forEach((o, i) => {
             const b = document.createElement('div');
             b.className = 'shell-option dive-temp-btn';
             b.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${o.n}</span>`;
-            b.style.top = '50%'; 
-            b.style.left = i === 0 ? 'calc(50% - 130px)' : 'calc(50% + 30px)';
+            b.style.top = '50%'; b.style.left = i === 0 ? 'calc(50% - 130px)' : 'calc(50% + 30px)';
             document.body.appendChild(b);
             setTimeout(() => b.classList.add('shell-unfold'), 50);
             
             b.onclick = (e) => {
                 e.stopPropagation();
                 document.querySelectorAll('.dive-temp-btn').forEach(el => el.remove());
-                if(o.t === 'char') showModal('<h3>性格标签</h3><div style="display:flex;flex-wrap:wrap;gap:8px;">'+['ENTJ','行动派','社牛','爱笑'].map(t=>`<span style="background:#e0f2f1;color:#00796b;padding:4px 10px;border-radius:10px;">${t}</span>`).join('')+'</div>');
-                else showHobbySub();
+                if(o.t === 'c') {
+                    showModal(`<h3>我的性格特质</h3><div style="display:flex;flex-wrap:wrap;gap:10px;padding:10px;">
+                        ${['ENTJ','爱笑','社牛大师','高效执行','想象力丰富','拒绝拖延'].map(t=>`<span style="background:#e0f2f1;color:#00796b;padding:6px 12px;border-radius:15px;font-weight:bold;border:1px solid #b2dfdb">${t}</span>`).join('')}
+                    </div>`);
+                } else showHobbySub();
             };
         });
     }
 
     function showHobbySub() {
-        const subs = [{n:'✈️ 旅游', id:'t'}, {n:'🎧 音乐', id:'m'}];
+        const subs = [
+            {n:'✈️ 旅游', id:'t', content:'<h3>热爱旅行</h3><p>探索过许多城市，喜欢在旅途中捕捉自然灵感，追求“原生感”的表达。</p>'},
+            {n:'🌊 运动', id:'s', content:'<h3>运动达人</h3><p>🏊‍♂️ 游泳 | 🎾 网球<br>喜欢在律动中保持充沛的精力和积极的心态。</p>'},
+            {n:'🎧 听歌', id:'m'}
+        ];
         subs.forEach((s, i) => {
             const b = document.createElement('div');
             b.className = 'shell-option hobby-temp-btn';
             b.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span style="font-size:13px">${s.n}</span>`;
-            b.style.left = (window.innerWidth/2 + (i===0?-150:150)) + 'px';
-            b.style.top = (window.innerHeight/2) + 'px';
+            const angle = (i / subs.length) * Math.PI * 2;
+            b.style.left = (window.innerWidth/2 + Math.cos(angle)*160) + 'px';
+            b.style.top = (window.innerHeight/2 + Math.sin(angle)*160) + 'px';
             document.body.appendChild(b);
             setTimeout(() => b.classList.add('shell-unfold'), 50);
             b.onclick = (e) => {
                 e.stopPropagation();
-                if(s.id==='m') showMusicGallery(); else showModal('<h3>旅游</h3><p>喜欢探索未知的城市和风景。</p>');
+                if(s.id === 'm') showMusic(); else showModal(s.content);
             };
         });
     }
 
-    // 调用 p1.jpg - p6.jpg
-    function showMusicGallery() {
-        const html = `<h3>我的唱片集</h3><div class="scroll-box">
+    function showMusic() {
+        const html = `<h3>我的唱片 (p1-p6)</h3><div class="scroll-box">
             ${[1,2,3,4,5,6].map(i => `<img src="dist/assets/img/p${i}.jpg" style="border-radius:50%;width:130px;height:130px;object-fit:cover;border:4px solid #333;">`).join('')}
         </div>`;
         showModal(html);
     }
 
-    // 6. 全局控制：彻底修复鱼消失问题
+    // 4. 控制逻辑
     function showModal(h) { 
         document.getElementById('modal-body').innerHTML = h;
         document.getElementById('main-modal').style.display = 'block';
@@ -181,19 +162,11 @@
         document.getElementById('image-viewer').style.display = 'block';
         document.getElementById('overlay').style.display = 'block';
     }
-    
-    // ✅ 唯一的退出出口：点击遮罩或 X 都会执行这里
     function closeAll() {
         document.getElementById('main-modal').style.display = 'none';
         document.getElementById('image-viewer').style.display = 'none';
         document.getElementById('overlay').style.display = 'none';
-        
-        // 1. 强制鱼群显示回归（物理级修复）
-        document.querySelectorAll('.main-fish-item').forEach(f => {
-            f.style.display = 'flex';
-        });
-
-        // 2. 清理所有动态生成的贝壳按钮
+        document.querySelectorAll('.main-fish-item').forEach(f => f.style.display = 'flex');
         document.querySelectorAll('.dive-temp-btn, .hobby-temp-btn').forEach(el => el.remove());
     }
 </script>
