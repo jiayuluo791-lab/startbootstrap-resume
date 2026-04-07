@@ -172,8 +172,7 @@
     // ✅ 4. 性格爱好：深潜逻辑
     function startDeepDive() {
         document.getElementById('overlay').style.display = 'block';
-        document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.opacity = '0');
-        const opts = [{name:'性格标签', type:'char'}, {name:'兴趣爱好', type:'hobby'}];
+       document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'none'); const opts = [{name:'性格标签', type:'char'}, {name:'兴趣爱好', type:'hobby'}];
         opts.forEach((opt, i) => {
             const btn = document.createElement('div'); btn.className = 'shell-option dive-opt';
             btn.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${opt.name}</span>`;
@@ -269,12 +268,21 @@ if (i === 0) {
     function closeModal() { document.getElementById('main-modal').style.display='none'; document.getElementById('overlay').style.display='none'; }
     function closeViewer() { document.getElementById('image-viewer').style.display='none'; if(document.getElementById('main-modal').style.display==='none') document.getElementById('overlay').style.display='none'; }
     
-    // ✅ 恢复鱼群与清理
     function closeAll() { 
-        closeModal(); closeViewer(); 
-        document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.opacity='1'); 
-        document.querySelectorAll('.dive-opt, .hobby-item, .char-tag-scatter').forEach(el => el.remove()); 
-    }
+    // 1. 关闭所有弹窗
+    document.getElementById('main-modal').style.display='none'; 
+    document.getElementById('image-viewer').style.display='none'; 
+    document.getElementById('overlay').style.display='none'; 
+
+    // 2. 【核心修复】让鱼群和水母重新出现
+    document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => {
+        f.style.display = 'flex'; // 重新显示
+        f.style.opacity = '1';    // 确保透明度是满的
+    }); 
+
+    // 3. 清理掉屏幕上散落的贝壳和性格标签
+    document.querySelectorAll('.dive-opt, .hobby-item, .char-tag-scatter').forEach(el => el.remove()); 
+}
 </script>
 </body>
 </html>
