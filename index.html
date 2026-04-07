@@ -32,7 +32,19 @@
 
         .scroll-box { display: flex; overflow-x: auto; gap: 15px; padding: 10px 5px; scrollbar-width: none; }
         .scroll-box::-webkit-scrollbar { display: none; }
-        .scroll-box img { width: 180px; border-radius: 10px; flex-shrink: 0; cursor: pointer; border: 1px solid #eee; }
+        .scroll-box img { width: 180px; border-radius: 10px; flex-shrink: 0; cursor: pointer; }
+
+        /* 性格标签散落动画 */
+        .char-tag-scatter {
+            position: fixed; padding: 8px 18px; background: #e0f2f1; color: #00796b; border-radius: 20px;
+            font-weight: bold; font-size: 14px; pointer-events: none; z-index: 200; border: 1px solid #b2dfdb;
+            animation: scatterAnim 4s ease-out forwards;
+        }
+        @keyframes scatterAnim {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+            15% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.8) rotate(var(--tr)); }
+        }
     </style>
 </head>
 <body>
@@ -46,7 +58,7 @@
 
 <script>
     const fishList = [
-        { title: '基础信息', type: 'info', content: `<h3>基本信息</h3><p><b>罗家渝</b><br>华南农业大学 2023级<br>📞 18998055663<br>📧 2304362354@qq.com</p>` },
+        { title: '基础信息', type: 'info', content: `<h3>基本信息</h3><p><b>罗家渝</b><br>华南农业大学 2023级<br>📞 18998055663</p>` },
         { title: '工作经历', type: 'work' },
         { title: '工作技能', type: 'skill' },
         { title: '性格与爱好', type: 'special' }
@@ -80,28 +92,25 @@
         };
     });
 
-    // 1. 工作经历 (worke1-worke5)
     function openWork() {
-        const html = `<h3>项目实战</h3><div class="scroll-box">${[1,2,3,4,5].map(i => `<img src="dist/assets/img/worke${i}.jpg" onclick="viewImage('worke${i}.jpg')">`).join('')}</div>`;
-        showModal(html);
+        const h = `<h3>项目实战</h3><div class="scroll-box">${[1,2,3,4,5].map(i => `<img src="dist/assets/img/worke${i}.jpg" onclick="viewImage('worke${i}.jpg')">`).join('')}</div>`;
+        showModal(h);
     }
 
-    // 2. 工作技能 (skill_video, skill_design, skill_sop)
     function openSkills() {
-        const html = `<h3>核心技能</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
+        const h = `<h3>核心技能</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
             <div onclick="viewImage('skill_video.jpg')"><div style="font-size:28px;background:#f5f5f5;border-radius:12px;padding:10px;">🎬</div><div>视频剪辑</div></div>
             <div onclick="viewImage('skill_design.jpg')"><div style="font-size:28px;background:#f5f5f5;border-radius:12px;padding:10px;">🎨</div><div>视觉设计</div></div>
-            <div onclick="viewImage('skill_sop.jpg')"><div style="font-size:28px;background:#f5f5f5;border-radius:12px;padding:10px;">📈</div><div>数据SOP</div></div>
+            <div onclick="viewImage('skill_sop.jpg')"><div style="font-size:28px;background:#f5f5f5;border-radius:12px;padding:10px;">📊</div><div>数据SOP</div></div>
         </div>`;
-        showModal(html);
+        showModal(h);
     }
 
-    // 3. 性格与爱好 (完整版：性格/旅游/运动/听歌)
     function startDeepDive() {
         document.getElementById('overlay').style.display = 'block';
         document.querySelectorAll('.main-fish-item').forEach(f => f.style.display = 'none');
         
-        const opts = [{n:'我的性格', t:'c'}, {n:'我的爱好', t:'h'}];
+        const opts = [{n:'性格标签', t:'c'}, {n:'兴趣爱好', t:'h'}];
         opts.forEach((o, i) => {
             const b = document.createElement('div');
             b.className = 'shell-option dive-temp-btn';
@@ -112,20 +121,38 @@
             
             b.onclick = (e) => {
                 e.stopPropagation();
-                document.querySelectorAll('.dive-temp-btn').forEach(el => el.remove());
-                if(o.t === 'c') {
-                    showModal(`<h3>我的性格特质</h3><div style="display:flex;flex-wrap:wrap;gap:10px;padding:10px;">
-                        ${['ENTJ','爱笑','社牛大师','高效执行','想象力丰富','拒绝拖延'].map(t=>`<span style="background:#e0f2f1;color:#00796b;padding:6px 12px;border-radius:15px;font-weight:bold;border:1px solid #b2dfdb">${t}</span>`).join('')}
-                    </div>`);
-                } else showHobbySub();
+                if(o.t === 'c') scatterTags(); 
+                else {
+                    document.querySelectorAll('.dive-temp-btn').forEach(el => el.remove());
+                    showHobbySub();
+                }
             };
+        });
+    }
+
+    function scatterTags() {
+        const tags = ['ENTJ', '行动派', '社牛大师', '拒绝拖延', '想象力丰富', '说干就干', '爱笑', '偶尔工作狂', '有个设计梦', '第一喜欢海边', '探索欲极强', '执行力Max'];
+        tags.forEach((text, i) => {
+            const el = document.createElement('div');
+            el.className = 'char-tag-scatter';
+            el.innerText = text;
+            el.style.left = '50%'; el.style.top = '50%';
+            const angle = Math.random() * Math.PI * 2;
+            const dist = Math.random() * 250 + 150;
+            el.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+            el.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+            el.style.setProperty('--tr', (Math.random() - 0.5) * 90 + 'deg');
+            el.style.animationDelay = (i * 0.1) + 's';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 4000);
         });
     }
 
     function showHobbySub() {
         const subs = [
-            {n:'✈️ 旅游', id:'t', content:'<h3>热爱旅行</h3><p>探索过许多城市，喜欢在旅途中捕捉自然灵感，追求“原生感”的表达。</p>'},
-            {n:'🌊 运动', id:'s', content:'<h3>运动达人</h3><p>🏊‍♂️ 游泳 | 🎾 网球<br>喜欢在律动中保持充沛的精力和积极的心态。</p>'},
+            {n:'✈️ 旅游', c:'<h3>热爱旅行</h3><p>探索过许多城市，喜欢捕捉自然灵感，追求“原生感”表达。</p>'},
+            {n:'🏊‍♂️ 游泳', c:'<h3>游泳</h3><p>在水中寻找平静与力量，保持充沛精力。</p>'},
+            {n:'🎾 网球', c:'<h3>网球</h3><p>享受挥拍的汗水，是一个积极心态的行动派。</p>'},
             {n:'🎧 听歌', id:'m'}
         ];
         subs.forEach((s, i) => {
@@ -133,41 +160,30 @@
             b.className = 'shell-option hobby-temp-btn';
             b.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span style="font-size:13px">${s.n}</span>`;
             const angle = (i / subs.length) * Math.PI * 2;
-            b.style.left = (window.innerWidth/2 + Math.cos(angle)*160) + 'px';
-            b.style.top = (window.innerHeight/2 + Math.sin(angle)*160) + 'px';
+            b.style.left = (window.innerWidth/2 + Math.cos(angle)*170) + 'px';
+            b.style.top = (window.innerHeight/2 + Math.sin(angle)*170) + 'px';
             document.body.appendChild(b);
             setTimeout(() => b.classList.add('shell-unfold'), 50);
             b.onclick = (e) => {
                 e.stopPropagation();
-                if(s.id === 'm') showMusic(); else showModal(s.content);
+                if(s.id === 'm') showMusic(); else showModal(s.c);
             };
         });
     }
 
     function showMusic() {
-        const html = `<h3>我的唱片 (p1-p6)</h3><div class="scroll-box">
-            ${[1,2,3,4,5,6].map(i => `<img src="dist/assets/img/p${i}.jpg" style="border-radius:50%;width:130px;height:130px;object-fit:cover;border:4px solid #333;">`).join('')}
-        </div>`;
-        showModal(html);
+        const h = `<h3>我的唱片</h3><div class="scroll-box">${[1,2,3,4,5,6].map(i => `<img src="dist/assets/img/p${i}.jpg" style="border-radius:50%;width:130px;height:130px;object-fit:cover;border:4px solid #333;">`).join('')}</div>`;
+        showModal(h);
     }
 
-    // 4. 控制逻辑
-    function showModal(h) { 
-        document.getElementById('modal-body').innerHTML = h;
-        document.getElementById('main-modal').style.display = 'block';
-        document.getElementById('overlay').style.display = 'block';
-    }
-    function viewImage(s) {
-        document.getElementById('full-img').src = "dist/assets/img/" + s;
-        document.getElementById('image-viewer').style.display = 'block';
-        document.getElementById('overlay').style.display = 'block';
-    }
+    function showModal(h) { document.getElementById('modal-body').innerHTML = h; document.getElementById('main-modal').style.display = 'block'; document.getElementById('overlay').style.display = 'block'; }
+    function viewImage(s) { document.getElementById('full-img').src = "dist/assets/img/" + s; document.getElementById('image-viewer').style.display = 'block'; document.getElementById('overlay').style.display = 'block'; }
     function closeAll() {
         document.getElementById('main-modal').style.display = 'none';
         document.getElementById('image-viewer').style.display = 'none';
         document.getElementById('overlay').style.display = 'none';
         document.querySelectorAll('.main-fish-item').forEach(f => f.style.display = 'flex');
-        document.querySelectorAll('.dive-temp-btn, .hobby-temp-btn').forEach(el => el.remove());
+        document.querySelectorAll('.dive-temp-btn, .hobby-temp-btn, .char-tag-scatter').forEach(el => el.remove());
     }
 </script>
 </body>
