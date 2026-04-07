@@ -168,8 +168,16 @@
         opts.forEach((opt, i) => {
             const btn = document.createElement('div'); btn.className = 'shell-option dive-opt';
             btn.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${opt.name}</span>`;
-            btn.style.top = '50%'; btn.style.left = i === 0 ? 'calc(50% - 130px)' : 'calc(50% + 30px)';
-            document.body.appendChild(btn); setTimeout(() => btn.classList.add('shell-unfold'), 50);
+           // 设置贝壳垂直居中
+btn.style.top = '50%'; 
+
+// 精准定位在中心点两侧：第一个在左边 160px，第二个在右边 160px
+// 这里的 160px 刚好避开了你 210px 宽的头像
+if (i === 0) {
+    btn.style.left = 'calc(50% - 160px)'; // 左侧贝壳
+} else {
+    btn.style.left = 'calc(50% + 160px)'; // 右侧贝壳
+} document.body.appendChild(btn); setTimeout(() => btn.classList.add('shell-unfold'), 50);
             btn.onclick = (e) => { e.stopPropagation(); 
                 if(opt.type === 'char') scatterTags(); 
                 else {
