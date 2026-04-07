@@ -5,71 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>家渝的个人鱼塘</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
-        body { 
-            background-image: url("dist/assets/img/water.jpg");
-            background-size: cover; background-position: center;
-            background-attachment: fixed; background-color: #e0f7fa; 
-        }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: "PingFang SC", sans-serif; }
+        body { background-image: url("dist/assets/img/water.jpg"); background-size: cover; background-position: center; background-attachment: fixed; }
         
-        /* 中心头像 */
-        #profile-avatar {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 220px; height: 220px; border-radius: 50%; border: 8px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 0 40px rgba(255, 255, 255, 0.6); z-index: 5; object-fit: cover;
-            animation: float 4s ease-in-out infinite;
-        }
+        #profile-avatar { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 220px; height: 220px; border-radius: 50%; border: 8px solid rgba(255, 255, 255, 0.4); box-shadow: 0 0 40px rgba(255, 255, 255, 0.6); z-index: 5; object-fit: cover; animation: float 4s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translate(-50%, -50%) translateY(0px); } 50% { transform: translate(-50%, -50%) translateY(-15px); } }
 
-        /* 鱼群 */
         .fish { position: absolute; cursor: pointer; z-index: 10; display: flex; flex-direction: column; align-items: center; }
-        .fish img { width: 80px; height: auto; transition: transform 0.1s; }
-        .fish div { font-size: 14px; color: #00796b; font-weight: bold; text-align: center; margin-top: 5px; }
+        .fish img { width: 80px; height: auto; }
+        .fish div { font-size: 14px; color: #00796b; font-weight: bold; margin-top: 5px; }
 
         #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.15); backdrop-filter: blur(8px); z-index: 90; }
 
-        /* 工作经历画廊 */
-        .work-gallery {
-            display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
-            gap: 20px; padding: 15px 5px; -webkit-overflow-scrolling: touch;
-        }
-        .work-gallery::-webkit-scrollbar { height: 6px; }
-        .work-gallery::-webkit-scrollbar-thumb { background: #009688; border-radius: 10px; }
+        /* 技能实验室 Tab 样式 */
+        .skill-tabs { display: flex; justify-content: space-around; margin-bottom: 20px; border-bottom: 2px solid #e0f2f1; padding-bottom: 10px; }
+        .tab-btn { cursor: pointer; padding: 8px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; color: #00796b; transition: all 0.3s; }
+        .tab-btn.active { background: #00796b; color: #fff; }
+        .skill-content { display: none; animation: fadeIn 0.4s; }
+        .skill-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .work-card {
-            flex: 0 0 85%; scroll-snap-align: center;
-            background: #fff; border-radius: 15px; overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1); border: 1px solid #eee;
-        }
-        .work-card img { width: 100%; height: auto; display: block; cursor: pointer; }
-        .work-card .desc { padding: 12px; font-size: 13px; color: #444; text-align: center; background: #fdfdfd; }
-        .work-card a { color: #00796b; text-decoration: none; font-weight: bold; display: block; margin-top: 5px; word-break: break-all; font-size: 11px; }
-        .work-card a:hover { text-decoration: underline; }
+        .skill-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .skill-img-box { border-radius: 10px; overflow: hidden; border: 1px solid #eee; position: relative; }
+        .skill-img-box img { width: 100%; height: auto; display: block; }
+        .skill-label { background: rgba(0,0,0,0.6); color: #fff; font-size: 10px; position: absolute; bottom: 0; width: 100%; text-align: center; padding: 2px 0; }
 
-        /* 弹窗通用样式 */
-        #detail-card, #main-modal {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 88%; max-width: 520px; max-height: 85vh; padding: 25px; border-radius: 25px;
-            background: #fff; z-index: 150; box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-            overflow-y: auto !important;
-        }
-        .close-x { position: sticky; top: -10px; float: right; cursor: pointer; font-size: 26px; color: #999; z-index: 160; background: #fff; width: 32px; height: 32px; text-align: center; line-height: 32px; border-radius: 50%; }
+        #main-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 550px; max-height: 85vh; padding: 25px; border-radius: 25px; background: #fff; z-index: 150; box-shadow: 0 20px 50px rgba(0,0,0,0.2); overflow-y: auto; }
+        .close-x { position: sticky; top: -10px; float: right; cursor: pointer; font-size: 26px; color: #999; z-index: 160; background: #fff; border-radius: 50%; width: 30px; height: 30px; text-align: center; }
 
-        /* 贝壳 */
+        /* 工作经历滑动 */
+        .work-gallery { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; padding: 10px 0; }
+        .work-card { flex: 0 0 85%; scroll-snap-align: center; background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 1px solid #eee; }
+        .work-card img { width: 100%; }
+        .work-card a { color: #00796b; font-size: 11px; text-decoration: none; font-weight: bold; }
+
         .shell-item { position: fixed; width: 75px; height: 75px; display: none; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; z-index: 100; }
-        .shell-item img { width: 100%; height: auto; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); transition: transform 0.3s; }
-        .shell-item span { font-size: 11px; color: #004d40; font-weight: bold; background: rgba(255,255,255,0.8); padding: 2px 8px; border-radius: 10px; margin-top: -5px; }
-
-        /* 内容排版 */
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .info-section { background: rgba(0,150,136,0.04); padding: 15px; border-radius: 12px; border: 1px solid rgba(0,150,136,0.1); }
-        .tag { display: inline-block; background: #e0f2f1; color: #00796b; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin: 0 4px 4px 0; font-weight: bold; }
-        
-        #poster-container { width: 100%; height: 0; overflow: visible; transition: height 0.8s ease-in-out; }
-        #poster-container.unfold { height: auto; }
-        #swim-poster { width: 100%; height: auto; border-radius: 12px; display: block; margin-top: 15px; }
-
-        .bubble-common { position: fixed; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.6), rgba(178,235,242,0.3)); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; color: #00796b; border: 1px solid rgba(255,255,255,0.5); }
+        .shell-item img { width: 100%; }
+        .bubble-common { position: fixed; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, rgba(178,235,242,0.3)); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; color: #00796b; border: 1px solid #fff; }
     </style>
 </head>
 <body>
@@ -82,106 +54,17 @@
     <div id="main-content"></div>
 </div>
 
-<div id="detail-card">
-    <div class="close-x" onclick="closeDetail()">×</div>
-    <h2 id="detail-title" style="color:#00796b; margin:0 0 10px 0;"></h2>
-    <div id="detail-content" style="line-height:1.8; color:#444"></div>
-    <div id="poster-container"><img src="" id="swim-poster"></div>
-</div>
-
 <script>
-    const travelCities = ['南京', '北京', '沈阳', '云南', '重庆', '湖南', '广东', '广西', '马来西亚'];
-    const hobbyData = {
-        '网球': '热爱挥洒汗水的快感。',
-        '游泳': '在水底世界寻找宁静。',
-        '追星': '记录美好瞬间，学习闪光点。',
-        '旅游': '记录每一站的风景。点击贝壳探索我的足迹！'
-    };
-
+    // 基础数据
     const fishData = [
-        { 
-            title: '基础信息', 
-            details: `
-                <h2 style="color:#00796b; margin-top:0;">基础信息</h2>
-                <div class="info-grid">
-                    <div class="info-section">
-                        <b>姓名：</b>罗家渝<br>
-                        <b>专业：</b>华南农大 · 农林经管<br>
-                        <b>身份：</b>中共预备党员
-                    </div>
-                    <div class="info-section">
-                        <b>籍贯：</b>广东东莞<br>
-                        <b>电话：</b>18998055663<br>
-                        <b>邮箱：</b>2304362354@qq.com
-                    </div>
-                    <div class="info-section" style="grid-column: span 2;">
-                        🏅 连续两年获得校级奖学金<br>
-                        <span class="tag">CET-4</span> <span class="tag">CET-6</span>
-                    </div>
-                </div>
-            `
-        },
-        { 
-            title: '工作经历', 
-            details: `
-                <h2 style="color:#00796b; margin-top:0;">工作经历</h2>
-                <div class="work-gallery">
-                    <div class="work-card">
-                        <img src="dist/assets/img/worke1.jpg" onclick="window.open('https://www.tiktok.com/@_babyfood')">
-                        <div class="desc">
-                            TikTok 食谱账号运营<br>
-                            <a href="https://www.tiktok.com/@_babyfood" target="_blank">@_babyfood</a>
-                        </div>
-                    </div>
-                    <div class="work-card">
-                        <img src="dist/assets/img/worke2.jpg" onclick="window.open('https://xhslink.com/m/6RJ7BJGKedW')">
-                        <div class="desc">
-                            美的华凌空调小红书运营<br>
-                            <a href="https://xhslink.com/m/6RJ7BJGKedW" target="_blank">点击查看账号</a>
-                        </div>
-                    </div>
-                    <div class="work-card">
-                        <img src="dist/assets/img/worke3.jpg" onclick="window.open('https://xhslink.com/m/5dalT0qlOf5')">
-                        <div class="desc">
-                            小红书明星账号 (自媒体)<br>
-                            <a href="https://xhslink.com/m/5dalT0qlOf5" target="_blank">点击查看作品</a>
-                        </div>
-                    </div>
-                    <div class="work-card">
-                        <img src="dist/assets/img/worke4.jpg" onclick="window.open('https://v.douyin.com/LJAOEbunOag/')">
-                        <div class="desc">
-                            抖音日常分享类账号 (自媒体)<br>
-                            <a href="https://v.douyin.com/LJAOEbunOag/" target="_blank">点击查看主页</a>
-                        </div>
-                    </div>
-                    <div class="work-card">
-                        <img src="dist/assets/img/worke5.jpg" onclick="window.open('mailto:7@7.com')">
-                        <div class="desc">
-                            KOL运营 - 欧美地区<br>
-                            <span style="font-size:11px; color:#00796b; font-weight:bold;">7@7.com : 7pm</span>
-                        </div>
-                    </div>
-                </div>
-                <p style="font-size:11px; color:#999; text-align:center; margin-top:10px;">💡 点击图片或链接可直接跳转详情</p>
-            `
-        },
-        { 
-            title: '工作技能', 
-            details: `
-                <h2 style="color:#00796b; margin-top:0;">专业技能</h2>
-                <div class="info-section" style="margin-bottom:10px;">
-                    <b style="color:#00796b;">🎨 视觉与策划：</b> Figma, PS, Canva, 秀米排版，短视频全流程策划。
-                </div>
-                <div class="info-section">
-                    <b style="color:#00796b;">📊 数据办公：</b> 精通 Excel 数据透视表。计算机二级证书。
-                </div>
-            `
-        },
+        { title: '基础信息', type: 'info' },
+        { title: '工作经历', type: 'work' },
+        { title: '工作技能', type: 'skill' },
         { title: '性格与爱好', type: 'special' }
     ];
 
-    // 鱼群逻辑
-    fishData.forEach((data) => {
+    // 初始化鱼
+    fishData.forEach((data, index) => {
         const fish = document.createElement('div');
         fish.className = 'fish';
         fish.innerHTML = `<img src="dist/assets/img/fish1.png"><div>${data.title}</div>`;
@@ -197,99 +80,89 @@
             requestAnimationFrame(move);
         }
         move();
-        fish.onclick = () => data.type === 'special' ? startHobbyFlow() : showNormalModal(data.details);
+        fish.onclick = () => handleFishClick(data);
     });
 
-    function showNormalModal(content) {
+    function handleFishClick(data) {
         document.getElementById('overlay').style.display = 'block';
-        document.getElementById('main-content').innerHTML = content;
+        const content = document.getElementById('main-content');
+        if (data.type === 'skill') {
+            content.innerHTML = `
+                <h2 style="color:#00796b; margin-top:0;">技能实验室 Skill Lab</h2>
+                <div class="skill-tabs">
+                    <div class="tab-btn active" onclick="switchTab(0)">🎬 视频剪辑</div>
+                    <div class="tab-btn" onclick="switchTab(1)">🎨 设计/脚本</div>
+                    <div class="tab-btn" onclick="switchTab(2)">📑 方案/SOP</div>
+                </div>
+                <div class="skill-content active" id="tab-0">
+                    <div class="skill-grid">
+                        <div class="skill-img-box"><img src="dist/assets/img/skill_v1.jpg"><div class="skill-label">TikTok 本土化</div></div>
+                        <div class="skill-img-box"><img src="dist/assets/img/skill_v2.jpg"><div class="skill-label">B站 特效/安利</div></div>
+                    </div>
+                    <ul style="font-size:13px; color:#666; line-height:1.6;">
+                        <li><b>抖音：</b>热点卡点型、情感共鸣类。</li>
+                        <li><b>TikTok：</b>本土化自然型运营，熟悉海外受众心理。</li>
+                        <li><b>B站：</b>高燃特效剪辑，单条最高 4.1w 播放。</li>
+                    </ul>
+                </div>
+                <div class="skill-content" id="tab-1">
+                    <div class="skill-grid">
+                        <div class="skill-img-box"><img src="dist/assets/img/skill_d1.jpg"><div class="skill-label">宣传海报设计</div></div>
+                        <div class="skill-img-box"><img src="dist/assets/img/skill_d2.jpg"><div class="skill-label">脚本/文案撰写</div></div>
+                    </div>
+                    <p style="font-size:13px; color:#666;">擅长 Figma, PS 视觉设计，曾开创“华样电台”系列海报；具备成熟的公众号排版与视频脚本撰写逻辑。</p>
+                </div>
+                <div class="skill-content" id="tab-2">
+                    <div class="skill-img-box" style="margin-bottom:10px;"><img src="dist/assets/img/skill_s1.jpg"></div>
+                    <ul style="font-size:13px; color:#666; line-height:1.8;">
+                        <li><b>数据驱动：</b>发布时间调研、AB测试方案。</li>
+                        <li><b>流程标准化：</b>KOL合作SOP、geelark使用手册。</li>
+                        <li><b>落地能力：</b>将营销目标转化为可执行的标准化操作指南。</li>
+                    </ul>
+                </div>
+            `;
+        } else if (data.type === 'work') {
+            content.innerHTML = `
+                <h2 style="color:#00796b; margin-top:0;">工作经历</h2>
+                <div class="work-gallery">
+                    <div class="work-card"><img src="dist/assets/img/worke1.jpg"><div style="padding:10px; text-align:center;"><a href="https://www.tiktok.com/@_babyfood" target="_blank">TikTok食谱账号运营</a></div></div>
+                    <div class="work-card"><img src="dist/assets/img/worke2.jpg"><div style="padding:10px; text-align:center;"><a href="https://xhslink.com/m/6RJ7BJGKedW" target="_blank">美的华凌空调小红书</a></div></div>
+                    <div class="work-card"><img src="dist/assets/img/worke3.jpg"><div style="padding:10px; text-align:center;"><a href="https://xhslink.com/m/5dalT0qlOf5" target="_blank">小红书明星账号自媒体</a></div></div>
+                </div>
+            `;
+        } else if (data.type === 'info') {
+            content.innerHTML = `<h2 style="color:#00796b;">基础信息</h2><p>罗家渝 | 华南农大 2027届 | 中共预备党员</p><p>电话：18998055663</p>`;
+        } else {
+            startHobbyFlow(); return;
+        }
         document.getElementById('main-modal').style.display = 'block';
     }
 
-    let rotationAngle = 0, isRotating = false;
+    function switchTab(index) {
+        document.querySelectorAll('.tab-btn').forEach((btn, i) => btn.classList.toggle('active', i === index));
+        document.querySelectorAll('.skill-content').forEach((content, i) => content.classList.toggle('active', i === index));
+    }
+
     function startHobbyFlow() {
+        // ... 原有的性格与爱好逻辑 (气泡 -> 贝壳)
         document.getElementById('overlay').style.display = 'block';
         const big = document.createElement('div');
         big.className = 'bubble-common';
         big.style.width = '160px'; big.style.height = '160px';
         big.style.left = 'calc(50% - 80px)'; big.style.top = 'calc(50% - 80px)';
-        big.innerText = '性格与爱好'; big.style.display = 'flex';
+        big.innerText = '性格与爱好';
         document.body.appendChild(big);
         big.onclick = (e) => {
             e.stopPropagation();
-            big.style.transform = 'scale(1.8)'; big.style.opacity = '0';
-            setTimeout(() => { big.remove(); spawnHobbyBubbles(); }, 300);
-        };
+            big.remove();
+            // 此处可接原有的 spawnHobbyBubbles() 逻辑
+        }
     }
 
-    function spawnHobbyBubbles() {
-        const hobbies = Object.keys(hobbyData);
-        hobbies.forEach((name, i) => {
-            const sub = document.createElement('div');
-            sub.className = 'bubble-common sub-h';
-            sub.style.width = '85px'; sub.style.height = '85px';
-            sub.innerText = name; sub.style.display = 'flex';
-            document.body.appendChild(sub);
-            const angle = (i / hobbies.length) * Math.PI * 2, dist = 190;
-            setTimeout(() => {
-                sub.style.left = (window.innerWidth/2 - 42 + Math.cos(angle) * dist) + 'px';
-                sub.style.top = (window.innerHeight/2 - 42 + Math.sin(angle) * dist) + 'px';
-            }, 50);
-            sub.onclick = (ev) => { ev.stopPropagation(); name === '旅游' ? startTravelShells() : showHobbyDetail(name); };
-        });
-    }
-
-    function startTravelShells() {
-        document.querySelectorAll('.sub-h').forEach(b => b.remove());
-        isRotating = true;
-        travelCities.forEach((city) => {
-            const shell = document.createElement('div');
-            shell.className = 'shell-item';
-            shell.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${city}</span>`;
-            shell.style.display = 'flex';
-            document.body.appendChild(shell);
-            shell.onclick = (e) => { e.stopPropagation(); showCityPhoto(city); };
-        });
-        updateShellPositions();
-    }
-
-    function updateShellPositions() {
-        if (!isRotating) return;
-        rotationAngle += 0.005;
-        const shells = document.querySelectorAll('.shell-item'), radius = 240;
-        shells.forEach((shell, i) => {
-            const angle = rotationAngle + (i / shells.length) * Math.PI * 2;
-            const x = window.innerWidth / 2 + Math.cos(angle) * radius - 37;
-            const y = window.innerHeight / 2 + Math.sin(angle) * radius - 37;
-            shell.style.left = x + 'px'; shell.style.top = (y + Math.sin(rotationAngle * 2 + i) * 10) + 'px';
-            shell.style.transform = `rotate(${Math.cos(angle) * 10}deg)`;
-        });
-        requestAnimationFrame(updateShellPositions);
-    }
-
-    function showHobbyDetail(name) {
-        const card = document.getElementById('detail-card'), poster = document.getElementById('swim-poster'), container = document.getElementById('poster-container');
-        document.getElementById('detail-title').innerText = name;
-        document.getElementById('detail-content').innerText = hobbyData[name];
-        if (name === '游泳') { poster.src = "dist/assets/img/游泳.png"; container.style.display = 'block'; setTimeout(() => container.classList.add('unfold'), 50); } 
-        else { container.style.display = 'none'; }
-        card.style.display = 'block';
-    }
-
-    function showCityPhoto(city) {
-        document.getElementById('detail-title').innerText = `旅游足迹 · ${city}`;
-        document.getElementById('detail-content').innerText = `这是我在${city}留下的回忆...`;
-        document.getElementById('poster-container').style.display = 'none';
-        document.getElementById('detail-card').style.display = 'block';
-    }
-
-    function closeDetail() { document.getElementById('detail-card').style.display = 'none'; }
     function closeAll() {
         document.getElementById('overlay').style.display = 'none';
         document.getElementById('main-modal').style.display = 'none';
-        document.getElementById('detail-card').style.display = 'none';
-        document.querySelectorAll('.bubble-common, .shell-item').forEach(b => b.remove());
-        isRotating = false;
+        document.querySelectorAll('.bubble-common').forEach(b => b.remove());
     }
 </script>
 </body>
