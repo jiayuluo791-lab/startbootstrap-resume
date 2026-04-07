@@ -6,66 +6,79 @@
     <title>家渝的个人鱼塘</title>
     <style>
     :root { --teal: #00796b; --glow: rgba(178, 235, 242, 0.6); }
-    
-    /* ✅ 1. 【核心修复】确保 body 和 html 都是全屏，消除割裂线 */
+   <style>
+    :root { --teal: #00796b; --glow: rgba(178, 235, 242, 0.6); }
+
+    /* ✅ 1. 修复横线：确保 body 全屏且背景不重复 */
     body, html { 
-        margin: 0; 
-        padding: 0; 
-        height: 100%; 
-        width: 100%;
-        overflow: hidden; 
-        font-family: "PingFang SC", sans-serif; 
+        margin: 0; padding: 0; height: 100%; width: 100%;
+        overflow: hidden; font-family: "PingFang SC", sans-serif; 
         background-color: #000b14; 
     }
-    
+
     body { 
-        /* ✅ 2. 【核心修复】给整个背景添加一层统一的深色“减光镜” */
-        background-image: 
-            linear-gradient(rgba(0, 11, 20, 0.3), rgba(0, 11, 20, 0.3)), 
-            url("dist/assets/img/water.jpg"); 
+        /* 添加 no-repeat 彻底解决照片“复制/断层”的感觉 */
+        background: 
+            linear-gradient(rgba(0, 11, 20, 0.35), rgba(0, 11, 20, 0.35)), 
+            url("dist/assets/img/water.jpg") no-repeat center center; 
         background-size: cover; 
-        background-position: center; 
-        background-attachment: fixed; /* 固定背景，增加景深感 */
-    }
-    
-    /* 萤火虫 Canvas - 置于底层 */
-    #fireflyCanvas { 
-        position: fixed; top: 0; left: 0; 
-        width: 100%; height: 100%; 
-        z-index: 1; /* ✅ 3. 关键：层级为 1 */
-        pointer-events: none; 
+        background-attachment: fixed; 
     }
 
-    /* 头像、鱼群等内容 - 置于高层 */
-    #profile-avatar, .fish, .jellyfish, .shell-option, .close-x {
-        z-index: 10; /* ✅ 4. 关键：层级远高于 Canvas */
+    /* ✅ 2. 萤火虫画布层级 */
+    #fireflyCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+    /* ✅ 3. 中心头像：设置为你想要的放大版本 (180px) */
+    #profile-avatar { 
+        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+        width: 180px; height: 180px; 
+        border-radius: 50%; 
+        border: 6px solid rgba(255, 255, 255, 0.3); 
+        box-shadow: 0 0 40px var(--glow); z-index: 5; 
+        object-fit: cover; animation: AvatarFloat 5s ease-in-out infinite; 
     }
+    @keyframes AvatarFloat { 0%, 100% { transform: translate(-50%, -50%) translateY(0px); } 50% { transform: translate(-50%, -50%) translateY(-12px); } }
 
-    /* ✅ 其余所有样式不要变，比如头像、鱼群、弹窗等... */
-    /* ...保留原来的 #profile-avatar, .fish, .jellyfish 等样式... */
+    /* 鱼群、水母等通用层级 */
+    .fish, .jellyfish { z-index: 10; }
+    .fish { position: absolute; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
+    .fish img { width: 110px; height: auto; transition: transform 0.3s; }
+    .fish div { font-size: 15px; color: var(--teal); font-weight: bold; margin-top: 5px; text-shadow: 0 0 6px #fff; }
 
-    /* 性格标签：定格不消失 */
+    /* ✅ 4. 性格标签散落：定格不消失 */
     .char-tag-scatter {
-        position: fixed; 
-        padding: 10px 20px; 
-        background: #e0f2f1; 
-        color: #00796b; 
-        border-radius: 20px;
-        font-weight: bold; 
-        font-size: 14px; 
-        pointer-events: none; 
-        z-index: 200; /* ✅ 标签层级最高 */
-        border: 1.5px solid #b2dfdb;
+        position: fixed; padding: 10px 20px; background: #e0f2f1; color: #00796b; border-radius: 20px;
+        font-weight: bold; font-size: 14px; pointer-events: none; z-index: 200; border: 1.5px solid #b2dfdb;
         animation: scatterAnim 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
-    
     @keyframes scatterAnim {
         0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
         30% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
         100% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--tr)); }
     }
-    
-    @keyframes AvatarFloat { 0%, 100% { transform: translate(-50%, -50%) translateY(0px); } 50% { transform: translate(-50%, -50%) translateY(-12px); } }
+
+    /* 遮罩与弹窗 */
+    #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(6px); z-index: 90; }
+    #main-modal, #image-viewer { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 25px; background: #fff; z-index: 150; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    #main-modal { width: 85%; max-width: 480px; padding: 25px; max-height: 75vh; overflow-y: auto; }
+    #image-viewer { width: 90%; max-width: 1000px; background: none; box-shadow: none; }
+    #image-viewer img { width: 100%; border-radius: 15px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+    .close-x { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 22px; color: #666; background: #eee; width: 32px; height: 32px; border-radius: 50%; text-align: center; line-height: 32px; z-index: 10; }
+
+    /* 贝壳选项 */
+    .shell-option { position: fixed; width: 125px; height: 125px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; color: var(--teal); font-weight: bold; transform: translate(-50%, -50%) scale(0); opacity: 0; transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .shell-option img { position: absolute; width: 100%; height: 100%; z-index: -1; }
+    .shell-unfold { transform: translate(-50%, -50%) scale(1) !important; opacity: 1 !important; }
+
+    /* 经历滚动 & 唱片机 */
+    .work-scroll { display: flex; overflow-x: auto; gap: 15px; padding: 10px 0; scroll-snap-type: x mandatory; scrollbar-width: none; }
+    .work-scroll::-webkit-scrollbar { display: none; }
+    .work-scroll img { width: 220px; border-radius: 12px; scroll-snap-align: center; cursor: pointer; border: 1px solid #eee; flex-shrink: 0; }
+    .record-player { display: flex; overflow-x: auto; gap: 25px; padding: 20px 10px; scrollbar-width: none; }
+    .record-item { flex: 0 0 150px; text-align: center; }
+    .record-item img { width: 140px; height: 140px; border-radius: 50%; border: 8px solid #222; object-fit: cover; }
+    .record-item.is-selected img { animation: RecordSpin 12s linear infinite; border-color: var(--teal); }
+    @keyframes RecordSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 </style>
         /* 鱼群 */
         .fish { position: absolute; cursor: pointer; z-index: 10; display: flex; flex-direction: column; align-items: center; }
