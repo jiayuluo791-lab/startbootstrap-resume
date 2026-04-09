@@ -302,8 +302,10 @@
             // 🐚 贝壳抖动反馈
             const shell = e.currentTarget;
             shell.style.transform = 'rotate(-10deg) scale(0.8)';
-            setTimeout(() => shell.style.transform = 'rotate(-10deg) scale(1)', 100);
-        }
-    </script>
+           setTimeout(() => {
+            shell.style.transform = 'rotate(-10deg) scale(1)';
+        }, 100);
+    } // <--- 🌟 就是在这里，新加这个大括号！它是送给 function spawnLuck 的
+</script>
 </body>
 </html>
