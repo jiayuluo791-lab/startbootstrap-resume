@@ -309,22 +309,21 @@
     function viewImage(s) { document.getElementById('full-img').src="dist/assets/img/"+s; document.getElementById('image-viewer').style.display='block'; document.getElementById('overlay').style.display='block'; }
     function closeModal() { document.getElementById('main-modal').style.display='none'; document.getElementById('overlay').style.display='none'; }
     function closeViewer() { document.getElementById('image-viewer').style.display='none'; if(document.getElementById('main-modal').style.display==='none') document.getElementById('overlay').style.display='none'; }
-    function closeAll() { 
-   function closeAll() {
-    // 1. 关闭弹窗和遮罩
+    function closeAll() {
+    // 1. 关闭所有弹窗和遮罩
     document.getElementById('main-modal').style.display = 'none';
     document.getElementById('image-viewer').style.display = 'none';
     document.getElementById('overlay').style.display = 'none'; 
 
-    // 2. 让主页的鱼群和水母重新显示
-    document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => {
-        f.style.display = 'flex';
+    // 2. ✅ 核心修复：重新显示主页的鱼群
+    // 确保这里的 querySelector 选中的是生成鱼群时用的 class 名（通常是 .main-fish-item）
+    document.querySelectorAll('.main-fish-item').forEach(f => {
+        f.style.display = 'flex'; // 重新把鱼变出来
     });
 
-    // 3. ✅ 关键修复：把页面上所有临时生成的贝壳和标签全部删掉
-    // 这样页面才会彻底清空，回到主页面状态
-    const tempElements = document.querySelectorAll('.dive-opt, .hobby-item, .char-tag-scatter');
-    tempElements.forEach(el => el.remove()); 
+    // 3. 清除所有临时生成的贝壳和标签，防止它们堆积
+    const elementsToRemove = document.querySelectorAll('.dive-opt, .hobby-item, .char-tag-scatter');
+    elementsToRemove.forEach(el => el.remove()); 
 }
 </script>
 </body>
