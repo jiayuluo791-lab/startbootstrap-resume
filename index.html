@@ -259,17 +259,62 @@
     function viewImage(s) { document.getElementById('full-img').src="dist/assets/img/"+s; document.getElementById('image-viewer').style.display='block'; document.getElementById('overlay').style.display='block'; }
     function closeModal() { document.getElementById('main-modal').style.display='none'; document.getElementById('overlay').style.display='none'; }
     function closeViewer() { document.getElementById('image-viewer').style.display='none'; if(document.getElementById('main-modal').style.display==='none') document.getElementById('overlay').style.display='none'; }
-    function closeAll() {
+   function closeAll() {
         document.getElementById('main-modal').style.display = 'none';
         document.getElementById('image-viewer').style.display = 'none';
         document.getElementById('overlay').style.display = 'none'; 
         document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'flex');
         document.querySelectorAll('.dive-opt, .hobby-item, .char-tag-scatter').forEach(el => el.remove()); 
     }
-<div class="treasure-box" onclick="spawnLuck(event)" style="pointer-events: auto; cursor: pointer;">
-        <img src="assets/img/粉贝壳.png">
-    </div>
 
-    <script>
+    // --- 🎵 这里是新加的播放与彩蛋函数 ---
+    let shellMusic = null; 
+
+    function spawnLuck(e) {
+        e.stopPropagation();
+        
+        // 1. 播放音乐逻辑 (确保 keshi.mp3 在 index.html 旁边)
+        if (!shellMusic) {
+            shellMusic = new Audio('keshi.mp3'); 
+            shellMusic.volume = 0.6;
+        }
+        shellMusic.currentTime = 0;
+        shellMusic.play().catch(err => console.log("音频播放失败，请检查文件名:", err));
+
+        // 2. 喷射宝石特效
+        const items = ['✨', '💎', '🐚', '🌟', '💰', '🍬', '🌸'];
+        for (let i = 0; i < 12; i++) {
+            const el = document.createElement('div');
+            el.style.cssText = `
+                position: fixed; left: ${e.clientX}px; top: ${e.clientY}px;
+                font-size: 24px; pointer-events: none; z-index: 999;
+                transition: all 1s ease-out;
+            `;
+            el.innerText = items[Math.floor(Math.random() * items.length)];
+            document.body.appendChild(el);
+
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 100 + Math.random() * 100;
+            const tx = Math.cos(angle) * dist;
+            const ty = Math.sin(angle) * dist;
+
+            requestAnimationFrame(() => {
+                el.style.transform = `translate(${tx}px, ${ty}px) rotate(${Math.random()*360}deg)`;
+                el.style.opacity = '0';
+            });
+            setTimeout(() => el.remove(), 1000);
+        }
+        
+        // 3. 贝壳点击反馈
+        const shell = e.currentTarget;
+        shell.style.transform = 'rotate(-10deg) scale(0.8)';
+        setTimeout(() => shell.style.transform = 'rotate(-10deg) scale(1)', 100);
+    }
+</script>
+
+<div class="treasure-box" onclick="spawnLuck(event)" style="pointer-events: auto; cursor: pointer;">
+    <img src="dist/assets/img/粉贝壳.png">
+</div>
+
 </body>
 </html>
