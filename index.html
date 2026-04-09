@@ -189,45 +189,17 @@
    const fishData = [
     { 
         title: '工作经历', 
-        content: `<h3>项目实战</h3>
-                  <div class="work-grid">
-                      <img src="dist/assets/img/worke1.jpg" onclick="viewImage('worke1.jpg')">
-                      <img src="dist/assets/img/worke2.jpg" onclick="viewImage('worke2.jpg')">
-                      <img src="dist/assets/img/worke3.jpg" onclick="viewImage('worke3.jpg')">
-                      <img src="dist/assets/img/worke4.jpg" onclick="viewImage('worke4.jpg')">
-                  </div>` 
+        content: '<h3>项目实战</h3><div class="work-grid"><img src="dist/assets/img/worke1.jpg" onclick="viewImage(\'worke1.jpg\')"><img src="dist/assets/img/worke2.jpg" onclick="viewImage(\'worke2.jpg\')"><img src="dist/assets/img/worke3.jpg" onclick="viewImage(\'worke3.jpg\')"><img src="dist/assets/img/worke4.jpg" onclick="viewImage(\'worke4.jpg\')"></div>' 
     },
-    { title: '性格与爱好', type: 'special' },
+    { 
+        title: '性格与爱好', 
+        type: 'special' 
+    },
     { 
         title: '基础信息', 
-        content: `
-            <div style="text-align: left; line-height: 1.8;">
-                <h3 style="color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 0;">个人名片</h3>
-                <p><b>姓名：</b>罗家渝</p>
-                <p><b>联系方式：</b><br>18998055663 (微信同号)<br>2304362354@qq.com</p>
-                <p><b>学校专业：</b><br>华南农业大学｜农林经济管理<br><small>(2023-2027)</small></p>
-                
-                <h3 style="color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 15px;">专业技能</h3>
-                <p><b>🌐 语言能力：</b><br>英语 CET-6，具备商务沟通与内容本地化能力。</p>
-                <p><b>📊 数据分析：</b><br>计算机二级，熟练运用 Excel 数据透视表。</p>
-                <p><b>🎨 内容工具：</b><br>熟练使用剪映、PS、Canva、Figma、秀米。</p>
-            </div>
-        ` 
-    } // ✅ 注意这里的闭合大括号
-]; // ✅ 注意这里的闭合中括号和分号
-        { 
-    title: '工作经历', 
-    content: `<h3>项目实战</h3>
-              <div class="work-grid">
-                  <img src="dist/assets/img/worke1.jpg" onclick="viewImage('worke1.jpg')">
-                  <img src="dist/assets/img/worke2.jpg" onclick="viewImage('worke2.jpg')">
-                  <img src="dist/assets/img/worke3.jpg" onclick="viewImage('worke3.jpg')">
-                  <img src="dist/assets/img/worke4.jpg" onclick="viewImage('worke4.jpg')">
-              </div>` 
-},{ title: '工作技能', type: 'skill' },
-        { title: '性格与爱好', type: 'special' }
-    ];
-
+        content: '<div style="text-align: left; line-height: 1.8;"><h3 style="color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 0;">个人名片</h3><p><b>姓名：</b>罗家渝</p><p><b>联系方式：</b><br>18998055663 (微信同号)<br>2304362354@qq.com</p><p><b>学校专业：</b><br>华南农业大学｜农林经济管理<br><small>(2023-2027)</small></p><h3 style="color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 15px;">专业技能</h3><p><b>🌐 语言能力：</b><br>英语 CET-6，具备商务沟通与内容本地化能力。</p><p><b>📊 数据分析：</b><br>计算机二级，熟练运用 Excel 数据透视表。</p><p><b>🎨 内容工具：</b><br>熟练使用剪映、PS、Canva、Figma、秀米。</p></div>' 
+    }
+];
     fishData.forEach((data) => {
         const fish = document.createElement('div'); fish.className = 'fish main-fish-item';
         fish.innerHTML = `<img src="dist/assets/img/fish1.png"><div>${data.title}</div>`;
