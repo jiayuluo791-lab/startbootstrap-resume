@@ -19,17 +19,16 @@
 }
 
 .treasure-box {
-    position: absolute; 
-    bottom: 8%;  /* 距离底部 */
-    right: 5%;   /* 距离右侧 */
+    position: fixed;    /* 必须是 fixed 或 absolute 才能离开中间 */
+    bottom: 50px;       /* 距离底部固定距离 */
+    right: 50px;        /* 距离右侧固定距离 */
     width: 140px; 
     height: auto; 
-    z-index: 2;   
+    z-index: 99;        /* 确保在最上层 */
     pointer-events: none; 
-    animation: TreasureGlow 4s ease-in-out infinite;
     transform: rotate(-10deg); 
+    animation: TreasureGlow 4s ease-in-out infinite;
 }
-
 .treasure-box img {
     width: 100%; 
     height: auto;
