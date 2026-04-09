@@ -266,24 +266,29 @@
         document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'flex');
         document.querySelectorAll('.dive-opt, .hobby-item, .char-tag-scatter').forEach(el => el.remove()); 
     }
-<script>
-       <div class="treasure-box" onclick="spawnLuck(event)" style="pointer-events: auto; cursor: pointer;">
+<div class="treasure-box" onclick="spawnLuck(event)" style="pointer-events: auto; cursor: pointer;">
         <img src="assets/img/粉贝壳.png">
     </div>
 
     <script>
+        // 播放器变量放在这里
         let shellMusic = null; 
 
         function spawnLuck(e) {
+            // 阻止事件冒泡
             e.stopPropagation();
 
-            // 🎵 播放音乐 (确保 keshi.mp3 在同级目录)
+            // 🎵 音乐播放逻辑
             if (!shellMusic) {
+                // 因为你把文件挪到了 dist 根目录，直接写文件名即可
                 shellMusic = new Audio('keshi.mp3'); 
                 shellMusic.volume = 0.6;
             }
-            shellMusic.currentTime = 0;
-            shellMusic.play().catch(err => console.log("音频加载中或路径错误:", err));
+            
+            shellMusic.currentTime = 0; // 每次点击从头开始
+            shellMusic.play().catch(err => {
+                console.warn("音频播放失败，请确认 keshi.mp3 在 index.html 同级目录", err);
+            });
 
             // ✨ 喷射宝石特效
             const items = ['✨', '💎', '🐚', '🌟', '💰', '🍬', '🌸'];
@@ -304,13 +309,13 @@
                 setTimeout(() => el.remove(), 1000);
             }
             
-            // 🐚 贝壳抖动反馈
+            // 🐚 贝壳点击反馈（抖动）
             const shell = e.currentTarget;
             shell.style.transform = 'rotate(-10deg) scale(0.8)';
             setTimeout(() => {
                 shell.style.transform = 'rotate(-10deg) scale(1)';
             }, 100);
-        } // ✅ 确认这里有关闭函数的大括号
+        } // 这个右花括号用来关闭 spawnLuck 函数
     </script>
 </body>
 </html>
