@@ -7,146 +7,76 @@
     <style>
         :root { --teal: #00796b; --glow: rgba(178, 235, 242, 0.6); }
 
-        /* ✅ 核心修复：锁定全屏高度，防止背景断层出现横线 */
         body, html { 
-            margin: 0; 
-            padding: 0; 
-            height: 100vh; 
-            width: 100vw;
-            overflow: hidden; 
-            font-family: "PingFang SC", sans-serif; 
+            margin: 0; padding: 0; height: 100vh; width: 100vw;
+            overflow: hidden; font-family: "PingFang SC", sans-serif; 
             background-color: #000b14; 
         }
 
         body { 
-            /* ✅ 核心修复：使用固定背景且不重复，彻底消除“照片复制”感 */
             background: 
                 linear-gradient(rgba(0, 11, 20, 0.35), rgba(0, 11, 20, 0.35)), 
                 url("dist/assets/img/water.jpg") no-repeat center center; 
-            background-size: cover; 
-            background-attachment: fixed; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background-size: cover; background-attachment: fixed; 
+            display: flex; justify-content: center; align-items: center;
         }
         
-        /* 画布：置于底层 */
         #fireflyCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-        /* 水母 */
+        /* 水母样式与动画 */
         .jellyfish {
             position: absolute; width: 150px; height: auto; z-index: 2; pointer-events: none;
-            opacity: 0.7; animation: JellyMovement 45s linear infinite;
+            opacity: 0.7; animation: JellyFloat 6s ease-in-out infinite;
         }
-/* ✅ 定义水母上下浮动的动画 */
-@keyframes JellyFloat {
-    0%, 100% { 
-        transform: translateY(0px) rotate(0deg); 
-    }
-    50% { 
-        transform: translateY(-20px) rotate(2deg); /* 向上漂浮 20 像素，并轻微旋转 */
-    }
-}
+        @keyframes JellyFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
 
-/* ✅ 找到你原本的 .jellyfish 样式，把这行 animation 加进去 */
-.jellyfish {
-    animation: JellyFloat 6s ease-in-out infinite;
-    position: absolute; /* 确保它有定位 */
-    z-index: 2;         /* 确保它在背景之上 */
-    pointer-events: none;
-}
-        /* ✅ 中心头像：已按需放大至 180px */
         #profile-avatar { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 180px; 
-            height: 180px; 
-            border-radius: 50%; 
+            width: 180px; height: 180px; border-radius: 50%; 
             border: 6px solid rgba(255, 255, 255, 0.3); 
             box-shadow: 0 0 40px var(--glow); z-index: 5; 
             object-fit: cover; animation: AvatarFloat 5s ease-in-out infinite; 
         }
         @keyframes AvatarFloat { 0%, 100% { transform: translate(-50%, -50%) translateY(0px); } 50% { transform: translate(-50%, -50%) translateY(-12px); } }
 
-        /* 鱼群 */
         .fish { position: absolute; cursor: pointer; z-index: 10; display: flex; flex-direction: column; align-items: center; }
         .fish img { width: 110px; height: auto; transition: transform 0.3s; }
         .fish div { font-size: 15px; color: var(--teal); font-weight: bold; margin-top: 5px; text-shadow: 0 0 6px #fff; }
 
-        /* 遮罩与弹窗 */
         #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(6px); z-index: 90; }
         #main-modal, #image-viewer { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 25px; background: #fff; z-index: 150; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
         #main-modal { width: 85%; max-width: 480px; padding: 25px; max-height: 75vh; overflow-y: auto; }
-        /* ✅ 专门为工作经历准备的 2x2 网格布局 */
-.work-grid { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; /* 分成两列 */
-    gap: 12px;                      /* 照片间距 */
-    margin-top: 15px; 
-}
+        
+        /* 工作经历 2x2 网格 */
+        .work-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .work-grid img { width: 100%; height: 110px; object-fit: cover; border-radius: 12px; cursor: pointer; border: 1.5px solid #eee; transition: transform 0.2s; }
+        .work-grid img:hover { transform: scale(1.05); border-color: var(--teal); }
 
-.work-grid img { 
-    width: 100%;           
-    height: 110px;         /* 统一高度，让四张图对齐 */
-    object-fit: cover;     
-    border-radius: 12px;   
-    cursor: pointer;       
-    border: 1.5px solid #eee; 
-    transition: transform 0.2s;
-}
-
-.work-grid img:hover { transform: scale(1.05); border-color: var(--teal); }#image-viewer { width: 90%; max-width: 1000px; background: none; box-shadow: none; }
+        #image-viewer { width: 90%; max-width: 1000px; background: none; box-shadow: none; }
         #image-viewer img { width: 100%; border-radius: 15px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
         .close-x { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 22px; color: #666; background: #eee; width: 32px; height: 32px; border-radius: 50%; text-align: center; line-height: 32px; z-index: 10; }
-/* ✅ 专门为爱好详情准备的样式 */
-.hobby-content {
-    line-height: 1.6;
-    color: #444;
-}
-.hobby-content h3 {
-    color: var(--teal);
-    border-bottom: 2px solid #e0f2f1;
-    padding-bottom: 8px;
-    margin-bottom: 12px;
-    margin-top: 0;
-}
-.hobby-content p {
-    font-size: 14px;
-    background: #f9f9f9;
-    padding: 12px;
-    border-radius: 10px;
-    margin: 0;
-}
-        /* 贝壳与子项 */
+
+        /* 爱好详情样式 */
+        .hobby-content { line-height: 1.6; color: #444; }
+        .hobby-content h3 { color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 8px; margin-bottom: 12px; margin-top: 0; }
+        .hobby-content p { font-size: 14px; background: #f9f9f9; padding: 12px; border-radius: 10px; margin: 0; }
+
         .shell-option { position: fixed; width: 125px; height: 125px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; color: var(--teal); font-weight: bold; transform: translate(-50%, -50%) scale(0); opacity: 0; transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .shell-option img { position: absolute; width: 100%; height: 100%; z-index: -1; }
         .shell-unfold { transform: translate(-50%, -50%) scale(1) !important; opacity: 1 !important; }
 
-        /* 性格标签动画 */
-        .char-tag-scatter {
-            position: fixed; padding: 10px 20px; background: #e0f2f1; color: #00796b; border-radius: 20px;
-            font-weight: bold; font-size: 14px; pointer-events: none; z-index: 200; border: 1.5px solid #b2dfdb;
-            animation: scatterAnim 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-        @keyframes scatterAnim {
-            0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
-            30% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
-            100% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--tr)); }
-        }
-
-        /* 唱片机与滑动 */
-        .work-scroll, .record-player { display: flex; overflow-x: auto; gap: 15px; padding: 10px 0; scrollbar-width: none; }
-        .work-scroll img { width: 220px; border-radius: 12px; cursor: pointer; flex-shrink: 0; }
-        .record-item { flex: 0 0 150px; text-align: center; }
-        .record-item img { width: 140px; height: 140px; border-radius: 50%; border: 8px solid #222; object-fit: cover; }
-        .record-item.is-selected img { animation: RecordSpin 12s linear infinite; border-color: var(--teal); }
-        @keyframes RecordSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .char-tag-scatter { position: fixed; padding: 10px 20px; background: #e0f2f1; color: #00796b; border-radius: 20px; font-weight: bold; font-size: 14px; pointer-events: none; z-index: 200; border: 1.5px solid #b2dfdb; animation: scatterAnim 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes scatterAnim { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0); } 30% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } 100% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--tr)); } }
     </style>
 </head>
 <body>
 
 <canvas id="fireflyCanvas"></canvas>
 <img class="jellyfish" src="dist/assets/img/watermom.png" style="top:10%; left:5%;">
-<img class="jellyfish" src="dist/assets/img/watermom.png" style="bottom:15%; right:8%; animation-delay: -15s; transform: scaleX(-1);">
+<img class="jellyfish" src="dist/assets/img/watermom.png" style="bottom:15%; right:8%; animation-delay: -3s; transform: scaleX(-1);">
 
 <img id="profile-avatar" src="dist/assets/img/profile.jpg">
 <div id="overlay" onclick="closeAll()"></div>
@@ -162,13 +92,9 @@
     function initCanvas() {
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         fireflies = Array.from({length: 50}, () => ({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            r: Math.random() * 2 + 1,
-            vx: (Math.random() - 0.5) * 0.4,
-            vy: (Math.random() - 0.5) * 0.3,
-            a: Math.random(),
-            ds: Math.random() * 0.01 + 0.005
+            x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+            r: Math.random() * 2 + 1, vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.3,
+            a: Math.random(), ds: Math.random() * 0.01 + 0.005
         }));
     }
     function draw() {
@@ -177,7 +103,6 @@
             f.x += f.vx; f.y += f.vy; f.a += f.ds;
             if(f.a > 0.8 || f.a < 0.2) f.ds *= -1;
             ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI*2);
-            // ✅ 优化：增强萤火虫在亮色背景下的发光度
             ctx.fillStyle = `rgba(180, 255, 230, ${f.a})`;
             ctx.shadowBlur = 12; ctx.shadowColor = "#d4ff80";
             ctx.fill();
@@ -186,20 +111,20 @@
     }
     initCanvas(); draw(); window.onresize = initCanvas;
 
-   const fishData = [
-    { 
-        title: '工作经历', 
-        content: '<h3>项目实战</h3><div class="work-grid"><img src="dist/assets/img/worke1.jpg" onclick="viewImage(\'worke1.jpg\')"><img src="dist/assets/img/worke2.jpg" onclick="viewImage(\'worke2.jpg\')"><img src="dist/assets/img/worke3.jpg" onclick="viewImage(\'worke3.jpg\')"><img src="dist/assets/img/worke4.jpg" onclick="viewImage(\'worke4.jpg\')"></div>' 
-    },
-    { 
-        title: '性格与爱好', 
-        type: 'special' 
-    },
-    { 
-        title: '基础信息', 
-        content: '<div style="text-align: left; line-height: 1.8;"><h3 style="color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 0;">个人名片</h3><p><b>姓名：</b>罗家渝</p><p><b>联系方式：</b><br>18998055663 (微信同号)<br>2304362354@qq.com</p><p><b>学校专业：</b><br>华南农业大学｜农林经济管理<br><small>(2023-2027)</small></p><h3 style="color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 15px;">专业技能</h3><p><b>🌐 语言能力：</b><br>英语 CET-6，具备商务沟通与内容本地化能力。</p><p><b>📊 数据分析：</b><br>计算机二级，熟练运用 Excel 数据透视表。</p><p><b>🎨 内容工具：</b><br>熟练使用剪映、PS、Canva、Figma、秀米。</p></div>' 
-    }
-];
+    // 2. 核心数据（合并简历信息、工作经历、爱好占位）
+    const fishData = [
+        { 
+            title: '工作经历', 
+            content: '<h3>项目实战</h3><div class="work-grid"><img src="dist/assets/img/worke1.jpg" onclick="viewImage(\'worke1.jpg\')"><img src="dist/assets/img/worke2.jpg" onclick="viewImage(\'worke2.jpg\')"><img src="dist/assets/img/worke3.jpg" onclick="viewImage(\'worke3.jpg\')"><img src="dist/assets/img/worke4.jpg" onclick="viewImage(\'worke4.jpg\')"></div>' 
+        },
+        { title: '性格与爱好', type: 'special' },
+        { 
+            title: '基础信息', 
+            content: '<div style="text-align: left; line-height: 1.8;"><h3 style="color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 0;">个人名片</h3><p><b>姓名：</b>罗家渝</p><p><b>联系方式：</b><br>18998055663 (微信同号)<br>2304362354@qq.com</p><p><b>学校专业：</b><br>华南农业大学｜农林经济管理<br><small>(2023-2027)</small></p><h3 style="color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 15px;">专业技能</h3><p><b>🌐 语言能力：</b><br>英语 CET-6，具备商务沟通与内容本地化能力。</p><p><b>📊 数据分析：</b><br>计算机二级，熟练运用 Excel 数据透视表。</p><p><b>🎨 内容工具：</b><br>熟练使用剪映、PS、Canva、Figma、秀米。</p></div>' 
+        }
+    ];
+
+    // 3. 生成主页鱼群
     fishData.forEach((data) => {
         const fish = document.createElement('div'); fish.className = 'fish main-fish-item';
         fish.innerHTML = `<img src="dist/assets/img/fish1.png"><div>${data.title}</div>`;
@@ -216,48 +141,36 @@
         }
         moveFish();
         fish.onclick = () => {
-            if (data.type === 'skill') openSkillFolder();
-            else if (data.type === 'special') startDeepDive();
+            if (data.type === 'special') startDeepDive();
             else showModal(data.content);
         };
     });
 
-    function openSkillFolder() {
-        showModal(`<h3>核心技能</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;">
-            <div onclick="viewImage('skill_video.jpg')"><div style="font-size:30px;">🎬</div>视频剪辑</div>
-            <div onclick="viewImage('skill_design.jpg')"><div style="font-size:30px;">🎨</div>视觉设计</div>
-            <div onclick="viewImage('skill_sop.jpg')"><div style="font-size:30px;">📊</div>数据SOP</div>
-        </div>`);
-    }
-
+    // 4. 性格与爱好点击逻辑
     function startDeepDive() {
-    const overlay = document.getElementById('overlay');
-    overlay.style.display = 'block';
-    // 隐藏主页鱼群和水母
-    document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'none'); 
+        document.getElementById('overlay').style.display = 'block';
+        document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'none'); 
 
-    const opts = [{name:'性格标签', type:'char'}, {name:'兴趣爱好', type:'hobby'}];
-    opts.forEach((opt, i) => {
-        const btn = document.createElement('div'); 
-        btn.className = 'shell-option dive-opt'; // 标记为 dive-opt 方便清除
-        btn.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${opt.name}</span>`;
-        btn.style.top = '50%'; 
-        btn.style.left = i === 0 ? 'calc(50% - 145px)' : 'calc(50% + 145px)'; 
-        document.body.appendChild(btn); 
-        setTimeout(() => btn.classList.add('shell-unfold'), 50);
+        const opts = [{name:'性格标签', type:'char'}, {name:'兴趣爱好', type:'hobby'}];
+        opts.forEach((opt, i) => {
+            const btn = document.createElement('div'); 
+            btn.className = 'shell-option dive-opt';
+            btn.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${opt.name}</span>`;
+            btn.style.top = '50%'; 
+            btn.style.left = i === 0 ? 'calc(50% - 145px)' : 'calc(50% + 145px)'; 
+            document.body.appendChild(btn); 
+            setTimeout(() => btn.classList.add('shell-unfold'), 50);
 
-        btn.onclick = (e) => { 
-            e.stopPropagation(); 
-            if(opt.type === 'char') {
-                scatterTags(); 
-            } else { 
-                // ✅ 核心修改：点击爱好后，先把当前的两个大贝壳删掉
-                document.querySelectorAll('.dive-opt').forEach(el => el.remove());
-                showHobbySub(); 
-            } 
-        };
-    });
-}
+            btn.onclick = (e) => { 
+                e.stopPropagation(); 
+                if(opt.type === 'char') scatterTags(); 
+                else { 
+                    document.querySelectorAll('.dive-opt').forEach(el => el.remove());
+                    showHobbySub(); 
+                } 
+            };
+        });
+    }
 
     function scatterTags() {
         const tags = ['ENTJ', '有点脸盲', '偶尔想当忧郁少女', '拒绝拖延', '想象力丰富', '执行力max', '开朗爱笑', '搞怪', 'idea多', '尝新派也是守旧派'];
@@ -272,73 +185,47 @@
         });
     }
 
-   function showHobbySub() {
-    // 1. 定义你的四类爱好内容
-    const hobbyList = [
-        { 
-            name: '🎾 运动类', 
-            content: `<h3>保持活力</h3><p>喜欢通过<b>网球和游泳</b>保持活力，也锻炼了专注力和持久力。喜欢网球带来的挑战感；喜欢游泳缓解疲惫、在水中什么都不用想，只管往前游。</p>` 
-        },
-        { 
-            name: '🎨 文艺类', 
-            content: `<h3>记录生活</h3><p>喜欢用<b>日记和手帐</b>记录生活，把烦恼写在纸上，脑子就不会过载。喜欢花花绿绿的手帐，让生活充满色彩，同时也提升自我管理能力。</p>` 
-        },
-        { 
-            name: '🌍 社交类', 
-            content: `<h3>探索世界</h3><p>热衷结识新朋友和旅游。对<b>粤语、英语和西语</b>文化十分感兴趣，梦想是去巴塞罗那晒太阳，听人的故事，也听城市的故事。</p>` 
-        },
-        { 
-            name: '🍰 生活类', 
-            content: `<h3>发现趣味</h3><p>喜欢<b>追剧和探索美食</b>。乐于尝试新剧情新口味，但找到喜欢的会一直忠诚直到厌倦。乐于发现生活中的趣味点，自娱自乐很有一手。</p>` 
-        }
-    ];
+    function showHobbySub() {
+        const hobbyList = [
+            { name: '🎾 运动类', content: '<h3>保持活力</h3><p>喜欢通过<b>网球和游泳</b>保持活力，也锻炼了专注力和持久力。喜欢网球带来的挑战感；喜欢游泳缓解疲惫、在水中什么都不用想，只管往前游。</p>' },
+            { name: '🎨 文艺类', content: '<h3>记录生活</h3><p>喜欢用<b>日记和手帐</b>记录生活，把烦恼写在纸上，脑子就不会过载。喜欢花花绿绿的手帐，让生活充满色彩，同时也提升自我管理能力。</p>' },
+            { name: '🌍 社交类', content: '<h3>探索世界</h3><p>热衷结识新朋友和旅游。对<b>粤语、英语和西语</b>文化十分感兴趣，梦想是去巴塞罗那晒太阳，听人的故事，也听城市的故事。</p>' },
+            { name: '🍰 生活类', content: '<h3>发现趣味</h3><p>喜欢<b>追剧和探索美食</b>。乐于尝试新剧情新口味，但找到喜欢的会一直忠诚直到厌倦。乐于发现生活中的趣味点，自娱自乐很有一手。</p>' }
+        ];
 
-    // 2. 渲染四个贝壳按钮
-    hobbyList.forEach((s, i) => {
-        const b = document.createElement('div');
-        b.className = 'shell-option hobby-item'; // 确保样式名方便清除
-        b.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${s.name}</span>`;
-        
-        // 围绕中心点均匀排布
-        const angle = (i / hobbyList.length) * Math.PI * 2;
-        const radius = 170; // 距离头像的距离
-        b.style.left = (window.innerWidth / 2 + Math.cos(angle) * radius) + 'px';
-        b.style.top = (window.innerHeight / 2 + Math.sin(angle) * radius) + 'px';
-        
-        document.body.appendChild(b);
-        setTimeout(() => b.classList.add('shell-unfold'), 50);
-
-        // 点击后弹出对应的详细文案
-        b.onclick = (e) => {
-            e.stopPropagation();
-            showModal(`<div class="hobby-content">${s.content}</div>`);
-        };
-    });
-}
-    function showMusicPlayer() {
-        showModal(`<h3>唱片集</h3><div class="record-player" id="rp">${[1,2,3,4,5,6].map(i=>`<div class="record-item"><img src="dist/assets/img/p${i}.jpg"></div>`).join('')}</div>`);
+        hobbyList.forEach((s, i) => {
+            const b = document.createElement('div');
+            b.className = 'shell-option hobby-item';
+            b.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${s.name}</span>`;
+            const angle = (i / hobbyList.length) * Math.PI * 2;
+            const radius = 170;
+            b.style.left = (window.innerWidth / 2 + Math.cos(angle) * radius) + 'px';
+            b.style.top = (window.innerHeight / 2 + Math.sin(angle) * radius) + 'px';
+            document.body.appendChild(b);
+            setTimeout(() => b.classList.add('shell-unfold'), 50);
+            b.onclick = (e) => {
+                e.stopPropagation();
+                showModal(`<div class="hobby-content">${s.content}</div>`);
+            };
+        });
     }
 
+    // 5. 通用功能函数
     function showModal(h) { document.getElementById('overlay').style.display='block'; document.getElementById('modal-body').innerHTML=h; document.getElementById('main-modal').style.display='block'; }
     function viewImage(s) { document.getElementById('full-img').src="dist/assets/img/"+s; document.getElementById('image-viewer').style.display='block'; document.getElementById('overlay').style.display='block'; }
     function closeModal() { document.getElementById('main-modal').style.display='none'; document.getElementById('overlay').style.display='none'; }
     function closeViewer() { document.getElementById('image-viewer').style.display='none'; if(document.getElementById('main-modal').style.display==='none') document.getElementById('overlay').style.display='none'; }
+    
+    // ✅ 修复返回主页的关键函数
     function closeAll() {
-    // 1. 关闭所有弹窗和遮罩
-    document.getElementById('main-modal').style.display = 'none';
-    document.getElementById('image-viewer').style.display = 'none';
-    document.getElementById('overlay').style.display = 'none'; 
-
-    // 2. ✅ 核心修复：重新显示主页的鱼群
-    // 确保这里的 querySelector 选中的是生成鱼群时用的 class 名（通常是 .main-fish-item）
-    document.querySelectorAll('.main-fish-item').forEach(f => {
-        f.style.display = 'flex'; // 重新把鱼变出来
-    });
-
-    // 3. 清除所有临时生成的贝壳和标签，防止它们堆积
-    const elementsToRemove = document.querySelectorAll('.dive-opt, .hobby-item, .char-tag-scatter');
-    elementsToRemove.forEach(el => el.remove()); 
-}
+        document.getElementById('main-modal').style.display = 'none';
+        document.getElementById('image-viewer').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none'; 
+        // 显示鱼群和水母
+        document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'flex');
+        // 清理所有动态生成的贝壳和标签
+        document.querySelectorAll('.dive-opt, .hobby-item, .char-tag-scatter').forEach(el => el.remove()); 
+    }
 </script>
 </body>
 </html>
