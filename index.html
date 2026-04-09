@@ -23,7 +23,6 @@
         
         #fireflyCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-        /* 水母样式与动画 */
         .jellyfish {
             position: absolute; width: 150px; height: auto; z-index: 2; pointer-events: none;
             opacity: 0.7; animation: JellyFloat 6s ease-in-out infinite;
@@ -50,19 +49,12 @@
         #main-modal, #image-viewer { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 25px; background: #fff; z-index: 150; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
         #main-modal { width: 85%; max-width: 480px; padding: 25px; max-height: 75vh; overflow-y: auto; }
         
-        /* 工作经历 2x2 网格 */
         .work-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
         .work-grid img { width: 100%; height: 110px; object-fit: cover; border-radius: 12px; cursor: pointer; border: 1.5px solid #eee; transition: transform 0.2s; }
-        .work-grid img:hover { transform: scale(1.05); border-color: var(--teal); }
 
         #image-viewer { width: 90%; max-width: 1000px; background: none; box-shadow: none; }
         #image-viewer img { width: 100%; border-radius: 15px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
         .close-x { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 22px; color: #666; background: #eee; width: 32px; height: 32px; border-radius: 50%; text-align: center; line-height: 32px; z-index: 10; }
-
-        /* 爱好详情样式 */
-        .hobby-content { line-height: 1.6; color: #444; }
-        .hobby-content h3 { color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 8px; margin-bottom: 12px; margin-top: 0; }
-        .hobby-content p { font-size: 14px; background: #f9f9f9; padding: 12px; border-radius: 10px; margin: 0; }
 
         .shell-option { position: fixed; width: 125px; height: 125px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; color: var(--teal); font-weight: bold; transform: translate(-50%, -50%) scale(0); opacity: 0; transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .shell-option img { position: absolute; width: 100%; height: 100%; z-index: -1; }
@@ -85,7 +77,6 @@
 <div id="image-viewer"><div class="close-x" onclick="closeViewer()" style="top:-40px; right:0;">×</div><img id="full-img" src=""></div>
 
 <script>
-    // 1. 萤火虫逻辑
     const canvas = document.getElementById('fireflyCanvas');
     const ctx = canvas.getContext('2d');
     let fireflies = [];
@@ -111,12 +102,13 @@
     }
     initCanvas(); draw(); window.onresize = initCanvas;
 
-    // 2. 核心数据（合并简历信息、工作经历、爱好占位）
+    // ✅ 数据列表：四条鱼，一个都不少
     const fishData = [
         { 
             title: '工作经历', 
             content: '<h3>项目实战</h3><div class="work-grid"><img src="dist/assets/img/worke1.jpg" onclick="viewImage(\'worke1.jpg\')"><img src="dist/assets/img/worke2.jpg" onclick="viewImage(\'worke2.jpg\')"><img src="dist/assets/img/worke3.jpg" onclick="viewImage(\'worke3.jpg\')"><img src="dist/assets/img/worke4.jpg" onclick="viewImage(\'worke4.jpg\')"></div>' 
         },
+        { title: '工作技能', type: 'skill' }, // 🎬 那个图标鱼回来了
         { title: '性格与爱好', type: 'special' },
         { 
             title: '基础信息', 
@@ -124,9 +116,9 @@
         }
     ];
 
-    // 3. 生成主页鱼群
     fishData.forEach((data) => {
-        const fish = document.createElement('div'); fish.className = 'fish main-fish-item';
+        const fish = document.createElement('div'); 
+        fish.className = 'fish main-fish-item';
         fish.innerHTML = `<img src="dist/assets/img/fish1.png"><div>${data.title}</div>`;
         document.body.appendChild(fish);
         let px = Math.random() * (window.innerWidth - 120), py = Math.random() * (window.innerHeight - 120);
@@ -140,13 +132,23 @@
             requestAnimationFrame(moveFish);
         }
         moveFish();
+        
         fish.onclick = () => {
-            if (data.type === 'special') startDeepDive();
+            if (data.type === 'skill') openSkillFolder(); // 这里调用图标技能
+            else if (data.type === 'special') startDeepDive();
             else showModal(data.content);
         };
     });
 
-    // 4. 性格与爱好点击逻辑
+    // ✅ 图标版工作技能函数
+    function openSkillFolder() {
+        showModal(`<h3>核心技能</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;text-align:center;">
+            <div onclick="viewImage('skill_video.jpg')" style="cursor:pointer;"><div style="font-size:30px;">🎬</div>视频剪辑</div>
+            <div onclick="viewImage('skill_design.jpg')" style="cursor:pointer;"><div style="font-size:30px;">🎨</div>视觉设计</div>
+            <div onclick="viewImage('skill_sop.jpg')" style="cursor:pointer;"><div style="font-size:30px;">📊</div>数据SOP</div>
+        </div>`);
+    }
+
     function startDeepDive() {
         document.getElementById('overlay').style.display = 'block';
         document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'none'); 
@@ -187,10 +189,10 @@
 
     function showHobbySub() {
         const hobbyList = [
-            { name: '🎾 运动类', content: '<h3>保持活力</h3><p>喜欢通过<b>网球和游泳</b>保持活力，也锻炼了专注力和持久力。喜欢网球带来的挑战感；喜欢游泳缓解疲惫、在水中什么都不用想，只管往前游。</p>' },
-            { name: '🎨 文艺类', content: '<h3>记录生活</h3><p>喜欢用<b>日记和手帐</b>记录生活，把烦恼写在纸上，脑子就不会过载。喜欢花花绿绿的手帐，让生活充满色彩，同时也提升自我管理能力。</p>' },
-            { name: '🌍 社交类', content: '<h3>探索世界</h3><p>热衷结识新朋友和旅游。对<b>粤语、英语和西语</b>文化十分感兴趣，梦想是去巴塞罗那晒太阳，听人的故事，也听城市的故事。</p>' },
-            { name: '🍰 生活类', content: '<h3>发现趣味</h3><p>喜欢<b>追剧和探索美食</b>。乐于尝试新剧情新口味，但找到喜欢的会一直忠诚直到厌倦。乐于发现生活中的趣味点，自娱自乐很有一手。</p>' }
+            { name: '🎾 运动类', content: '<h3>保持活力</h3><p>喜欢通过网球和游泳保持活力。喜欢网球带来的挑战感；喜欢游泳缓解疲惫。</p>' },
+            { name: '🎨 文艺类', content: '<h3>记录生活</h3><p>喜欢用日记和手帐记录生活，把烦恼写在纸上，脑子就不会过载。</p>' },
+            { name: '🌍 社交类', content: '<h3>探索世界</h3><p>热衷结识新朋友和旅游。对粤语、英语和西语文化十分感兴趣。</p>' },
+            { name: '🍰 生活类', content: '<h3>发现趣味</h3><p>喜欢追剧和探索美食。乐于发现生活中的趣味点。</p>' }
         ];
 
         hobbyList.forEach((s, i) => {
@@ -205,25 +207,20 @@
             setTimeout(() => b.classList.add('shell-unfold'), 50);
             b.onclick = (e) => {
                 e.stopPropagation();
-                showModal(`<div class="hobby-content">${s.content}</div>`);
+                showModal(`<div style="line-height:1.6;color:#444;">${s.content}</div>`);
             };
         });
     }
 
-    // 5. 通用功能函数
     function showModal(h) { document.getElementById('overlay').style.display='block'; document.getElementById('modal-body').innerHTML=h; document.getElementById('main-modal').style.display='block'; }
     function viewImage(s) { document.getElementById('full-img').src="dist/assets/img/"+s; document.getElementById('image-viewer').style.display='block'; document.getElementById('overlay').style.display='block'; }
     function closeModal() { document.getElementById('main-modal').style.display='none'; document.getElementById('overlay').style.display='none'; }
     function closeViewer() { document.getElementById('image-viewer').style.display='none'; if(document.getElementById('main-modal').style.display==='none') document.getElementById('overlay').style.display='none'; }
-    
-    // ✅ 修复返回主页的关键函数
     function closeAll() {
         document.getElementById('main-modal').style.display = 'none';
         document.getElementById('image-viewer').style.display = 'none';
         document.getElementById('overlay').style.display = 'none'; 
-        // 显示鱼群和水母
         document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'flex');
-        // 清理所有动态生成的贝壳和标签
         document.querySelectorAll('.dive-opt, .hobby-item, .char-tag-scatter').forEach(el => el.remove()); 
     }
 </script>
