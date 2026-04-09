@@ -5,6 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>家渝有一片海</title>
     <style>
+        /* ✅ 宝藏发光特效：直接粘贴在这里 */
+@keyframes TreasureGlow {
+    0%, 100% { 
+        filter: drop-shadow(0 0 10px rgba(178, 235, 242, 0.4));
+        opacity: 0.9;
+    }
+    50% { 
+        filter: drop-shadow(0 0 30px rgba(212, 255, 128, 0.8)) brightness(1.2);
+        opacity: 1;
+        transform: scale(1.03); 
+    }
+}
+
+.treasure-box {
+    position: absolute; 
+    bottom: 8%;  /* 距离底部 */
+    right: 5%;   /* 距离右侧 */
+    width: 140px; 
+    height: auto; 
+    z-index: 2;   
+    pointer-events: none; 
+    animation: TreasureGlow 4s ease-in-out infinite;
+    transform: rotate(-10deg); 
+}
+
+.treasure-box img {
+    width: 100%; 
+    height: auto;
+}
+        /* ✅ 定义“宝藏之光”的呼吸动画 */
+@keyframes TreasureGlow {
+    0%, 100% { 
+        /* 初始状态：淡淡的青蓝色光晕 */
+        filter: drop-shadow(0 0 10px rgba(178, 235, 242, 0.4));
+        opacity: 0.9;
+    }
+    50% { 
+        /* 亮度高潮：强烈的金绿色光晕，并轻微放大 */
+        filter: drop-shadow(0 0 30px rgba(212, 255, 128, 0.8)) brightness(1.2);
+        opacity: 1;
+        transform: scale(1.03); 
+    }
+}
         :root { --teal: #00796b; --glow: rgba(178, 235, 242, 0.6); }
 
         body, html { 
