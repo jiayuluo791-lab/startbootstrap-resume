@@ -273,21 +273,14 @@
     function spawnLuck(e) {
         e.stopPropagation();
         
-        // 自动识别路径并尝试播放
-        const playMusic = () => {
-            if (!shellMusic) {
-                shellMusic = new Audio('keshi.mp3'); 
-                shellMusic.volume = 0.6;
-            }
-            shellMusic.currentTime = 0;
-            // 增加 play() 的返回处理
-            let playPromise = shellMusic.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.error("播放被拦截或文件丢失:", error);
-                });
-            }
-        };
+        // 尝试播放
+        let testAudio = new Audio('keshi.mp3');
+        testAudio.play().then(() => {
+            console.log("播放成功");
+        }).catch(err => {
+            // 如果报错，弹窗提示
+            alert("还是找不到文件！请检查：\n1. 文件名是否有空格\n2. 后缀是不是.mp3\n3. 是不是放在了正确的 index.html 旁边");
+        });
 
         playMusic();
         // 2. 喷射宝石特效
