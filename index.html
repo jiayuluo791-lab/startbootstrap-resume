@@ -216,6 +216,96 @@
     function closeAll() { closeModal(); document.getElementById('overlay').style.display='none'; document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'flex'); document.querySelectorAll('.dive-opt, .hobby-item, .char-tag-scatter').forEach(el => el.remove()); }
     function viewImage(s) { document.getElementById('full-img').src="dist/assets/img/"+s; document.getElementById('image-viewer').style.display='block'; document.getElementById('overlay').style.display='block'; }
     function closeViewer() { document.getElementById('image-viewer').style.display='none'; if(document.getElementById('main-modal').style.display==='none') document.getElementById('overlay').style.display='none'; }
+/* 🖼️ 精致的图片查看器样式 */
+#image-viewer { 
+    display: none; 
+    position: fixed; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    z-index: 2000; /* 极高层级，防止被遮挡 */
+    max-width: 85%; 
+    max-height: 80vh; 
+    flex-direction: column;
+    align-items: center;
+}
+
+#image-viewer img { 
+    width: auto;
+    height: auto;
+    max-width: 100%; 
+    max-height: 80vh; 
+    border-radius: 12px; 
+    box-shadow: 0 0 50px rgba(0,0,0,0.8); 
+    border: 3px solid rgba(255,255,255,0.2);
+    cursor: zoom-out; /* 提示用户点击可缩小/关闭 */
+}
+
+/* ❌ 醒目的红色关闭按钮 */
+#image-viewer .close-x { 
+    position: absolute; 
+    top: -50px; 
+    right: 0; 
+    width: 40px; 
+    height: 40px; 
+    line-height: 38px; 
+    background: #ff5252; 
+    color: white; 
+    font-size: 30px; 
+    border-radius: 50%; 
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid white;
+    z-index: 2001;
+}
+
+/* 指引文字 */
+#image-viewer::after {
+    content: "点击红色按钮或背景处关闭";
+    position: absolute;
+    bottom: -35px;
+    color: white;
+    font-size: 14px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+    // ✅ 覆盖旧的图片查看函数，确保居中并显示正常
+    function viewImage(s) {
+        const viewer = document.getElementById('image-viewer');
+        const fullImg = document.getElementById('full-img');
+        const overlay = document.getElementById('overlay');
+        
+        if (viewer && fullImg && overlay) {
+            fullImg.src = "dist/assets/img/" + s;
+            viewer.style.display = 'flex';   // 关键：变成 flex 才能让 CSS 的居中生效
+            overlay.style.display = 'block';
+            overlay.style.zIndex = '1900';   // 确保遮罩在图片下面
+        }
+    }
+
+    // ✅ 覆盖旧的关闭函数
+    function closeViewer() {
+        const viewer = document.getElementById('image-viewer');
+        const modal = document.getElementById('main-modal');
+        const overlay = document.getElementById('overlay');
+
+        if (viewer) viewer.style.display = 'none';
+        
+        // 如果中间的那个大白方框也没开，就把半透明黑色背景也关掉
+        if (modal && modal.style.display === 'none') {
+            if (overlay) overlay.style.display = 'none';
+        }
+    }
+
+    // ✅ 万能关闭：点黑色背景处也能关掉图片
+    const originalCloseAll = closeAll;
+    closeAll = function() {
+        if (typeof originalCloseAll === 'function') originalCloseAll();
+        closeViewer();
+    };
 </script>
+    <div id="image-viewer" style="display: none;">
+    <div class="close-x" onclick="closeViewer()">×</div>
+    <img id="full-img" src="" alt="作品原图">
+</div>
 </body>
 </html>
