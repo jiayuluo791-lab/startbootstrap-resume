@@ -131,12 +131,33 @@
         }
     }
 
-    function openSkillFolder() {
-        showModal(`<h3>核心技能</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;text-align:center;">
-            <div onclick="viewImage('skill_video.jpg')" style="cursor:pointer;"><div style="font-size:30px;">🎬</div>视频剪辑</div>
-            <div onclick="viewImage('skill_design.jpg')" style="cursor:pointer;"><div style="font-size:30px;">🎨</div>视觉设计</div>
-            <div onclick="viewImage('skill_sop.jpg')" style="cursor:pointer;"><div style="font-size:30px;">📊</div>数据SOP</div>
-        </div>`);
+   function openSkillFolder() {
+        showModal(`
+            <h3 style="color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 0;">核心技能</h3>
+            
+            <div style="text-align: left; line-height: 1.6; color: #444;">
+                <p><b>🎬 视频剪辑与创意：</b><br>熟练使用剪映、PS，具备优秀的网感和脚本拆解能力，能够独立完成从选题到成片的全过程。</p>
+                <p><b>🎨 视觉设计与交互：</b><br>熟练运用 Canva、Figma、秀米进行排版与美化，注重品牌调性与用户视觉体验的统一。</p>
+                <p><b>📊 数据分析与SOP：</b><br>计算机二级水平，擅长使用 Excel 数据透视表进行复盘，并能将复杂流程标准化（SOP）。</p>
+            </div>
+
+            <h3 style="color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 15px;">作品集预览</h3>
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;">
+                <div onclick="viewImage('skill_video.jpg')" style="cursor:pointer; text-align:center; background:#f5fdfb; padding:10px; border-radius:12px;">
+                    <div style="font-size:24px;">🎬</div>
+                    <div style="font-size:12px; color:var(--teal);">视频集</div>
+                </div>
+                <div onclick="viewImage('skill_design.jpg')" style="cursor:pointer; text-align:center; background:#f5fdfb; padding:10px; border-radius:12px;">
+                    <div style="font-size:24px;">🎨</div>
+                    <div style="font-size:12px; color:var(--teal);">设计稿</div>
+                </div>
+                <div onclick="viewImage('skill_sop.jpg')" style="cursor:pointer; text-align:center; background:#f5fdfb; padding:10px; border-radius:12px;">
+                    <div style="font-size:24px;">📊</div>
+                    <div style="font-size:12px; color:var(--teal);">SOP文档</div>
+                </div>
+            </div>
+            <p style="font-size:12px; color:#999; margin-top:10px; text-align:center;">（点击图标查看作品原图）</p>
+        `);
     }
 
     function startDeepDive() {
