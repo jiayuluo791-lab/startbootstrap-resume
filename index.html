@@ -273,14 +273,23 @@
     function spawnLuck(e) {
         e.stopPropagation();
         
-        // 1. 播放音乐逻辑 (确保 keshi.mp3 在 index.html 旁边)
-        if (!shellMusic) {
-            shellMusic = new Audio('js/keshi.mp3');
-            shellMusic.volume = 0.6;
-        }
-        shellMusic.currentTime = 0;
-        shellMusic.play().catch(err => console.log("音频播放失败，请检查文件名:", err));
+        // 自动识别路径并尝试播放
+        const playMusic = () => {
+            if (!shellMusic) {
+                shellMusic = new Audio('keshi.mp3'); 
+                shellMusic.volume = 0.6;
+            }
+            shellMusic.currentTime = 0;
+            // 增加 play() 的返回处理
+            let playPromise = shellMusic.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.error("播放被拦截或文件丢失:", error);
+                });
+            }
+        };
 
+        playMusic();
         // 2. 喷射宝石特效
         const items = ['✨', '💎', '🐚', '🌟', '💰', '🍬', '🌸'];
         for (let i = 0; i < 12; i++) {
