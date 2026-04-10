@@ -100,14 +100,21 @@
         </div>` },
         { title: '工作技能', type: 'skill' },
         { title: '性格与爱好', type: 'special' },
-        { title: '基础信息', content: `<div style="text-align: left; line-height: 1.8;">
-            <h3 style="color:var(--teal); border-bottom:2px solid #e0f2f1;">个人名片</h3>
+        { 
+    title: '基础信息', 
+    content: `
+        <div style="text-align: left; line-height: 1.8;">
+            <h3 style="color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 0;">个人名片</h3>
             <p><b>姓名：</b>罗家渝</p>
-            <p><b>联系方式：</b>18998055663 (微信同号) | 2304362354@qq.com</p>
-            <p><b>学校专业：</b>华南农业大学｜农林经济管理 (2023-2027)</p>
-            <h3 style="color:var(--teal); border-bottom:2px solid #e0f2f1; margin-top:15px;">专业技能</h3>
-            <p>英语 CET-6 | 计算机二级 | 熟练剪映、PS、Canva、Figma、秀米</p>
-        </div>` }
+            <p><b>联系方式：</b><br>18998055663 (微信同号)<br>2304362354@qq.com</p>
+            <p><b>学校专业：</b><br>华南农业大学｜农林经济管理<br><small>(2023-2027)</small></p>
+            <h3 style="color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 15px;">专业技能</h3>
+            <p><b>🌐 语言能力：</b><br>英语 CET-6，具备商务沟通与内容本地化能力。</p>
+            <p><b>📊 数据分析：</b><br>计算机二级，熟练运用 Excel 数据透视表。</p>
+            <p><b>🎨 内容工具：</b><br>熟练使用剪映、PS、Canva、Figma、秀米。</p>
+        </div>
+    ` 
+}
     ];
 
     // 生成鱼群
@@ -185,23 +192,41 @@
     }
 
     function showHobbySub() {
-        const hobbyList = [
-            { name: '🎾 运动类', content: '<h3>保持活力</h3><p>喜欢网球带来的挑战感，喜欢游泳缓解疲惫，在水中往前游什么都不用想。</p>' },
-            { name: '🎨 文艺类', content: '<h3>记录生活</h3><p>喜欢花花绿绿的手帐，让生活充满色彩，让脑子不过载。</p>' },
-            { name: '🌍 社交类', content: '<h3>探索世界</h3><p>梦想去巴塞罗那晒太阳，听城市的故事。</p>' },
-            { name: '🍰 生活类', content: '<h3>发现趣味</h3><p>乐于发现生活中的趣味点，自娱自乐很有一手。</p>' }
-        ];
-        hobbyList.forEach((s, i) => {
-            const b = document.createElement('div'); b.className = 'shell-option hobby-item';
-            b.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${s.name}</span>`;
-            const angle = (i / hobbyList.length) * Math.PI * 2; const radius = 170;
-            b.style.left = (window.innerWidth / 2 + Math.cos(angle) * radius) + 'px';
-            b.style.top = (window.innerHeight / 2 + Math.sin(angle) * radius) + 'px';
-            document.body.appendChild(b);
-            setTimeout(() => b.classList.add('shell-unfold'), 50);
-            b.onclick = (e) => { e.stopPropagation(); showModal(s.content); };
-        });
-    }
+    const hobbyList = [
+        { 
+            name: '🎾 运动类', 
+            content: '<h3>保持活力</h3><p>喜欢通过网球和游泳保持活力，也锻炼了专注力和持久力，喜欢网球带来的挑战感，喜欢游泳缓解疲惫、在水中什么都不用想，往前游</p>' 
+        },
+        { 
+            name: '🎨 文艺类', 
+            content: '<h3>记录生活</h3><p>喜欢用日记和手帐记录生活，把烦恼的事情写在纸上，脑子就不会过载，喜欢花花绿绿的手帐，让我的生活充满色彩，同时也提升自我管理和创意表达能力</p>' 
+        },
+        { 
+            name: '🌍 社交类', 
+            content: '<h3>探索世界</h3><p>热衷结识新朋友和探索不同的地域文化，喜欢语言，对粤语、英语和西语文化十分感兴趣，梦想是去巴塞罗那晒太阳，听人的故事，也听城市的故事</p>' 
+        },
+        { 
+            name: '🍰 生活类', 
+            content: '<h3>发现趣味</h3><p>喜欢追剧和探索美食，乐于尝试新剧情新口味，但是找到了喜欢的会一直喜欢直到厌倦，也乐于发现生活中的趣味点，自娱自乐很有一手</p>' 
+        }
+    ];
+    // 下面的生成贝壳按钮的逻辑保持不动...
+    hobbyList.forEach((s, i) => {
+        const b = document.createElement('div'); 
+        b.className = 'shell-option hobby-item';
+        b.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${s.name}</span>`;
+        const angle = (i / hobbyList.length) * Math.PI * 2; 
+        const radius = 170;
+        b.style.left = (window.innerWidth / 2 + Math.cos(angle) * radius) + 'px';
+        b.style.top = (window.innerHeight / 2 + Math.sin(angle) * radius) + 'px';
+        document.body.appendChild(b);
+        setTimeout(() => b.classList.add('shell-unfold'), 50);
+        b.onclick = (e) => { 
+            e.stopPropagation(); 
+            showModal(`<div style="line-height:1.6;color:#444;">${s.content}</div>`); 
+        };
+    });
+}
 
     // 通用交互函数
     function showModal(h) { document.getElementById('modal-body').innerHTML=h; document.getElementById('main-modal').style.display='block'; document.getElementById('overlay').style.display='block'; }
