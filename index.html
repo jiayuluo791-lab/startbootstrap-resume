@@ -265,35 +265,33 @@
         document.getElementById('overlay').style.display = 'none'; 
         document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'flex');
         document.querySelectorAll('.dive-opt, .hobby-item, .char-tag-scatter').forEach(el => el.remove()); 
-    }
+   } // 确认这是 closeAll 的结尾大括号
 
-   // ✅ 新的 spawnLuck 函数：点击出现文字
+    // ✅ 文字提示功能：点击贝壳后触发
     function spawnLuck(e) {
         e.stopPropagation();
 
-        // 💬 1. 生成文字气泡
+        // 💬 1. 创建文字气泡
         const textTip = document.createElement('div');
-        textTip.className = 'chat-tip-bubble'; // 我们稍后在 CSS 里定义样式
+        textTip.className = 'chat-tip-bubble';
         textTip.innerText = '想了解更多欢迎找我聊天～🌸';
-        
-        // 设置文字气泡出现的位置（在点击位置上方）
         textTip.style.cssText = `
             position: fixed;
             left: ${e.clientX}px;
-            top: ${e.clientY - 40}px; /* 在点击位置上方 40px */
-            transform: translateX(-50%); /* 居中显示 */
+            top: ${e.clientY - 40}px;
+            transform: translateX(-50%);
+            z-index: 1000;
         `;
-        
         document.body.appendChild(textTip);
 
-        // 2秒后自动移除文字
+        // 2秒后自动消失
         setTimeout(() => {
             textTip.style.opacity = '0';
-            textTip.style.transform = 'translateX(-50%) translateY(-20px)'; // 向上飘散效果
-            setTimeout(() => textTip.remove(), 500); // 动画结束后移除
+            textTip.style.transform = 'translateX(-50%) translateY(-20px)';
+            setTimeout(() => textTip.remove(), 500);
         }, 2000);
 
-        // ✨ 2. 喷射宝石特效 (保持你现有的代码不变，增加氛围)
+        // ✨ 2. 喷射宝石特效
         const items = ['✨', '💎', '🐚', '🌟', '💰', '🍬', '🌸'];
         for (let i = 0; i < 12; i++) {
             const el = document.createElement('div');
@@ -310,25 +308,11 @@
             setTimeout(() => el.remove(), 1000);
         }
         
-        // 🐚 3. 贝壳点击反馈（抖动）
+        // 🐚 3. 贝壳点击反馈
         const shell = e.currentTarget;
         shell.style.transform = 'rotate(-10deg) scale(0.8)';
         setTimeout(() => shell.style.transform = 'rotate(-10deg) scale(1)', 100);
     }
-    /* ✅ 文字气泡样式 */
-        .chat-tip-bubble {
-            background: rgba(255, 255, 255, 0.9); /* 半透明白色背景 */
-            color: #00796b;                      /* 你的 Teal 主题色 */
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 14px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* 阴影 */
-            z-index: 1000;                       /* 确保在最上层 */
-            pointer-events: none;                /* 不挡鼠标 */
-            transition: all 0.5s ease;           /* 消失时的动画 */
-            white-space: nowrap;                 /* 防止文字换行 */
-        }
 </script>
 
 <div class="treasure-box" onclick="spawnLuck(event)" style="pointer-events: auto; cursor: pointer;">
