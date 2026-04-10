@@ -26,8 +26,9 @@
         /* 🖼️ 图片查看器样式 */
         #image-viewer { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; max-width: 85%; max-height: 80vh; flex-direction: column; align-items: center; }
         #image-viewer img { width: auto; height: auto; max-width: 100%; max-height: 80vh; border-radius: 12px; box-shadow: 0 0 50px rgba(0,0,0,0.8); border: 3px solid rgba(255,255,255,0.2); }
-        #image-viewer .close-x { position: absolute; top: -50px; right: 0; width: 40px; height: 40px; line-height: 38px; background: #ff5252; color: white; font-size: 30px; border-radius: 50%; text-align: center; cursor: pointer; border: 2px solid white; z-index: 2001; }
-
+        #image-viewer .close-x {
+    display: none !important; /* 彻底藏掉红叉 */
+}
         .close-x-modal { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 22px; color: #666; background: #eee; width: 32px; height: 32px; border-radius: 50%; text-align: center; line-height: 32px; }
         
         .shell-option { position: fixed; width: 125px; height: 125px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; color: var(--teal); font-weight: bold; transform: translate(-50%, -50%) scale(0); opacity: 0; transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -205,12 +206,40 @@
     // 通用交互函数
     function showModal(h) { document.getElementById('modal-body').innerHTML=h; document.getElementById('main-modal').style.display='block'; document.getElementById('overlay').style.display='block'; }
     function closeModal() { document.getElementById('main-modal').style.display='none'; if(document.getElementById('image-viewer').style.display === 'none') document.getElementById('overlay').style.display='none'; }
-    function viewImage(s) { 
-        document.getElementById('full-img').src = "dist/assets/img/" + s;
-        document.getElementById('image-viewer').style.display = 'flex';
-        document.getElementById('overlay').style.display = 'block';
+   // 🖼️ 优化后的图片查看：变大且支持点击空白处退出
+    function viewImage(s) {
+        const viewer = document.getElementById('image-viewer');
+        const fullImg = document.getElementById('full-img');
+        const overlay = document.getElementById('overlay');
+        
+        // 加载图片
+        fullImg.src = "dist/assets/img/" + s;
+        
+        // 样式优化：图片更大（占屏幕90%），移除丑红叉（通过CSS控制）
+        viewer.style.display = 'flex';
+        viewer.style.position = 'fixed';
+        viewer.style.top = '50%';
+        viewer.style.left = '50%';
+        viewer.style.transform = 'translate(-50%, -50%)';
+        viewer.style.zIndex = '2000';
+        
+        fullImg.style.maxWidth = "95vw"; // 调大显示比例
+        fullImg.style.maxHeight = "90vh";
+        fullImg.style.borderRadius = "8px";
+        fullImg.style.boxShadow = "0 0 30px rgba(0,0,0,0.5)";
+
+        // 确保点击黑色遮罩层时调用 closeAll 或特定的关闭
+        overlay.style.display = 'block';
+        overlay.onclick = closeAll; // 直接绑定：点背景就关掉所有内容
     }
-    function closeViewer() { document.getElementById('image-viewer').style.display = 'none'; if(document.getElementById('main-modal').style.display === 'none') document.getElementById('overlay').style.display='none'; }
+
+    // 💡 确保这个函数能同时关掉弹窗和图片
+    function closeViewer() {
+        document.getElementById('image-viewer').style.display = 'none';
+        if(document.getElementById('main-modal').style.display === 'none') {
+            document.getElementById('overlay').style.display = 'none';
+        }
+    }
     function closeAll() { 
         closeModal(); closeViewer();
         document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'flex'); 
