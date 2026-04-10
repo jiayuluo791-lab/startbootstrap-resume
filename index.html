@@ -5,119 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>家渝有一片海</title>
     <style>
-        /* ✅ 宝藏发光特效：直接粘贴在这里 */
-@keyframes TreasureGlow {
-    0%, 100% { 
-        filter: drop-shadow(0 0 10px rgba(178, 235, 242, 0.4));
-        opacity: 0.9;
-    }
-    50% { 
-        filter: drop-shadow(0 0 30px rgba(212, 255, 128, 0.8)) brightness(1.2);
-        opacity: 1;
-        transform: scale(1.03); 
-    }
-}
-
-.treasure-box {
-    position: fixed;    /* 必须是 fixed 或 absolute 才能离开中间 */
-    bottom: 50px;       /* 距离底部固定距离 */
-    right: 50px;        /* 距离右侧固定距离 */
-    width: 140px; 
-    height: auto; 
-    z-index: 99;        /* 确保在最上层 */
-    pointer-events: none; 
-    transform: rotate(-10deg); 
-    animation: TreasureGlow 4s ease-in-out infinite;
-}
-.treasure-box img {
-    width: 100%; 
-    height: auto;
-}
-        /* ✅ 定义“宝藏之光”的呼吸动画 */
-@keyframes TreasureGlow {
-    0%, 100% { 
-        /* 初始状态：淡淡的青蓝色光晕 */
-        filter: drop-shadow(0 0 10px rgba(178, 235, 242, 0.4));
-        opacity: 0.9;
-    }
-    50% { 
-        /* 亮度高潮：强烈的金绿色光晕，并轻微放大 */
-        filter: drop-shadow(0 0 30px rgba(212, 255, 128, 0.8)) brightness(1.2);
-        opacity: 1;
-        transform: scale(1.03); 
-    }
-}
         :root { --teal: #00796b; --glow: rgba(178, 235, 242, 0.6); }
-
-        body, html { 
-            margin: 0; padding: 0; height: 100vh; width: 100vw;
-            overflow: hidden; font-family: "PingFang SC", sans-serif; 
-            background-color: #000b14; 
-        }
-
-        body { 
-            background: 
-                linear-gradient(rgba(0, 11, 20, 0.35), rgba(0, 11, 20, 0.35)), 
-                url("dist/assets/img/water.jpg") no-repeat center center; 
-            background-size: cover; background-attachment: fixed; 
-            display: flex; justify-content: center; align-items: center;
-        }
-        
+        body, html { margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; font-family: "PingFang SC", sans-serif; background-color: #000b14; }
+        body { background: linear-gradient(rgba(0, 11, 20, 0.35), rgba(0, 11, 20, 0.35)), url("dist/assets/img/water.jpg") no-repeat center center; background-size: cover; background-attachment: fixed; display: flex; justify-content: center; align-items: center; }
         #fireflyCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-
-        .jellyfish {
-            position: absolute; width: 150px; height: auto; z-index: 2; pointer-events: none;
-            opacity: 0.7; animation: JellyFloat 6s ease-in-out infinite;
-        }
-        @keyframes JellyFloat {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(2deg); }
-        }
-
-        #profile-avatar { 
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 180px; height: 180px; border-radius: 50%; 
-            border: 6px solid rgba(255, 255, 255, 0.3); 
-            box-shadow: 0 0 40px var(--glow); z-index: 5; 
-            object-fit: cover; animation: AvatarFloat 5s ease-in-out infinite; 
-        }
+        .jellyfish { position: absolute; width: 150px; height: auto; z-index: 2; pointer-events: none; opacity: 0.7; animation: JellyFloat 6s ease-in-out infinite; }
+        @keyframes JellyFloat { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-20px) rotate(2deg); } }
+        #profile-avatar { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 180px; height: 180px; border-radius: 50%; border: 6px solid rgba(255, 255, 255, 0.3); box-shadow: 0 0 40px var(--glow); z-index: 5; object-fit: cover; animation: AvatarFloat 5s ease-in-out infinite; }
         @keyframes AvatarFloat { 0%, 100% { transform: translate(-50%, -50%) translateY(0px); } 50% { transform: translate(-50%, -50%) translateY(-12px); } }
-
         .fish { position: absolute; cursor: pointer; z-index: 10; display: flex; flex-direction: column; align-items: center; }
         .fish img { width: 110px; height: auto; transition: transform 0.3s; }
         .fish div { font-size: 15px; color: var(--teal); font-weight: bold; margin-top: 5px; text-shadow: 0 0 6px #fff; }
-
         #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(6px); z-index: 90; }
         #main-modal, #image-viewer { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 25px; background: #fff; z-index: 150; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
         #main-modal { width: 85%; max-width: 480px; padding: 25px; max-height: 75vh; overflow-y: auto; }
-        
         .work-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
         .work-grid img { width: 100%; height: 110px; object-fit: cover; border-radius: 12px; cursor: pointer; border: 1.5px solid #eee; transition: transform 0.2s; }
-
-        #image-viewer { width: 90%; max-width: 1000px; background: none; box-shadow: none; }
-        #image-viewer img { width: 100%; border-radius: 15px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
         .close-x { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 22px; color: #666; background: #eee; width: 32px; height: 32px; border-radius: 50%; text-align: center; line-height: 32px; z-index: 10; }
-
         .shell-option { position: fixed; width: 125px; height: 125px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; color: var(--teal); font-weight: bold; transform: translate(-50%, -50%) scale(0); opacity: 0; transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .shell-option img { position: absolute; width: 100%; height: 100%; z-index: -1; }
         .shell-unfold { transform: translate(-50%, -50%) scale(1) !important; opacity: 1 !important; }
-
         .char-tag-scatter { position: fixed; padding: 10px 20px; background: #e0f2f1; color: #00796b; border-radius: 20px; font-weight: bold; font-size: 14px; pointer-events: none; z-index: 200; border: 1.5px solid #b2dfdb; animation: scatterAnim 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes scatterAnim { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0); } 30% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } 100% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--tr)); } }
+        @keyframes scatterAnim { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0); } 100% { opacity: 1; transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--tr)); } }
+
+        /* 贝壳与气泡特效样式 */
+        .treasure-box { position: fixed; bottom: 50px; right: 50px; width: 140px; z-index: 99; cursor: pointer; animation: TreasureGlow 4s ease-in-out infinite; }
+        @keyframes TreasureGlow { 0%, 100% { filter: drop-shadow(0 0 10px rgba(178, 235, 242, 0.4)); transform: rotate(-10deg) scale(1); } 50% { filter: drop-shadow(0 0 30px rgba(212, 255, 128, 0.8)) brightness(1.2); transform: rotate(-10deg) scale(1.05); } }
+        .shell-whisper { background: rgba(255, 255, 255, 0.95); color: #00796b; padding: 12px 24px; border-radius: 25px; font-weight: bold; font-size: 14px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); pointer-events: none; transition: all 0.6s ease; white-space: nowrap; border: 1px solid rgba(178, 235, 242, 0.5); }
+        .flower-icon { display: inline-block; margin-left: 5px; animation: FlowerSway 2s ease-in-out infinite; }
+        @keyframes FlowerSway { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(15deg) scale(1.2); } }
     </style>
 </head>
 <body>
 
 <canvas id="fireflyCanvas"></canvas>
 <img class="jellyfish" src="dist/assets/img/watermom.png" style="top:10%; left:5%;">
-<div class="treasure-box">
-    <img src="dist/assets/img/粉贝壳.png">
-</div>
 <img id="profile-avatar" src="dist/assets/img/profile.jpg">
 <div id="overlay" onclick="closeAll()"></div>
 
 <div id="main-modal"><div class="close-x" onclick="closeModal()">×</div><div id="modal-body"></div></div>
 <div id="image-viewer"><div class="close-x" onclick="closeViewer()" style="top:-40px; right:0;">×</div><img id="full-img" src=""></div>
+
+<div class="treasure-box" onclick="spawnLuck(event)">
+    <img src="dist/assets/img/粉贝壳.png" style="width:100%;">
+</div>
 
 <script>
     const canvas = document.getElementById('fireflyCanvas');
@@ -145,18 +76,11 @@
     }
     initCanvas(); draw(); window.onresize = initCanvas;
 
-    // ✅ 数据列表：四条鱼，一个都不少
     const fishData = [
-        { 
-            title: '工作经历', 
-            content: '<h3>项目实战</h3><div class="work-grid"><img src="dist/assets/img/worke1.jpg" onclick="viewImage(\'worke1.jpg\')"><img src="dist/assets/img/worke2.jpg" onclick="viewImage(\'worke2.jpg\')"><img src="dist/assets/img/worke3.jpg" onclick="viewImage(\'worke3.jpg\')"><img src="dist/assets/img/worke4.jpg" onclick="viewImage(\'worke4.jpg\')"></div>' 
-        },
-        { title: '工作技能', type: 'skill' }, // 🎬 那个图标鱼回来了
+        { title: '工作经历', content: '<h3>项目实战</h3><div class="work-grid"><img src="dist/assets/img/worke1.jpg" onclick="viewImage(\'worke1.jpg\')"><img src="dist/assets/img/worke2.jpg" onclick="viewImage(\'worke2.jpg\')"><img src="dist/assets/img/worke3.jpg" onclick="viewImage(\'worke3.jpg\')"><img src="dist/assets/img/worke4.jpg" onclick="viewImage(\'worke4.jpg\')"></div>' },
+        { title: '工作技能', type: 'skill' },
         { title: '性格与爱好', type: 'special' },
-        { 
-            title: '基础信息', 
-            content: '<div style="text-align: left; line-height: 1.8;"><h3 style="color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 0;">个人名片</h3><p><b>姓名：</b>罗家渝</p><p><b>联系方式：</b><br>18998055663 (微信同号)<br>2304362354@qq.com</p><p><b>学校专业：</b><br>华南农业大学｜农林经济管理<br><small>(2023-2027)</small></p><h3 style="color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 15px;">专业技能</h3><p><b>🌐 语言能力：</b><br>英语 CET-6，具备商务沟通与内容本地化能力。</p><p><b>📊 数据分析：</b><br>计算机二级，熟练运用 Excel 数据透视表。</p><p><b>🎨 内容工具：</b><br>熟练使用剪映、PS、Canva、Figma、秀米。</p></div>' 
-        }
+        { title: '基础信息', content: '<div style="text-align: left; line-height: 1.8;"><h3 style="color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 0;">个人名片</h3><p><b>姓名：</b>罗家渝</p><p><b>联系方式：</b><br>18998055663 (微信同号)<br>2304362354@qq.com</p><p><b>学校专业：</b><br>华南农业大学｜农林经济管理<br><small>(2023-2027)</small></p><h3 style="color: var(--teal); border-bottom: 2px solid #e0f2f1; padding-bottom: 5px; margin-top: 15px;">专业技能</h3><p><b>🌐 语言能力：</b><br>英语 CET-6，具备商务沟通与内容本地化能力。</p><p><b>📊 数据分析：</b><br>计算机二级，熟练运用 Excel 数据透视表。</p><p><b>🎨 内容工具：</b><br>熟练使用剪映、PS、Canva、Figma、秀米。</p></div>' }
     ];
 
     fishData.forEach((data) => {
@@ -175,15 +99,38 @@
             requestAnimationFrame(moveFish);
         }
         moveFish();
-        
         fish.onclick = () => {
-            if (data.type === 'skill') openSkillFolder(); // 这里调用图标技能
+            if (data.type === 'skill') openSkillFolder();
             else if (data.type === 'special') startDeepDive();
             else showModal(data.content);
         };
     });
 
-    // ✅ 图标版工作技能函数
+    function spawnLuck(e) {
+        e.stopPropagation();
+        const textTip = document.createElement('div');
+        textTip.className = 'shell-whisper';
+        textTip.innerHTML = '想了解更多欢迎找我聊天～ <span class="flower-icon">🌸</span>';
+        textTip.style.cssText = `position:fixed; left:${e.clientX}px; top:${e.clientY-60}px; transform:translateX(-50%); z-index:1000;`;
+        document.body.appendChild(textTip);
+        setTimeout(() => { textTip.style.opacity = '0'; setTimeout(() => textTip.remove(), 600); }, 2000);
+
+        const items = ['✨', '💎', '🐚', '🌟', '💰', '🍬', '🌸'];
+        for (let i = 0; i < 15; i++) {
+            const el = document.createElement('div');
+            el.innerText = items[Math.floor(Math.random() * items.length)];
+            el.style.cssText = `position:fixed; left:${e.clientX}px; top:${e.clientY}px; z-index:999; pointer-events:none; font-size:20px; transition:all 1s ease-out;`;
+            document.body.appendChild(el);
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 100 + Math.random() * 150;
+            requestAnimationFrame(() => {
+                el.style.transform = `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px) rotate(360deg)`;
+                el.style.opacity = '0';
+            });
+            setTimeout(() => el.remove(), 1000);
+        }
+    }
+
     function openSkillFolder() {
         showModal(`<h3>核心技能</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:15px;text-align:center;">
             <div onclick="viewImage('skill_video.jpg')" style="cursor:pointer;"><div style="font-size:30px;">🎬</div>视频剪辑</div>
@@ -195,24 +142,18 @@
     function startDeepDive() {
         document.getElementById('overlay').style.display = 'block';
         document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'none'); 
-
         const opts = [{name:'性格标签', type:'char'}, {name:'兴趣爱好', type:'hobby'}];
         opts.forEach((opt, i) => {
             const btn = document.createElement('div'); 
             btn.className = 'shell-option dive-opt';
             btn.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${opt.name}</span>`;
-            btn.style.top = '50%'; 
-            btn.style.left = i === 0 ? 'calc(50% - 145px)' : 'calc(50% + 145px)'; 
+            btn.style.top = '50%'; btn.style.left = i === 0 ? 'calc(50% - 145px)' : 'calc(50% + 145px)'; 
             document.body.appendChild(btn); 
             setTimeout(() => btn.classList.add('shell-unfold'), 50);
-
             btn.onclick = (e) => { 
                 e.stopPropagation(); 
                 if(opt.type === 'char') scatterTags(); 
-                else { 
-                    document.querySelectorAll('.dive-opt').forEach(el => el.remove());
-                    showHobbySub(); 
-                } 
+                else { document.querySelectorAll('.dive-opt').forEach(el => el.remove()); showHobbySub(); } 
             };
         });
     }
@@ -237,141 +178,23 @@
             { name: '🌍 社交类', content: '<h3>探索世界</h3><p>热衷结识新朋友和探索不同的地域文化，喜欢语言，对粤语、英语和西语文化十分感兴趣，梦想是去巴塞罗那晒太阳，听人的故事，也听城市的故事</p>' },
             { name: '🍰 生活类', content: '<h3>发现趣味</h3><p>喜欢追剧和探索美食，乐于尝试新剧情新口味，但是找到了喜欢的会一直喜欢直到厌倦，也乐于发现生活中的趣味点，自娱自乐很有一手</p>' }
         ];
-
         hobbyList.forEach((s, i) => {
-            const b = document.createElement('div');
-            b.className = 'shell-option hobby-item';
+            const b = document.createElement('div'); b.className = 'shell-option hobby-item';
             b.innerHTML = `<img src="dist/assets/img/旅游贝壳.png"><span>${s.name}</span>`;
-            const angle = (i / hobbyList.length) * Math.PI * 2;
-            const radius = 170;
+            const angle = (i / hobbyList.length) * Math.PI * 2; const radius = 170;
             b.style.left = (window.innerWidth / 2 + Math.cos(angle) * radius) + 'px';
             b.style.top = (window.innerHeight / 2 + Math.sin(angle) * radius) + 'px';
             document.body.appendChild(b);
             setTimeout(() => b.classList.add('shell-unfold'), 50);
-            b.onclick = (e) => {
-                e.stopPropagation();
-                showModal(`<div style="line-height:1.6;color:#444;">${s.content}</div>`);
-            };
+            b.onclick = (e) => { e.stopPropagation(); showModal(`<div style="line-height:1.6;color:#444;">${s.content}</div>`); };
         });
     }
 
     function showModal(h) { document.getElementById('overlay').style.display='block'; document.getElementById('modal-body').innerHTML=h; document.getElementById('main-modal').style.display='block'; }
-    function viewImage(s) { document.getElementById('full-img').src="dist/assets/img/"+s; document.getElementById('image-viewer').style.display='block'; document.getElementById('overlay').style.display='block'; }
     function closeModal() { document.getElementById('main-modal').style.display='none'; document.getElementById('overlay').style.display='none'; }
+    function closeAll() { closeModal(); document.getElementById('overlay').style.display='none'; document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'flex'); document.querySelectorAll('.dive-opt, .hobby-item, .char-tag-scatter').forEach(el => el.remove()); }
+    function viewImage(s) { document.getElementById('full-img').src="dist/assets/img/"+s; document.getElementById('image-viewer').style.display='block'; document.getElementById('overlay').style.display='block'; }
     function closeViewer() { document.getElementById('image-viewer').style.display='none'; if(document.getElementById('main-modal').style.display==='none') document.getElementById('overlay').style.display='none'; }
-   function closeAll() {
-        document.getElementById('main-modal').style.display = 'none';
-        document.getElementById('image-viewer').style.display = 'none';
-        document.getElementById('overlay').style.display = 'none'; 
-        document.querySelectorAll('.main-fish-item, .jellyfish').forEach(f => f.style.display = 'flex');
-        document.querySelectorAll('.dive-opt, .hobby-item, .char-tag-scatter').forEach(el => el.remove()); 
-   } // 确认这是 closeAll 的结尾大括号
-
-    // ✅ 新的优雅版 spawnLuck 函数：点击出现精致气泡 + 宝石喷射
-    function spawnLuck(e) {
-        e.stopPropagation();
-
-        // 💬 1. 创建精致的“悄悄话”气泡
-        const textTip = document.createElement('div');
-        textTip.className = 'chat-tip-bubble shell-whisper'; // 我们在 CSS 里定义样式
-        textTip.innerHTML = '想了解更多欢迎找我聊天～ <span class="flower-icon">🌸</span>';
-        
-        // 设置文字气泡出现的位置（精准浮在贝壳上方）
-        textTip.style.cssText = `
-            position: fixed;
-            left: ${e.clientX}px;
-            top: ${e.clientY - 60}px; /* 向上偏移 60px，不压贝壳 */
-            transform: translateX(-50%); /* 居中显示 */
-            opacity: 0;                  /* 初始透明 */
-            z-index: 1000;               /* 确保在最上层 */
-        `;
-        
-        document.body.appendChild(textTip);
-
-        // 优雅地浮现出来
-        requestAnimationFrame(() => {
-            textTip.style.opacity = '1';
-            textTip.style.top = `${e.clientY - 70}px`; // 微微向上飘
-        });
-
-        // 2.5秒后自动淡出并移除文字
-        setTimeout(() => {
-            textTip.style.opacity = '0';
-            textTip.style.top = `${e.clientY - 90}px`; // 继续向上飘散效果
-            setTimeout(() => textTip.remove(), 600);   // 动画结束后移除
-        }, 2500);
-
-        // ✨ 2. 💎 宝石喷射特效正式回归！ 💎
-        const items = ['✨', '💎', '🐚', '🌟', '💰', '🍬', '🌸'];
-        for (let i = 0; i < 15; i++) { // 增加点数量，更热闹
-            const el = document.createElement('div');
-            el.className = 'lucky-item'; // ⚠️ 确保你的 CSS 底部有 .lucky-item 的动画样式
-            el.innerText = items[Math.floor(Math.random() * items.length)];
-            
-            // 设置初始位置
-            el.style.cssText = `
-                position: fixed;
-                left: ${e.clientX}px;
-                top: ${e.clientY}px;
-                font-size: ${16 + Math.random() * 12}px; /* 随机大小 */
-                pointer-events: none;
-                z-index: 999;
-                transition: all 1s cubic-bezier(0.12, 0.89, 0.32, 1.15); /* 增加弹性感 */
-            `;
-            
-            document.body.appendChild(el);
-
-            // 宝石喷射的数学计算
-            const angle = Math.random() * Math.PI * 2; // 360度
-            const dist = 120 + Math.random() * 180;    // 喷射距离
-            const tx = Math.cos(angle) * dist;
-            const ty = Math.sin(angle) * dist;
-
-            // 启动喷射动画
-            requestAnimationFrame(() => {
-                el.style.transform = `translate(${tx}px, ${ty}px) rotate(${Math.random() * 720}deg)`;
-                el.style.opacity = '0'; // 喷射过程中慢慢变淡
-            });
-            
-            // 动画结束后移除
-            setTimeout(() => el.remove(), 1100);
-        }
-        
-        // 🐚 3. 贝壳点击反馈（抖动）
-        const shell = e.currentTarget;
-        shell.style.transform = 'rotate(-10deg) scale(0.8)';
-        setTimeout(() => shell.style.transform = 'rotate(-10deg) scale(1)', 100);
-    }
-    /* ✅ 贝壳悄悄话精致气泡样式 */
-        .shell-whisper {
-            background: rgba(255, 255, 255, 0.9); /* 半透明乳白色背景，极佳质感 */
-            color: #00796b;                       /* 你的 Teal 主题色，优雅清新 */
-            padding: 12px 24px;                  /* 增加内边距，呼吸感十足 */
-            border-radius: 25px;                 /* 圆润的气泡 */
-            font-weight: bold;
-            font-size: 14px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15); /* 柔和的深海阴影 */
-            pointer-events: none;                /* 不挡鼠标 */
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); /* 优雅的浮现动画 */
-            white-space: nowrap;                 /* 防止文字换行 */
-            border: 1px solid rgba(178, 235, 242, 0.5); /* 淡淡的青蓝色边框 */
-        }
-        
-        .shell-whisper .flower-icon {
-            display: inline-block;
-            margin-left: 5px;
-            animation: FlowerSway 2s ease-in-out infinite; /* 樱花微动效果 */
-        }
-        
-        @keyframes FlowerSway {
-            0%, 100% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(15deg) scale(1.1); }
-        }
 </script>
-
-<div class="treasure-box" onclick="spawnLuck(event)" style="pointer-events: auto; cursor: pointer;">
-    <img src="dist/assets/img/粉贝壳.png">
-</div>
-
 </body>
 </html>
