@@ -143,7 +143,31 @@
 
     // 技能弹窗
     function openSkillFolder() {
-        showModal(`
+        showModal(`// 🛠️ 修复后的技能弹窗（解决白条报错问题）
+function openSkillFolder() {
+    let htmlContent = '<h3 style="color: var(--teal); margin-top: 0; margin-bottom: 15px;">核心技能</h3>' +
+    '<div style="text-align: left; line-height: 1.8; color: #333;">' +
+        '<p><b>🎬 视频剪辑：</b>熟练剪映/PS，具备优秀网感与脚本拆解能力。</p>' +
+        '<p><b>🎨 视觉设计：</b>熟练使用 Figma/Canva/秀米进行排版与美化。</p>' +
+        '<p><b>📊 数据分析：</b>擅长 Excel 数据透视表并进行标准化 SOP 沉淀。</p>' +
+    '</div>' +
+    '<div style="text-align: center; font-size: 13px; color: #00796b; font-weight: bold; margin-top: 20px; margin-bottom: 10px;">' +
+        '👇 点击下方按钮查看对应作品图片' +
+    '</div>' +
+    '<div style="display: flex; justify-content: space-between; gap: 8px;">' +
+        '<button onclick="viewImage(\'worke1.jpg\')" style="flex: 1; cursor: pointer; background: #e0f2f1; color: #004d40; border: 1.5px solid #80cbc4; padding: 10px 4px; border-radius: 12px; font-weight: bold; font-size: 13px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">' +
+            '🎬 作品 🔍' +
+        '</button>' +
+        '<button onclick="viewImage(\'worke2.jpg\')" style="flex: 1; cursor: pointer; background: #e0f2f1; color: #004d40; border: 1.5px solid #80cbc4; padding: 10px 4px; border-radius: 12px; font-weight: bold; font-size: 13px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">' +
+            '🎨 设计 🔍' +
+        '</button>' +
+        '<button onclick="viewImage(\'worke3.jpg\')" style="flex: 1; cursor: pointer; background: #e0f2f1; color: #004d40; border: 1.5px solid #80cbc4; padding: 10px 4px; border-radius: 12px; font-weight: bold; font-size: 13px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">' +
+            '📊 文档 🔍' +
+        '</button>' +
+    '</div>';
+
+    showModal(htmlContent);
+}
           
         `);
     }
