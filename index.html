@@ -92,12 +92,14 @@
 
     // 🐟 核心数据
     const fishData = [
-        { title: '工作经历', content: `<h3>项目实战</h3><div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:15px;">
-            <img src="dist/assets/img/worke1.jpg" onclick="viewImage('worke1.jpg')" style="width:100%; border-radius:12px; cursor:pointer;">
-            <img src="dist/assets/img/worke2.jpg" onclick="viewImage('worke2.jpg')" style="width:100%; border-radius:12px; cursor:pointer;">
-            <img src="dist/assets/img/worke3.jpg" onclick="viewImage('worke3.jpg')" style="width:100%; border-radius:12px; cursor:pointer;">
-            <img src="dist/assets/img/worke4.jpg" onclick="viewImage('worke4.jpg')" style="width:100%; border-radius:12px; cursor:pointer;">
-        </div>` },
+        { title: '工作经历', content: `<h3>项目实战</h3><div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-top:15px;">
+        <img src="dist/assets/img/worke1.jpg" onclick="viewImage('worke1.jpg')" style="width:100%; aspect-ratio: 1/1; object-fit: cover; border-radius:10px; cursor:pointer;">
+        <img src="dist/assets/img/worke2.jpg" onclick="viewImage('worke2.jpg')" style="width:100%; aspect-ratio: 1/1; object-fit: cover; border-radius:10px; cursor:pointer;">
+        <img src="dist/assets/img/worke3.jpg" onclick="viewImage('worke3.jpg')" style="width:100%; aspect-ratio: 1/1; object-fit: cover; border-radius:10px; cursor:pointer;">
+        <img src="dist/assets/img/worke4.jpg" onclick="viewImage('worke4.jpg')" style="width:100%; aspect-ratio: 1/1; object-fit: cover; border-radius:10px; cursor:pointer;">
+        <img src="dist/assets/img/worke5.jpg" onclick="viewImage('worke5.jpg')" style="width:100%; aspect-ratio: 1/1; object-fit: cover; border-radius:10px; cursor:pointer;">
+        <img src="dist/assets/img/worke6.jpg" onclick="viewImage('worke6.jpg')" style="width:100%; aspect-ratio: 1/1; object-fit: cover; border-radius:10px; cursor:pointer;">
+    </div>` },
         { title: '工作技能', type: 'skill' },
         { title: '性格与爱好', type: 'special' },
         { 
